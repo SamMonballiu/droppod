@@ -15,15 +15,22 @@ function App() {
 
   console.log(url);
 
-  useEffect(() => {
-    const url = `${window.location.href.replace("5173", "4004")}files`;
+  const fetchFiles = () => {
     fetch(url)
       .then((data) => data.json())
       .then((files) => setFiles(files));
+  }
+  useEffect(() => {
+    fetchFiles();
   }, []);
 
   return (
-    <Tab.Group>
+    <Tab.Group onChange={(index) => {
+      console.log(index);
+      if (index === 0) {
+        fetchFiles();
+      }
+    } }>
       <Tab.List className={styles.tabList}>
         <Tab as={Fragment}>
           {({ selected }) => (
@@ -41,7 +48,7 @@ function App() {
           <FileList files={files} />
         </Tab.Panel>
         <Tab.Panel>
-          <Upload />
+          <Upload baseUrl={url} />
         </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>

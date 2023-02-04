@@ -3,9 +3,10 @@ import React, { FC } from "react";
 
 interface Props {
   onError?: (err: Error | string) => void;
+  baseUrl: string;
 }
 
-const Upload: FC<Props> = ({ onError }) => {
+const Upload: FC<Props> = ({ onError, baseUrl }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const files = document.getElementById("files")! as HTMLInputElement;
@@ -15,7 +16,7 @@ const Upload: FC<Props> = ({ onError }) => {
       formData.append("files", files.files![i]);
     }
 
-    const url = `${window.location.href}upload_files`;
+    const url = `${baseUrl}upload_files`;
     fetch(url, {
       method: "POST",
       body: formData,
