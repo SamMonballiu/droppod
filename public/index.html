@@ -1,17 +1,59 @@
 <body>
-    <div class="container">
-        <h1>File Upload</h1>
-        <form id='form'>
-            <div class="input-group">
-                <label for='name'>Your name</label>
-                <input name='name' id='name' placeholder="Enter your name" />
-            </div>
-            <div class="input-group">
-                <label for='files'>Select files</label>
-                <input id='files' type="file" multiple>
-            </div>
-            <button class="submit-btn" type='submit'>Upload</button>
-        </form>
-    </div>
-    <script src='./script.js'></script>
+  <style>
+    body {
+      background-color: rgb(6, 26, 27);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+    }
+    .container h1 {
+      text-align: center;
+      color: white;
+    }
+    form {
+      background-color: white;
+      padding: 30px;
+    }
+    form .input-group {
+      margin-bottom: 15px;
+    }
+    form label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    form input {
+      padding: 12px 20px;
+      width: 100%;
+      border: 1px solid #ccc;
+    }
+    .submit-btn {
+      width: 100%;
+      border: none;
+      background: rgb(37, 83, 3);
+      font-size: 18px;
+      color: white;
+      border-radius: 3px;
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+  <div class="container">
+    <h1>File Upload</h1>
+    <form id="form">
+      <div class="input-group">
+        <label for="name">Your name</label>
+        <input name="name" id="name" placeholder="Enter your name" />
+      </div>
+      <div class="input-group">
+        <label for="files">Select files</label>
+        <input id="files" type="file" multiple />
+      </div>
+      <button class="submit-btn" type="submit">Upload</button>
+    </form>
+  </div>
+  <script src="./script.js"></script>
 </body>
