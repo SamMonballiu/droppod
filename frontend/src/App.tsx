@@ -13,10 +13,9 @@ function App() {
     ? window.location.href.replace("5173", "4004")
     : window.location.href;
 
-  console.log(url);
 
   const fetchFiles = () => {
-    fetch(url)
+    fetch(url + "files")
       .then((data) => data.json())
       .then((files) => setFiles(files));
   }
@@ -26,7 +25,6 @@ function App() {
 
   return (
     <Tab.Group onChange={(index) => {
-      console.log(index);
       if (index === 0) {
         fetchFiles();
       }
