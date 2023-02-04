@@ -10,7 +10,9 @@ function submitForm(e) {
   for (let i = 0; i < files.files.length; i++) {
     formData.append("files", files.files[i]);
   }
-  fetch("http://localhost:4004/upload_files", {
+
+  const url = `${window.location.href}upload_files`;
+  fetch(url, {
     method: "POST",
     body: formData,
   })
