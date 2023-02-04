@@ -1,5 +1,8 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { FileInfo } from "./models/fileinfo";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -24,6 +27,21 @@ app.post(
     res.status(200).send("ok");
   }
 );
+
+app.get("/files", (_, res: Response) => {
+  const folder = __dirname + "/public/uploads/";
+  const files = fs.readdirSync(folder);
+  
+  const result = files.reduce((acc, file) => {
+    return acc.concat({
+      filename: file,
+      extension: path.extname(folder + file),
+      size: fs.statSync(folder + file).size
+    })
+  }, [] as FileInfo[]);
+
+  res.status(200).send(result);
+});
 
 app.listen(4004, () => {
   console.log("Server started...");
