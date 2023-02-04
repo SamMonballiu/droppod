@@ -1,0 +1,29 @@
+.files {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.4em;
+}
+
+.file {
+  display: flex;
+}
+
+.link {
+  color: black;
+  text-decoration-line: none;
+  width: 70vw;
+
+  &:hover {
+    color: cornflowerblue;
+  }
+
+  &:visited {
+    text-decoration: none;
+  }
+}
+
+.size {
+  display: flex;
+  justify-content: flex-end;
+  width: 30vw;
+}
