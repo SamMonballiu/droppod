@@ -16,10 +16,6 @@
   color: black;
   text-decoration-line: none;
 
-  &:hover {
-    //color: cornflowerblue;
-  }
-
   &:visited {
     text-decoration: none;
   }
@@ -27,6 +23,7 @@
 
 .filename {
   width: 82vw;
+  overflow: hidden;
 }
 
 .ext {
