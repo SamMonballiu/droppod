@@ -2,9 +2,10 @@ import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { FileInfo } from "./models/fileinfo";
+import { FileInfo, isImageExtension } from "./models/fileinfo";
 import cors from "cors";
 import os from "os";
+import imageThumbnail from "image-thumbnail";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -40,21 +41,47 @@ app.post(
   }
 );
 
-app.get("/files", (_, res: Response) => {
+app.get("/files", async (_, res: Response) => {
   const folder = __dirname + "/public/uploads/";
   const files = fs.readdirSync(folder);
 
-  const result = files.reduce((acc, file) => {
-    return acc.concat({
+  const result: FileInfo[] = [];
+
+  for (const file of files) {
+    const extension = path.extname(folder + file);
+
+    const fileInfo: FileInfo = {
       filename: file,
       fullPath: `http://${os.hostname()}:4004/uploads/${file}`,
       extension: path.extname(folder + file),
       size: fs.statSync(folder + file).size,
-    });
-  }, [] as FileInfo[]);
+      thumbnailPath: isImageExtension(extension)
+        ? await getThumbnailPath(folder, file)
+        : undefined,
+    };
+
+    result.push(fileInfo);
+  }
 
   res.status(200).send(result);
 });
+
+const getThumbnailPath = async (folder: string, file: string) => {
+  try {
+    fs.readFileSync(`${folder}.thumbs/${file}`);
+  } catch {
+    const thumbnail = await imageThumbnail(folder + file, {
+      width: 256,
+      height: 256,
+      fit: "contain",
+      responseType: "buffer",
+    });
+
+    fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
+  }
+
+  return `http://${os.hostname()}:4004/uploads/.thumbs/${file}`;
+};
 
 app.listen(4004, () => {
   console.log("Server started...");

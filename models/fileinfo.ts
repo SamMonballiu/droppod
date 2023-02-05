@@ -3,9 +3,12 @@ export interface FileInfo {
   fullPath: string;
   extension: string;
   size: number;
+  thumbnailPath: any;
 }
 
-export const isImage = (file: FileInfo) =>
+export const isImageExtension = (ext: string) =>
   [".jpeg", ".jpg", ".png", ".bmp", ".tif", ".tiff"].includes(
-    file.extension.toLowerCase()
+    ext.toLowerCase()
   );
+
+export const isImage = (file: FileInfo) => isImageExtension(file.extension);
