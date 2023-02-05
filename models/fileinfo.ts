@@ -4,3 +4,8 @@ export interface FileInfo {
   extension: string;
   size: number;
 }
+
+export const isImage = (file: FileInfo) =>
+  [".jpeg", ".jpg", ".png", ".bmp", ".tif", ".tiff"].includes(
+    file.extension.toLowerCase()
+  );
