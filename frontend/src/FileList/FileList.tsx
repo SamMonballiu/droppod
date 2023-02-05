@@ -29,8 +29,17 @@ const FileList: FC<Props> = ({ files }) => {
   return (
     <div className={styles.container}>
       <div className={cx(styles.file, styles.header)}>
-        <p className={styles.link} onClick={() => handleSort("filename")}>
+        <p
+          className={cx(styles.link, styles.filename)}
+          onClick={() => handleSort("filename")}
+        >
           Name
+        </p>
+        <p
+          className={cx(styles.ext, styles.link)}
+          onClick={() => handleSort("extension")}
+        >
+          Ext.
         </p>
         <p className={styles.size} onClick={() => handleSort("size")}>
           Size
@@ -48,9 +57,14 @@ const FileList: FC<Props> = ({ files }) => {
 const File: FC<{ file: FileInfo }> = ({ file }) => {
   return (
     <div className={styles.file}>
-      <a target="_" href={file.fullPath} className={styles.link}>
+      <a
+        target="_"
+        href={file.fullPath}
+        className={cx(styles.link, styles.filename)}
+      >
         {file.filename}
       </a>
+      <span className={styles.ext}>{file.extension}</span>
       <span className={styles.size}>{(file.size / 1024).toFixed(2)} kb</span>
     </div>
   );

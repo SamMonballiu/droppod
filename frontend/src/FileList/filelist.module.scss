@@ -7,15 +7,17 @@
 
 .file {
   display: flex;
+  &:hover {
+    background: rgb(250, 250, 250);
+  }
 }
 
 .link {
   color: black;
   text-decoration-line: none;
-  width: 70vw;
 
   &:hover {
-    color: cornflowerblue;
+    //color: cornflowerblue;
   }
 
   &:visited {
@@ -23,10 +25,18 @@
   }
 }
 
+.filename {
+  width: 82vw;
+}
+
+.ext {
+  width: 7vw;
+}
+
 .size {
   display: flex;
   justify-content: flex-end;
-  width: 30vw;
+  width: 15vw;
   font-family: "Fira Code", monospace;
   font-size: 0.9em;
 }
@@ -37,8 +47,13 @@
   font-size: 1.1em;
   margin: 0 !important;
 
+  &:hover {
+    background: inherit;
+  }
+
   .size {
     font-family: "Work Sans", monospace;
+    font-size: 1.1em;
   }
 
   p {
