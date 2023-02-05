@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { FileInfo } from "../../../models/fileinfo";
 import styles from "./filelist.module.scss";
 import { useSortedList } from "../hooks/useSortedList";
+import cx from "classnames";
 
 interface Props {
   files: FileInfo[];
@@ -27,9 +28,7 @@ const FileList: FC<Props> = ({ files }) => {
 
   return (
     <div className={styles.container}>
-      <h2>Files</h2>
-      <hr />
-      <div className={styles.file}>
+      <div className={cx(styles.file, styles.header)}>
         <p className={styles.link} onClick={() => handleSort("filename")}>
           Name
         </p>

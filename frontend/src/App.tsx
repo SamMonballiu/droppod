@@ -5,6 +5,7 @@ import FileList from "./FileList/FileList";
 import { Fragment, useEffect, useState } from "react";
 import { FileInfo } from "../../models/fileinfo";
 import { Tab } from "@headlessui/react";
+import Paper from "./Paper/Paper";
 
 function App() {
   const [files, setFiles] = useState<FileInfo[]>([]);
@@ -13,22 +14,23 @@ function App() {
     ? window.location.href.replace("5173", "4004")
     : window.location.href;
 
-
   const fetchFiles = () => {
     fetch(url + "files")
       .then((data) => data.json())
       .then((files) => setFiles(files));
-  }
+  };
   useEffect(() => {
     fetchFiles();
   }, []);
 
   return (
-    <Tab.Group onChange={(index) => {
-      if (index === 0) {
-        fetchFiles();
-      }
-    } }>
+    <Tab.Group
+      onChange={(index) => {
+        if (index === 0) {
+          fetchFiles();
+        }
+      }}
+    >
       <Tab.List className={styles.tabList}>
         <Tab as={Fragment}>
           {({ selected }) => (
@@ -43,10 +45,14 @@ function App() {
       </Tab.List>
       <Tab.Panels>
         <Tab.Panel>
-          <FileList files={files} />
+          <Paper>
+            <FileList files={files} />
+          </Paper>
         </Tab.Panel>
         <Tab.Panel>
-          <Upload baseUrl={url} />
+          <Paper>
+            <Upload baseUrl={url} />
+          </Paper>
         </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>

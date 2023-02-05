@@ -27,7 +27,6 @@ const Upload: FC<Props> = ({ onError, baseUrl }) => {
 
   return (
     <div className="container">
-      <h1>File Upload</h1>
       <form id="form" onSubmit={handleSubmit}>
         <div className="input-group">
           <label htmlFor="files">Select files</label>
