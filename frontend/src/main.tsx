@@ -2,8 +2,21 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const mainQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={mainQueryClient}>
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>
 );

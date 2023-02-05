@@ -6,48 +6,60 @@ import { Fragment, useEffect, useState } from "react";
 import { FileInfo } from "../../models/fileinfo";
 import { Tab } from "@headlessui/react";
 import Paper from "./Paper/Paper";
+import { useQuery, useQueryClient } from "react-query";
+import cx from "classnames";
 
 function App() {
-  const [files, setFiles] = useState<FileInfo[]>([]);
+  const queryClient = useQueryClient();
 
   const url = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
     : window.location.href;
 
-  const fetchFiles = () => {
-    fetch(url + "files")
-      .then((data) => data.json())
-      .then((files) => setFiles(files));
-  };
-  useEffect(() => {
-    fetchFiles();
-  }, []);
+  const { data, isFetched } = useQuery(
+    ["files"],
+    async () => {
+      const response = await fetch(url + "files");
+      return await response.json();
+    },
+    {
+      staleTime: Infinity,
+    }
+  );
 
   return (
     <Tab.Group
       onChange={(index) => {
         if (index === 0) {
-          fetchFiles();
+          queryClient.invalidateQueries(["files"]);
         }
       }}
     >
       <Tab.List className={styles.tabList}>
         <Tab as={Fragment}>
           {({ selected }) => (
-            <button className={selected ? styles.selected : ""}>Files</button>
+            <button className={cx({ [styles.selected]: selected })}>
+              Files
+            </button>
           )}
         </Tab>
         <Tab as={Fragment}>
           {({ selected }) => (
-            <button className={selected ? styles.selected : ""}>Upload</button>
+            <button className={cx({ [styles.selected]: selected })}>
+              Upload
+            </button>
           )}
         </Tab>
       </Tab.List>
       <Tab.Panels>
         <Tab.Panel>
-          <Paper>
-            <FileList files={files} />
-          </Paper>
+          {isFetched ? (
+            <Paper>
+              <FileList files={data as FileInfo[]} />
+            </Paper>
+          ) : (
+            <p>Fetching...</p>
+          )}
         </Tab.Panel>
         <Tab.Panel>
           <Paper>
