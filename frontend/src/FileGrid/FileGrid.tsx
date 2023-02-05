@@ -22,7 +22,7 @@ const File: FC<{ file: FileInfo }> = ({ file }) => {
   return (
     <div className={styles.file}>
       {isImage(file) ? (
-        <img src={file.fullPath} />
+        <img src={file.thumbnailPath} />
       ) : (
         <div className={styles.thumbnail}></div>
       )}
