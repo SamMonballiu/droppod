@@ -1,0 +1,40 @@
+$dimension: 10em;
+$thumbnail: calc($dimension * 0.8);
+$border: 1px solid rgb(240, 240, 240);
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0px;
+}
+
+.file {
+  width: $dimension;
+  height: $dimension;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+img {
+  width: $thumbnail;
+  height: $thumbnail;
+  object-fit: cover;
+  $border: border;
+}
+
+a {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.thumbnail {
+  min-width: $thumbnail;
+  min-height: $thumbnail;
+  border: $border;
+}
+
+.filename {
+  font-size: 0.7em;
+  text-align: center;
+}
