@@ -1,5 +1,7 @@
-import "./upload.scss";
-import React, { FC } from "react";
+import styles from "./upload.module.scss";
+import React, { FC, useRef, useState } from "react";
+import { QueryClient, useMutation, useQueryClient } from "react-query";
+import cx from "classnames";
 
 interface Props {
   onError?: (err: Error | string) => void;
@@ -7,34 +9,75 @@ interface Props {
 }
 
 const Upload: FC<Props> = ({ onError, baseUrl }) => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const files = document.getElementById("files")! as HTMLInputElement;
-    const formData = new FormData();
+  const [state, setState] = useState<"progress" | "success">("progress");
+  const files = useRef<HTMLInputElement | null>(null);
 
-    for (let i = 0; i < files.files!.length; i++) {
-      formData.append("files", files.files![i]);
+  const queryClient = useQueryClient();
+  const { mutateAsync, isLoading, isSuccess } = useMutation(
+    async (formData: FormData) => {
+      const url = `${baseUrl}upload_files`;
+      try {
+        return await fetch(url, {
+          method: "POST",
+          body: formData,
+        });
+      } catch (err) {
+        onError?.(err as unknown as string | Error);
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["files"]);
+        setState("success");
+      },
+    }
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (files.current!.files!.length === 0) {
+      return;
     }
 
-    const url = `${baseUrl}upload_files`;
-    fetch(url, {
-      method: "POST",
-      body: formData,
-    })
-      .then((res) => console.log(res))
-      .catch((err) => onError?.(err));
+    const formData = new FormData();
+    for (let i = 0; i < files.current!.files!.length; i++) {
+      formData.append("files", files.current!.files![i]);
+    }
+    await mutateAsync(formData);
   };
 
   return (
-    <div className="container">
+    <div>
       <form id="form" onSubmit={handleSubmit}>
-        <div className="input-group">
+        <div className={styles.inputGroup}>
           <label htmlFor="files">Select files</label>
-          <input id="files" type="file" multiple />
+          <input
+            type="file"
+            ref={files}
+            multiple
+            disabled={state === "success"}
+          />
         </div>
-        <button className="submit-btn" type="submit">
-          Upload
-        </button>
+
+        {state === "progress" && (
+          <button
+            className={cx(styles.submitBtn, { [styles.disabled]: isLoading })}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? "Uploading... " : "Upload"}
+          </button>
+        )}
+
+        {state === "success" && (
+          <div className={styles.success}>
+            <span>Upload complete!</span>
+            <span className={styles.link} onClick={() => setState("progress")}>
+              Upload more
+            </span>
+          </div>
+        )}
       </form>
     </div>
   );
