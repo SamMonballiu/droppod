@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   font-size: 1em;
+  opacity: 0.8;
 }
 
 .file {
@@ -27,6 +28,7 @@
   justify-content: flex-end;
   width: 30vw;
   font-family: "Fira Code", monospace;
+  font-size: 0.9em;
 }
 
 .header {
