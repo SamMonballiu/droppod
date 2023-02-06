@@ -7,7 +7,7 @@ export interface FileInfo {
 }
 
 export const isImageExtension = (ext: string) =>
-  [".jpeg", ".jpg", ".png", ".bmp", ".tif", ".tiff"].includes(
+  [".jpeg", ".jpg", ".png", ".bmp", ".tif", ".tiff", ".gif"].includes(
     ext.toLowerCase()
   );
 
