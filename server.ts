@@ -70,6 +70,7 @@ const getThumbnailPath = async (folder: string, file: string) => {
   try {
     fs.readFileSync(`${folder}.thumbs/${file}`);
   } catch {
+    //@ts-ignore
     const thumbnail = await imageThumbnail(folder + file, {
       width: 256,
       height: 256,
