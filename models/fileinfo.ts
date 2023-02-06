@@ -3,7 +3,7 @@ export interface FileInfo {
   fullPath: string;
   extension: string;
   size: number;
-  thumbnailPath: any;
+  thumbnailPath: string | undefined;
 }
 
 export const isImageExtension = (ext: string) =>
