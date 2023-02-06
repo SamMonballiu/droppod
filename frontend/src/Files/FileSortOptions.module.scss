@@ -1,0 +1,24 @@
+.active {
+  color: cornflowerblue;
+  border-bottom: 1px solid cornflowerblue;
+}
+
+.option {
+  padding-bottom: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  svg {
+    margin-top: 4px;
+  }
+
+  user-select: none;
+}
+
+.options {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8em;
+}
