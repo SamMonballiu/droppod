@@ -1,0 +1,22 @@
+.icons {
+  font-size: 1.4em;
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-bottom: 8px;
+
+  svg {
+    opacity: 0.25;
+    cursor: pointer;
+
+    &:hover {
+      color: rgb(100, 149, 237);
+    }
+  }
+
+  .active {
+    color: cornflowerblue;
+    opacity: 1;
+    cursor: default;
+  }
+}

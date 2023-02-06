@@ -1,11 +1,21 @@
-$dimension: 10em;
+$dimension: 8em;
 $thumbnail: calc($dimension * 0.8);
-$border: 1px solid rgb(240, 240, 240);
+$border: 1px solid rgb(200, 200, 200);
+$accent: rgba(100, 149, 237, 0.25);
 
 .container {
   display: flex;
   flex-wrap: wrap;
-  gap: 0px;
+}
+
+.square {
+  border: $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $thumbnail;
+  height: $thumbnail;
+  min-height: $thumbnail;
 }
 
 .file {
@@ -14,13 +24,24 @@ $border: 1px solid rgb(240, 240, 240);
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 12px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $accent;
+  }
+}
+
+.folderIcon {
+  font-size: 3em;
+  color: $accent;
 }
 
 img {
   width: $thumbnail;
   height: $thumbnail;
   object-fit: cover;
-  $border: border;
+  border: $border;
 }
 
 a {

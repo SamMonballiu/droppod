@@ -1,14 +1,13 @@
 import "./App.scss";
 import styles from "./Tabs.module.scss";
 import Upload from "./Upload/Upload";
-import FileList from "./FileList/FileList";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import { FileInfo } from "../../models/fileinfo";
 import { Tab } from "@headlessui/react";
 import Paper from "./Paper/Paper";
 import { useQuery, useQueryClient } from "react-query";
 import cx from "classnames";
-import FileGrid from "./FileGrid/FileGrid";
+import Files from "./Files/Files";
 
 function App() {
   const queryClient = useQueryClient();
@@ -56,7 +55,7 @@ function App() {
         <Tab.Panel>
           {isFetched ? (
             <Paper>
-              <FileGrid files={data as FileInfo[]} />
+              <Files files={data as FileInfo[]} />
             </Paper>
           ) : (
             <p>Fetching...</p>
