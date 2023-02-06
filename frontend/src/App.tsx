@@ -3,6 +3,7 @@ import styles from "./Tabs.module.scss";
 import Upload from "./Upload/Upload";
 import { Fragment } from "react";
 import { FileInfo } from "../../models/fileinfo";
+import { FilesResponse } from "../../models/response";
 import { Tab } from "@headlessui/react";
 import Paper from "./Paper/Paper";
 import { useQuery, useQueryClient } from "react-query";
@@ -20,7 +21,7 @@ function App() {
     ["files"],
     async () => {
       const response = await fetch(url + "files");
-      return await response.json();
+      return (await response.json()) as FilesResponse;
     },
     {
       staleTime: Infinity,
@@ -51,7 +52,7 @@ function App() {
         <Tab.Panel>
           {isFetched ? (
             <Paper>
-              <Files files={data as FileInfo[]} />
+              <Files data={data} />
             </Paper>
           ) : (
             <p>Fetching...</p>
