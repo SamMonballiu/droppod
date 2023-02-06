@@ -36,7 +36,11 @@ app.use(
 app.post(
   "/upload_files",
   upload.array("files"),
-  (_: Request, res: Response) => {
+  async (req: Request, res: Response) => {
+    const uploaded = req["files"] as { filename: string }[];
+    for (const file of uploaded) {
+      await generateThumbnail(__dirname + "/public/uploads/", file.filename);
+    }
     res.status(200).send("ok");
   }
 );
@@ -70,23 +74,27 @@ const getThumbnailPath = async (folder: string, file: string) => {
   try {
     fs.readFileSync(`${folder}.thumbs/${file}`);
   } catch {
-    //@ts-ignore
-    const thumbnail = await imageThumbnail(folder + file, {
-      width: 256,
-      height: 256,
-      fit: "cover",
-      responseType: "buffer",
-      jpegOptions: {
-        force: true,
-        quality: 60
-      },
-      withMetaData: true
-    });
-
-    fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
+    await generateThumbnail(folder, file);
   }
 
   return `http://${os.hostname()}:4004/uploads/.thumbs/${file}`;
+};
+
+const generateThumbnail = async (folder: string, file: string) => {
+  //@ts-ignore
+  const thumbnail = await imageThumbnail(folder + file, {
+    width: 256,
+    height: 256,
+    fit: "cover",
+    responseType: "buffer",
+    jpegOptions: {
+      force: true,
+      quality: 60,
+    },
+    withMetaData: true,
+  });
+
+  fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
 };
 
 app.listen(4004, () => {
