@@ -38,16 +38,12 @@ function App() {
       <Tab.List className={styles.tabList}>
         <Tab as={Fragment}>
           {({ selected }) => (
-            <button className={cx({ [styles.selected]: selected })}>
-              Files
-            </button>
+            <span className={cx({ [styles.selected]: selected })}>Files</span>
           )}
         </Tab>
         <Tab as={Fragment}>
           {({ selected }) => (
-            <button className={cx({ [styles.selected]: selected })}>
-              Upload
-            </button>
+            <span className={cx({ [styles.selected]: selected })}>Upload</span>
           )}
         </Tab>
       </Tab.List>
