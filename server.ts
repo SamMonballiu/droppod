@@ -53,15 +53,17 @@ app.get("/files", async (_, res: Response) => {
 
   for (const file of files.filter((f) => !f.startsWith("."))) {
     const extension = path.extname(folder + file);
+    const stats = fs.statSync(folder + file);
 
     const fileInfo: FileInfo = {
       filename: file,
       fullPath: `http://${os.hostname()}:4004/uploads/${file}`,
       extension: path.extname(folder + file),
-      size: fs.statSync(folder + file).size,
+      size: stats.size,
       thumbnailPath: isImageExtension(extension)
         ? await getThumbnailPath(folder, file)
         : undefined,
+      dateAdded: stats.ctime,
     };
 
     result.push(fileInfo);

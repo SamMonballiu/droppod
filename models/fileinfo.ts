@@ -4,6 +4,7 @@ export interface FileInfo {
   extension: string;
   size: number;
   thumbnailPath: string | undefined;
+  dateAdded: Date;
 }
 
 export const isImageExtension = (ext: string) =>
