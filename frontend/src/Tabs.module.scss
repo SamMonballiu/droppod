@@ -1,15 +1,26 @@
 .selected {
-  color: cornflowerblue;
+  border-bottom: 3px solid white !important;
 }
 
 .tabList {
   background: #ccc;
-  padding: 12px 0;
   padding-left: 12px;
-  border-bottom: 1px solid #bbb;
+  background: #6190e8; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #6190e8,
+    #a7bfe8
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #6190e8,
+    #a7bfe8
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  gap: 24px;
+  display: flex;
 }
 
-.tabList > button {
+.tabList > span {
   background: none;
   border: none;
   font-size: 1.5em;
@@ -19,4 +30,10 @@
   &:hover {
     font-weight: 900;
   }
+
+  padding: 8px 0;
+  width: 96px;
+  text-align: center;
+
+  color: white;
 }
