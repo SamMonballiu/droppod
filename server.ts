@@ -74,8 +74,13 @@ const getThumbnailPath = async (folder: string, file: string) => {
     const thumbnail = await imageThumbnail(folder + file, {
       width: 256,
       height: 256,
-      fit: "contain",
+      fit: "cover",
       responseType: "buffer",
+      jpegOptions: {
+        force: true,
+        quality: 60
+      },
+      withMetaData: true
     });
 
     fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
