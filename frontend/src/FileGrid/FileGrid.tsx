@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import styles from "./FileGrid.module.scss";
+import { GoFile } from "react-icons/go";
 
 interface Props {
   files: FileInfo[];
@@ -24,7 +25,9 @@ const File: FC<{ file: FileInfo }> = ({ file }) => {
       {isImage(file) ? (
         <img src={file.thumbnailPath} />
       ) : (
-        <div className={styles.thumbnail}></div>
+        <div className={styles.square}>
+          <GoFile className={styles.folderIcon} />
+        </div>
       )}
 
       <a target="_" href={file.fullPath} className={styles.filename}>
