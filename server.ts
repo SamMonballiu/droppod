@@ -2,10 +2,12 @@ import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import { FileInfo, isImageExtension } from "./models/fileinfo";
+import { FilesResponse } from "./models/response";
 import cors from "cors";
 import os from "os";
 import fs from "fs";
 import { generateThumbnail, getThumbnailPath } from "./thumbnail";
+import checkDiskSpace from "check-disk-space";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -69,7 +71,12 @@ app.get("/files", async (_, res: Response) => {
     result.push(fileInfo);
   }
 
-  res.status(200).send(result);
+  const filesResponse: FilesResponse = {
+    freeSpace: (await checkDiskSpace(folder)).free,
+    files: result,
+  };
+
+  res.status(200).send(filesResponse);
 });
 
 app.listen(4004, () => {
