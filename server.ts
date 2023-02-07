@@ -6,7 +6,7 @@ import { FilesResponse } from "./models/response";
 import cors from "cors";
 import os from "os";
 import fs from "fs";
-import { generateThumbnail, getThumbnailPath } from "./thumbnail";
+import { Format, generateThumbnail, getThumbnailPath } from "./thumbnail";
 import checkDiskSpace from "check-disk-space";
 
 const storage = multer.diskStorage({
@@ -41,7 +41,11 @@ app.post(
   async (req: Request, res: Response) => {
     const uploaded = req["files"] as { filename: string }[];
     for (const file of uploaded) {
-      await generateThumbnail(__dirname + "/public/uploads/", file.filename);
+      await generateThumbnail(
+        __dirname + "/public/uploads/",
+        file.filename,
+        Format.Standard()
+      );
     }
     res.status(200).send("ok");
   }
@@ -77,6 +81,19 @@ app.get("/files", async (_, res: Response) => {
   };
 
   res.status(200).send(filesResponse);
+});
+
+app.get("/thumbnail", async (req: Request, res: Response) => {
+  const folder = __dirname + "/public/uploads/";
+  const file = req.query.file as string;
+  const percentage = req.query.percentage as string;
+  const thumbnail = await generateThumbnail(
+    folder,
+    file,
+    { percentage: parseInt(percentage) },
+    "return"
+  );
+  res.status(200).send(thumbnail);
 });
 
 app.listen(4004, () => {
