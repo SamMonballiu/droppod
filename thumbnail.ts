@@ -2,20 +2,37 @@ import imageThumbnail from "image-thumbnail";
 import fs from "fs";
 import os from "os";
 
+export class Format {
+  public static Standard() {
+    return { width: 256, height: 256 };
+  }
+}
+
 export const getThumbnailPath = async (folder: string, file: string) => {
   try {
     fs.readFileSync(`${folder}.thumbs/${file}`);
   } catch {
-    await generateThumbnail(folder, file);
+    await generateThumbnail(folder, file, Format.Standard());
   }
 
   return `http://${os.hostname()}:4004/uploads/.thumbs/${file}`;
 };
-export const generateThumbnail = async (folder: string, file: string) => {
+
+export const generateThumbnail = async (
+  folder: string,
+  file: string,
+  size:
+    | {
+        width: number;
+        height: number;
+      }
+    | {
+        percentage: number;
+      },
+  onComplete: "save" | "return" = "save"
+) => {
   //@ts-ignore
   const thumbnail = await imageThumbnail(folder + file, {
-    width: 256,
-    height: 256,
     fit: "cover",
     responseType: "buffer",
     jpegOptions: {
@@ -23,7 +40,12 @@ export const generateThumbnail = async (folder: string, file: string) => {
       quality: 60,
     },
     withMetaData: true,
+    ...size,
   });
 
-  fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
+  if (onComplete === "save") {
+    fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
+  } else {
+    return thumbnail;
+  }
 };
