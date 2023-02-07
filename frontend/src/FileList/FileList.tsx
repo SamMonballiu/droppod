@@ -36,11 +36,18 @@ const FileList: FC<Props> = ({ files }) => {
           Name
         </p>
         <p
-          className={cx(styles.ext, styles.link)}
+          className={cx(styles.link, styles.ext)}
           onClick={() => handleSort("extension")}
         >
           Ext.
         </p>
+        <p
+          className={cx(styles.link, styles.date)}
+          onClick={() => handleSort("dateAdded")}
+        >
+          Date
+        </p>
+
         <p className={styles.size} onClick={() => handleSort("size")}>
           Size
         </p>
@@ -65,6 +72,9 @@ const File: FC<{ file: FileInfo }> = ({ file }) => {
         {file.filename}
       </a>
       <span className={styles.ext}>{file.extension}</span>
+      <span className={styles.date}>
+        {new Date(file.dateAdded).toLocaleDateString()}
+      </span>
       <span className={styles.size}>{(file.size / 1024).toFixed(2)} kb</span>
     </div>
   );

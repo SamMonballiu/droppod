@@ -1,7 +1,11 @@
+.container {
+  // https://css-tricks.com/simplified-fluid-typography/
+  font-size: min(max(0.5rem, 2vw), 14px);
+}
+
 .files {
   display: flex;
   flex-direction: column;
-  font-size: 1em;
   opacity: 0.8;
 }
 
@@ -10,6 +14,7 @@
   &:hover {
     background: rgb(250, 250, 250);
   }
+  justify-content: space-between;
 }
 
 .link {
@@ -22,26 +27,28 @@
 }
 
 .filename {
-  width: 82vw;
   overflow: hidden;
+  flex-basis: 70vw;
 }
 
 .ext {
-  width: 7vw;
+  flex-basis: 10vw;
+}
+
+.date {
+  flex-basis: 10vw;
 }
 
 .size {
   display: flex;
   justify-content: flex-end;
-  width: 15vw;
   font-family: "Fira Code", monospace;
-  font-size: 0.9em;
+  flex-basis: 10vw;
 }
 
 .header {
   font-weight: 700;
   font-family: "Work Sans";
-  font-size: 1.1em;
   margin: 0 !important;
 
   &:hover {
@@ -50,7 +57,6 @@
 
   .size {
     font-family: "Work Sans", monospace;
-    font-size: 1.1em;
   }
 
   p {
