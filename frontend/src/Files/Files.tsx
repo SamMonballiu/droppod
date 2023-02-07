@@ -6,7 +6,6 @@ import { MdGridView, MdOutlineListAlt } from "react-icons/md";
 import styles from "./Files.module.scss";
 import cx from "classnames";
 import { useSortedList } from "../hooks/useSortedList";
-import { Listbox } from "@headlessui/react";
 import FileSortOptions, { SortOption } from "./FileSortOptions";
 import { FilesResponse } from "../../../models/response";
 
@@ -26,7 +25,7 @@ const Files: FC<Props> = ({ data }) => {
   } = useSortedList(data.files, "dateAdded", true);
 
   const sortOptions: SortOption<FileInfo>[] = [
-    { property: "dateAdded", name: "Date added" },
+    { property: "dateAdded", name: "Date" },
     { property: "filename", name: "Filename" },
     { property: "size", name: "Size" },
     { property: "extension", name: "Extension" },
