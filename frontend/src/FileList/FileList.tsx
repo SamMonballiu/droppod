@@ -6,9 +6,10 @@ import cx from "classnames";
 interface Props {
   files: FileInfo[];
   onSort: (prop: keyof FileInfo) => void;
+  onSelectFile: (file: FileInfo) => void;
 }
 
-const FileList: FC<Props> = ({ files, onSort }) => {
+const FileList: FC<Props> = ({ files, onSort, onSelectFile }) => {
   const handleSort = (property: keyof FileInfo) => {
     return () => onSort(property);
   };
@@ -41,21 +42,20 @@ const FileList: FC<Props> = ({ files, onSort }) => {
       </div>
       <div className={styles.files}>
         {files.map((f) => (
-          <File key={f.fullPath} file={f} />
+          <File key={f.fullPath} file={f} onSelect={onSelectFile} />
         ))}
       </div>
     </div>
   );
 };
 
-const File: FC<{ file: FileInfo }> = ({ file }) => {
+const File: FC<{ file: FileInfo; onSelect: (file: FileInfo) => void }> = ({
+  file,
+  onSelect,
+}) => {
   return (
-    <div className={styles.file}>
-      <a
-        target="_"
-        href={file.fullPath}
-        className={cx(styles.link, styles.filename)}
-      >
+    <div className={styles.file} onClick={() => onSelect(file)}>
+      <a target="_" className={cx(styles.link, styles.filename)}>
         {file.filename}
       </a>
       <span className={styles.ext}>{file.extension}</span>
