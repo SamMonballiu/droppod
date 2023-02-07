@@ -27,11 +27,22 @@ export function useSortedList<T>(
       : [...list].sort((a, b) => sortBy(a, b, sortProperty));
   }, [sortProperty, isDescending, list]);
 
+  const sort = (property: keyof T) => {
+    if (sortProperty === property) {
+      setIsDescending(!isDescending);
+      return;
+    }
+
+    setSortProperty(property);
+    setIsDescending(false);
+  };
+
   return {
     getSorted,
     sortProperty,
     setSortProperty,
     isDescending,
     setIsDescending,
+    sort,
   };
 }
