@@ -7,14 +7,20 @@ import cx from "classnames";
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
   files: FileInfo[];
+  onSelectFile: (file: FileInfo) => void;
   zoom?: FileGridZoom;
 }
 
-const FileGrid: FC<Props> = ({ files, zoom = 2 }) => {
+const FileGrid: FC<Props> = ({ files, onSelectFile, zoom = 2 }) => {
   return (
     <div className={styles.container}>
       {files.map((file) => (
-        <File key={file.filename} file={file} zoom={zoom} />
+        <File
+          key={file.filename}
+          file={file}
+          zoom={zoom}
+          onSelect={onSelectFile}
+        />
       ))}
     </div>
   );
@@ -22,7 +28,11 @@ const FileGrid: FC<Props> = ({ files, zoom = 2 }) => {
 
 export default FileGrid;
 
-const File: FC<{ file: FileInfo; zoom: FileGridZoom }> = ({ file, zoom }) => {
+const File: FC<{
+  file: FileInfo;
+  zoom: FileGridZoom;
+  onSelect: (file: FileInfo) => void;
+}> = ({ file, zoom, onSelect }) => {
   const zoomMap: Record<FileGridZoom, string> = {
     1: styles.zoom1,
     2: styles.zoom2,
@@ -38,7 +48,10 @@ const File: FC<{ file: FileInfo; zoom: FileGridZoom }> = ({ file, zoom }) => {
   };
 
   return (
-    <div className={cx(styles.file, zoomMap[zoom])}>
+    <div
+      className={cx(styles.file, zoomMap[zoom])}
+      onClick={() => onSelect(file)}
+    >
       {isImage(file) ? (
         <img src={file.thumbnailPath} className={thumbZoomMap[zoom]} />
       ) : (
