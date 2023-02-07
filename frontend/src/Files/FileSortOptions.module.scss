@@ -1,6 +1,5 @@
 .active {
   color: cornflowerblue;
-  border-bottom: 1px solid cornflowerblue;
 }
 
 .option {
@@ -19,6 +18,10 @@
 
 .options {
   display: flex;
-  gap: 12px;
   font-size: 0.8em;
+  gap: 12px;
+}
+
+.placeholder {
+  opacity: 0;
 }

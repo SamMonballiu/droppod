@@ -40,6 +40,9 @@ const FileSortOptions: FC<Props> = ({
               {isDescending ? <GoTriangleDown /> : <GoTriangleUp />}
             </div>
           )}
+          {value !== opt.property && (
+            <GoTriangleDown className={styles.placeholder} />
+          )}
         </RadioGroup.Option>
       )),
     [options]
