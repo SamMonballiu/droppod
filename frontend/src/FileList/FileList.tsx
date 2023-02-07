@@ -1,29 +1,16 @@
 import React, { FC } from "react";
 import { FileInfo } from "../../../models/fileinfo";
 import styles from "./filelist.module.scss";
-import { useSortedList } from "../hooks/useSortedList";
 import cx from "classnames";
 
 interface Props {
   files: FileInfo[];
+  onSort: (prop: keyof FileInfo) => void;
 }
 
-const FileList: FC<Props> = ({ files }) => {
-  const {
-    getSorted,
-    sortProperty,
-    setSortProperty,
-    isDescending,
-    setIsDescending,
-  } = useSortedList(files, "filename", false);
-
+const FileList: FC<Props> = ({ files, onSort }) => {
   const handleSort = (property: keyof FileInfo) => {
-    if (sortProperty === property) {
-      setIsDescending(!isDescending);
-      return;
-    }
-
-    setSortProperty(property);
+    return () => onSort(property);
   };
 
   return (
@@ -31,19 +18,19 @@ const FileList: FC<Props> = ({ files }) => {
       <div className={cx(styles.file, styles.header)}>
         <p
           className={cx(styles.link, styles.filename)}
-          onClick={() => handleSort("filename")}
+          onClick={handleSort("filename")}
         >
           Name
         </p>
         <p
           className={cx(styles.link, styles.ext)}
-          onClick={() => handleSort("extension")}
+          onClick={handleSort("extension")}
         >
           Ext.
         </p>
         <p
           className={cx(styles.link, styles.date)}
-          onClick={() => handleSort("dateAdded")}
+          onClick={handleSort("dateAdded")}
         >
           Date
         </p>
@@ -53,7 +40,7 @@ const FileList: FC<Props> = ({ files }) => {
         </p>
       </div>
       <div className={styles.files}>
-        {getSorted().map((f) => (
+        {files.map((f) => (
           <File key={f.fullPath} file={f} />
         ))}
       </div>

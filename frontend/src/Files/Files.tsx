@@ -18,13 +18,11 @@ const Files: FC<Props> = ({ data }) => {
   const [view, setView] = useState<"list" | "grid">("grid");
   const [zoom, setZoom] = useState<FileGridZoom>(2);
 
-  const {
-    getSorted,
-    sortProperty,
-    setSortProperty,
-    isDescending,
-    setIsDescending,
-  } = useSortedList(data.files, "dateAdded", true);
+  const { getSorted, sortProperty, isDescending, sort } = useSortedList(
+    data.files,
+    "dateAdded",
+    true
+  );
 
   const sortOptions: SortOption<FileInfo>[] = [
     { property: "dateAdded", name: "Date" },
@@ -34,13 +32,7 @@ const Files: FC<Props> = ({ data }) => {
   ];
 
   const handleSort = (option: SortOption<FileInfo>) => {
-    if (sortProperty === option.property) {
-      setIsDescending(!isDescending);
-      return;
-    }
-
-    setSortProperty(option.property);
-    setIsDescending(false);
+    sort(option.property);
   };
 
   return (
@@ -87,7 +79,7 @@ const Files: FC<Props> = ({ data }) => {
       </div>
 
       {view === "list" ? (
-        <FileList files={data.files} />
+        <FileList files={getSorted()} onSort={sort} />
       ) : (
         <FileGrid files={getSorted()} zoom={zoom} />
       )}
