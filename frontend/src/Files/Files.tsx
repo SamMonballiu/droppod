@@ -47,28 +47,33 @@ const Files: FC<Props> = ({ data }) => {
     <>
       <div className={styles.settings}>
         {view === "grid" ? (
-          <FileSortOptions
-            options={sortOptions}
-            value={sortProperty!}
-            onChange={(opt) => {
-              //@ts-ignore
-              handleSort(opt);
-            }}
-            isDescending={isDescending}
-          />
+          <>
+            <FileSortOptions
+              options={sortOptions}
+              value={sortProperty!}
+              onChange={(opt) => {
+                //@ts-ignore
+                handleSort(opt);
+              }}
+              isDescending={isDescending}
+            />
+            <div className={styles.zoomSlider}>
+              <TbTelescope />
+              <input
+                type="range"
+                min="1"
+                max="4"
+                value={zoom}
+                onChange={(e) =>
+                  setZoom(parseInt(e.target.value) as FileGridZoom)
+                }
+              />
+            </div>
+          </>
         ) : (
           <div>&nbsp;</div>
         )}
-        <div className={styles.zoomSlider}>
-          <TbTelescope />
-          <input
-            type="range"
-            min="1"
-            max="4"
-            value={zoom}
-            onChange={(e) => setZoom(parseInt(e.target.value) as FileGridZoom)}
-          />
-        </div>
+
         <div className={styles.icons}>
           <MdOutlineListAlt
             className={cx({ [styles.active]: view === "list" })}
