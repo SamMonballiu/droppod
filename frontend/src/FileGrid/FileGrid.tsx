@@ -2,16 +2,19 @@ import { FC } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import styles from "./FileGrid.module.scss";
 import { GoFile } from "react-icons/go";
+import cx from "classnames";
 
+export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
   files: FileInfo[];
+  zoom?: FileGridZoom;
 }
 
-const FileGrid: FC<Props> = ({ files }) => {
+const FileGrid: FC<Props> = ({ files, zoom = 2 }) => {
   return (
     <div className={styles.container}>
       {files.map((file) => (
-        <File key={file.filename} file={file} />
+        <File key={file.filename} file={file} zoom={zoom} />
       ))}
     </div>
   );
@@ -19,18 +22,36 @@ const FileGrid: FC<Props> = ({ files }) => {
 
 export default FileGrid;
 
-const File: FC<{ file: FileInfo }> = ({ file }) => {
+const File: FC<{ file: FileInfo; zoom: FileGridZoom }> = ({ file, zoom }) => {
+  const zoomMap: Record<FileGridZoom, string> = {
+    1: styles.zoom1,
+    2: styles.zoom2,
+    3: styles.zoom3,
+    4: styles.zoom4,
+  };
+
+  const thumbZoomMap: Record<FileGridZoom, string> = {
+    1: styles.thumbZoom1,
+    2: styles.thumbZoom2,
+    3: styles.thumbZoom3,
+    4: styles.thumbZoom4,
+  };
+
   return (
-    <div className={styles.file}>
+    <div className={cx(styles.file, zoomMap[zoom])}>
       {isImage(file) ? (
-        <img src={file.thumbnailPath} />
+        <img src={file.thumbnailPath} className={thumbZoomMap[zoom]} />
       ) : (
-        <div className={styles.square}>
+        <div className={cx(styles.square, thumbZoomMap[zoom])}>
           <GoFile className={styles.folderIcon} />
         </div>
       )}
 
-      <a target="_" href={file.fullPath} className={styles.filename}>
+      <a
+        target="_"
+        href={file.fullPath}
+        className={cx(styles.filename, zoomMap[zoom])}
+      >
         {file.filename}
       </a>
     </div>

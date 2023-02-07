@@ -1,5 +1,15 @@
-$dimension: 8em;
-$thumbnail: calc($dimension * 0.8);
+$dimension-1: 6em;
+$thumbnail-1: calc($dimension-1 * 0.8);
+
+$dimension-2: 8em;
+$thumbnail-2: calc($dimension-2 * 0.8);
+
+$dimension-3: 12em;
+$thumbnail-3: calc($dimension-3 * 0.8);
+
+$dimension-4: 16em;
+$thumbnail-4: calc($dimension-4 * 0.8);
+
 $border: 1px solid rgb(200, 200, 200);
 $accent: rgba(100, 149, 237, 0.25);
 
@@ -13,14 +23,57 @@ $accent: rgba(100, 149, 237, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: $thumbnail;
-  height: $thumbnail;
-  min-height: $thumbnail;
+}
+
+.zoom {
+  &1 {
+    width: $dimension-1;
+    height: $dimension-1;
+  }
+
+  &2 {
+    width: $dimension-2;
+    height: $dimension-2;
+  }
+
+  &3 {
+    width: $dimension-3;
+    height: $dimension-3;
+  }
+
+  &4 {
+    width: $dimension-4;
+    height: $dimension-4;
+  }
+}
+
+.thumbZoom {
+  &1 {
+    width: $thumbnail-1;
+    height: $thumbnail-1;
+    min-height: $thumbnail-1;
+  }
+
+  &2 {
+    width: $thumbnail-2;
+    height: $thumbnail-2;
+    min-height: $thumbnail-2;
+  }
+
+  &3 {
+    width: $thumbnail-3;
+    height: $thumbnail-3;
+    min-height: $thumbnail-3;
+  }
+
+  &4 {
+    width: $thumbnail-4;
+    height: $thumbnail-4;
+    min-height: $thumbnail-4;
+  }
 }
 
 .file {
-  width: $dimension;
-  height: $dimension;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,8 +91,6 @@ $accent: rgba(100, 149, 237, 0.25);
 }
 
 img {
-  width: $thumbnail;
-  height: $thumbnail;
   object-fit: cover;
   border: $border;
 }
@@ -47,14 +98,14 @@ img {
 a {
   text-decoration: none;
   color: rgba(0, 0, 0, 0.55);
-  width: $dimension;
+  // width: $dimension-1;
   text-overflow: ellipsis;
   overflow: clip;
 }
 
 .thumbnail {
-  min-width: $thumbnail;
-  min-height: $thumbnail;
+  min-width: $thumbnail-1;
+  min-height: $thumbnail-1;
   border: $border;
 }
 
