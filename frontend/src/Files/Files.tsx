@@ -1,8 +1,9 @@
 import { FC, useState } from "react";
 import { FileInfo } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
-import FileGrid from "../FileGrid/FileGrid";
+import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
 import { MdGridView, MdOutlineListAlt } from "react-icons/md";
+import { TbTelescope } from "react-icons/tb";
 import styles from "./Files.module.scss";
 import cx from "classnames";
 import { useSortedList } from "../hooks/useSortedList";
@@ -15,6 +16,7 @@ interface Props {
 
 const Files: FC<Props> = ({ data }) => {
   const [view, setView] = useState<"list" | "grid">("grid");
+  const [zoom, setZoom] = useState<FileGridZoom>(2);
 
   const {
     getSorted,
@@ -57,6 +59,16 @@ const Files: FC<Props> = ({ data }) => {
         ) : (
           <div>&nbsp;</div>
         )}
+        <div className={styles.zoomSlider}>
+          <TbTelescope />
+          <input
+            type="range"
+            min="1"
+            max="4"
+            value={zoom}
+            onChange={(e) => setZoom(parseInt(e.target.value) as FileGridZoom)}
+          />
+        </div>
         <div className={styles.icons}>
           <MdOutlineListAlt
             className={cx({ [styles.active]: view === "list" })}
@@ -72,7 +84,7 @@ const Files: FC<Props> = ({ data }) => {
       {view === "list" ? (
         <FileList files={data.files} />
       ) : (
-        <FileGrid files={getSorted()} />
+        <FileGrid files={getSorted()} zoom={zoom} />
       )}
 
       <div className={styles.info}>
