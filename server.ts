@@ -9,6 +9,7 @@ import fs from "fs";
 import { Format, generateThumbnail, getThumbnailPath } from "./thumbnail";
 import checkDiskSpace from "check-disk-space";
 import sizeOf from "image-size";
+import { cache } from "./thumbnail-cache";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -104,14 +105,23 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
     .map((d) => parseInt(d));
   const quality = req.query.quality
     ? parseInt(req.query.quality as string)
-    : undefined;
-  const thumbnail = await generateThumbnail(
-    folder,
-    file,
-    { height, width },
-    "return",
-    quality
-  );
+    : 60;
+
+  let thumbnail: Buffer;
+  if (cache.has(file, req.query.size as string, quality)) {
+    thumbnail = cache.get(file, req.query.size as string, quality)!;
+  } else {
+    thumbnail = await generateThumbnail(
+      folder,
+      file,
+      { height, width },
+      "return",
+      quality
+    );
+
+    cache.add(file, req.query.size as string, quality, thumbnail);
+  }
+
   res.setHeader("content-type", "image/jpeg").status(200).send(thumbnail);
 });
 

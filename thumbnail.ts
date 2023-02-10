@@ -46,6 +46,7 @@ export const generateThumbnail = async (
 
   if (onComplete === "save") {
     fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
+    return thumbnail;
   } else {
     return thumbnail;
   }
