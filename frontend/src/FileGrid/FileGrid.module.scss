@@ -20,6 +20,13 @@ $accent: rgba(100, 149, 237, 0.25);
 .container {
   display: flex;
   flex-wrap: wrap;
+
+  span {
+    color: rgba(0, 0, 0, 0.55);
+    text-overflow: ellipsis;
+    overflow: clip;
+    user-select: none;
+  }
 }
 
 .square {
@@ -93,13 +100,6 @@ $accent: rgba(100, 149, 237, 0.25);
 .folderIcon {
   font-size: 3em;
   color: $accent;
-}
-
-span {
-  color: rgba(0, 0, 0, 0.55);
-  text-overflow: ellipsis;
-  overflow: clip;
-  user-select: none;
 }
 
 .thumbnail {

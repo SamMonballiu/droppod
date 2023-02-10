@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { FileInfo } from "../../../models/fileinfo";
 import styles from "./filelist.module.scss";
 import cx from "classnames";
+import FileSize from "../FileSize/FileSize";
 
 interface Props {
   files: FileInfo[];
@@ -62,7 +63,7 @@ const File: FC<{ file: FileInfo; onSelect: (file: FileInfo) => void }> = ({
       <span className={styles.date}>
         {new Date(file.dateAdded).toLocaleDateString()}
       </span>
-      <span className={styles.size}>{(file.size / 1024).toFixed(2)} kb</span>
+      <FileSize className={styles.size} file={file} />
     </div>
   );
 };
