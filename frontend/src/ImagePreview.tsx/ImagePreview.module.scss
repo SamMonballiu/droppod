@@ -1,0 +1,20 @@
+$imageDimension: 33vw;
+
+.image {
+  max-height: $imageDimension;
+  max-width: $imageDimension;
+}
+
+.preview {
+  height: $imageDimension;
+  width: $imageDimension;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg {
+    font-size: 2em;
+    color: cornflowerblue;
+    opacity: 0.15;
+  }
+}
