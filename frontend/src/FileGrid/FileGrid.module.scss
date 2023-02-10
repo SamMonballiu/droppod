@@ -86,6 +86,7 @@ $accent: rgba(100, 149, 237, 0.25);
 
   &:hover {
     background: $accent;
+    cursor: pointer;
   }
 }
 
@@ -94,17 +95,11 @@ $accent: rgba(100, 149, 237, 0.25);
   color: $accent;
 }
 
-img {
-  // object-fit: cover;
-  // border: $border;
-}
-
-a {
-  text-decoration: none;
+span {
   color: rgba(0, 0, 0, 0.55);
-  // width: $dimension-1;
   text-overflow: ellipsis;
   overflow: clip;
+  user-select: none;
 }
 
 .thumbnail {
