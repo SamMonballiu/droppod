@@ -51,3 +51,23 @@ enum Orientation {
   MirrorHorizontalAndRotate90CW,
   Rotate270CW,
 }
+
+export const getSize = (
+  file: FileInfo,
+  format: "kb" | "mb" | "bytes" | "auto"
+) => {
+  const size = file.size;
+
+  if (format === "auto") {
+    format = size >= 1024 * 1024 ? "mb" : size >= 1024 ? "kb" : "bytes";
+  }
+
+  switch (format) {
+    case "kb":
+      return (file.size / 1024).toFixed(2) + "kb";
+    case "mb":
+      return (file.size / 1024 / 1024).toFixed(2) + "mb";
+    case "bytes":
+      return file.size + " bytes";
+  }
+};
