@@ -29,7 +29,8 @@ export const generateThumbnail = async (
     | {
         percentage: number;
       },
-  onComplete: "save" | "return" = "save"
+  onComplete: "save" | "return" = "save",
+  quality: number = 60
 ) => {
   //@ts-ignore
   const thumbnail = await imageThumbnail(folder + file, {
@@ -37,7 +38,7 @@ export const generateThumbnail = async (
     responseType: "buffer",
     jpegOptions: {
       force: true,
-      quality: 60,
+      quality,
     },
     withMetaData: true,
     ...size,

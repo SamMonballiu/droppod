@@ -8,6 +8,7 @@ import os from "os";
 import fs from "fs";
 import { Format, generateThumbnail, getThumbnailPath } from "./thumbnail";
 import checkDiskSpace from "check-disk-space";
+import sizeOf from "image-size";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -60,6 +61,17 @@ app.get("/files", async (_, res: Response) => {
   for (const file of files.filter((f) => !f.startsWith("."))) {
     const extension = path.extname(folder + file);
     const stats = fs.statSync(folder + file);
+    let dimensions:
+      | { height: number; width: number; orientation: number }
+      | undefined = undefined;
+    if (isImageExtension(extension)) {
+      const info = sizeOf(folder + file);
+      dimensions = {
+        height: info!.height!,
+        width: info!.width!,
+        orientation: info!.orientation!,
+      };
+    }
 
     const fileInfo: FileInfo = {
       filename: file,
@@ -70,6 +82,7 @@ app.get("/files", async (_, res: Response) => {
         ? await getThumbnailPath(folder, file)
         : undefined,
       dateAdded: stats.ctime,
+      dimensions,
     };
 
     result.push(fileInfo);
@@ -86,14 +99,20 @@ app.get("/files", async (_, res: Response) => {
 app.get("/thumbnail", async (req: Request, res: Response) => {
   const folder = __dirname + "/public/uploads/";
   const file = req.query.file as string;
-  const percentage = req.query.percentage as string;
+  const [height, width] = (req.query.size as string)
+    .split("x")
+    .map((d) => parseInt(d));
+  const quality = req.query.quality
+    ? parseInt(req.query.quality as string)
+    : undefined;
   const thumbnail = await generateThumbnail(
     folder,
     file,
-    { percentage: parseInt(percentage) },
-    "return"
+    { height, width },
+    "return",
+    quality
   );
-  res.status(200).send(thumbnail);
+  res.setHeader("content-type", "image/jpeg").status(200).send(thumbnail);
 });
 
 app.listen(4004, () => {
