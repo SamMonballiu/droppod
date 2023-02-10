@@ -17,7 +17,7 @@ interface Props {
 
 const Files: FC<Props> = ({ data }) => {
   const [view, setView] = useState<"list" | "grid">("grid");
-  const [zoom, setZoom] = useState<FileGridZoom>(2);
+  const [zoom, setZoom] = useState<FileGridZoom>(3);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
 
   const { getSorted, sortProperty, isDescending, sort } = useSortedList(
