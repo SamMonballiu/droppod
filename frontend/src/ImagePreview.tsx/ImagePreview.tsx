@@ -54,12 +54,6 @@ const ImagePreview: FC<Props> = ({
     }
   );
 
-  // return (
-  //   <div className={cx(styles.preview, styles.image, className)}>
-  //     <GoFileMedia />
-  //   </div>
-  // );
-
   return (
     <div className={className} ref={ref}>
       {isFetchingImage ? (
