@@ -13,6 +13,10 @@ $thumbnail-4: calc($dimension-4 * 0.8);
 $border: 1px solid rgb(200, 200, 200);
 $accent: rgba(100, 149, 237, 0.25);
 
+.border {
+  border: $border;
+}
+
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -91,8 +95,8 @@ $accent: rgba(100, 149, 237, 0.25);
 }
 
 img {
-  object-fit: cover;
-  border: $border;
+  // object-fit: cover;
+  // border: $border;
 }
 
 a {
