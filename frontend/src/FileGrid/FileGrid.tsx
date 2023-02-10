@@ -66,13 +66,9 @@ const File: FC<{
         </div>
       )}
 
-      <a
-        target="_"
-        href={file.fullPath}
-        className={cx(styles.filename, zoomMap[zoom])}
-      >
+      <span className={cx(styles.filename, zoomMap[zoom])}>
         {file.filename}
-      </a>
+      </span>
     </div>
   );
 };
