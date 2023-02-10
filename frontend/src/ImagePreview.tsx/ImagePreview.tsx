@@ -4,6 +4,7 @@ import React, { FC } from "react";
 import { useQuery } from "react-query";
 import { GoFileMedia } from "react-icons/go";
 import cx from "classnames";
+import { useInView } from "react-intersection-observer";
 
 interface Props {
   file: FileInfo;
@@ -24,6 +25,8 @@ const ImagePreview: FC<Props> = ({
   square = false,
   dimension = 1000,
 }) => {
+  const { ref, inView } = useInView();
+
   if (file.dimensions === undefined) {
     return null;
   }
@@ -47,18 +50,27 @@ const ImagePreview: FC<Props> = ({
     },
     {
       staleTime: Infinity,
+      enabled: inView,
     }
   );
 
-  if (isFetchingImage) {
-    return (
-      <div className={cx(styles.preview, styles.image, className)}>
-        <GoFileMedia />
-      </div>
-    );
-  } else {
-    return <img src={imageData} className={cx(styles.image, className)} />;
-  }
+  // return (
+  //   <div className={cx(styles.preview, styles.image, className)}>
+  //     <GoFileMedia />
+  //   </div>
+  // );
+
+  return (
+    <div className={className} ref={ref}>
+      {isFetchingImage ? (
+        <div className={cx(styles.preview, styles.image, className)}>
+          <GoFileMedia />
+        </div>
+      ) : (
+        <img src={imageData} className={cx(styles.image, className)} />
+      )}
+    </div>
+  );
 };
 
 export default ImagePreview;

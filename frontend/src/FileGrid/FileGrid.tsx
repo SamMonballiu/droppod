@@ -61,7 +61,6 @@ const File: FC<{
           className={thumbZoomMap[zoom]}
         />
       ) : (
-        // <img src={file.thumbnailPath} className={thumbZoomMap[zoom]} />
         <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
           <GoFile className={styles.folderIcon} />
         </div>
