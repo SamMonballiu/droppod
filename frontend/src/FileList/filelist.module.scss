@@ -15,6 +15,11 @@
     background: rgb(250, 250, 250);
   }
   justify-content: space-between;
+
+  color: rgba(0, 0, 0, 0.55);
+  text-overflow: ellipsis;
+  overflow: clip;
+  user-select: none;
 }
 
 .link {
@@ -44,6 +49,7 @@
   justify-content: flex-end;
   font-family: "Fira Code", monospace;
   flex-basis: 10vw;
+  margin: 0;
 }
 
 .header {
