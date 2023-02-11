@@ -21,7 +21,7 @@ const url = import.meta.env.DEV
 const ImagePreview: FC<Props> = ({
   file,
   className,
-  quality = 30,
+  quality = 60,
   square = false,
   dimension = 1000,
 }) => {
