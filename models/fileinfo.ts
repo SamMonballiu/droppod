@@ -3,7 +3,6 @@ export interface FileInfo {
   fullPath: string;
   extension: string;
   size: number;
-  thumbnailPath: string | undefined;
   dateAdded: Date;
   dimensions?: {
     width: number;

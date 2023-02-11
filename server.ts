@@ -6,7 +6,7 @@ import { FilesResponse } from "./models/response";
 import cors from "cors";
 import os from "os";
 import fs from "fs";
-import { Format, generateThumbnail, getThumbnailPath } from "./thumbnail";
+import { generateThumbnail } from "./thumbnail";
 import checkDiskSpace from "check-disk-space";
 import sizeOf from "image-size";
 import { cache } from "./thumbnail-cache";
@@ -37,21 +37,9 @@ app.use(
   })
 );
 
-app.post(
-  "/upload_files",
-  upload.array("files"),
-  async (req: Request, res: Response) => {
-    const uploaded = req["files"] as { filename: string }[];
-    for (const file of uploaded) {
-      await generateThumbnail(
-        __dirname + "/public/uploads/",
-        file.filename,
-        Format.Standard()
-      );
-    }
-    res.status(200).send("ok");
-  }
-);
+app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
+  res.status(200).send("ok");
+});
 
 app.get("/files", async (_, res: Response) => {
   const folder = __dirname + "/public/uploads/";
@@ -79,9 +67,6 @@ app.get("/files", async (_, res: Response) => {
       fullPath: `http://${os.hostname()}:4004/uploads/${file}`,
       extension: path.extname(folder + file),
       size: stats.size,
-      thumbnailPath: isImageExtension(extension)
-        ? await getThumbnailPath(folder, file)
-        : undefined,
       dateAdded: stats.ctime,
       dimensions,
     };
@@ -115,7 +100,6 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
       folder,
       file,
       { height, width },
-      "return",
       quality
     );
 
