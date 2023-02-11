@@ -66,9 +66,11 @@ const File: FC<{
         </div>
       )}
 
-      <span className={cx(styles.filename, zoomMap[zoom])}>
-        {file.filename}
-      </span>
+      {zoom > 1 && (
+        <span className={cx(styles.filename, zoomMap[zoom])}>
+          {file.filename}
+        </span>
+      )}
     </div>
   );
 };
