@@ -1,9 +1,10 @@
-$imageDimension: 33vw;
+$imageHeight: 60vh;
+$imageWidth: 75vw;
 $border: 1px solid rgb(200, 200, 200);
 
 .image {
-  max-height: $imageDimension;
-  max-width: $imageDimension;
+  max-height: $imageHeight;
+  max-width: $imageWidth;
 }
 
 .preview {
