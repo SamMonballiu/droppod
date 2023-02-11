@@ -29,7 +29,6 @@ export const generateThumbnail = async (
     | {
         percentage: number;
       },
-  onComplete: "save" | "return" = "save",
   quality: number = 60
 ) => {
   //@ts-ignore
@@ -44,10 +43,5 @@ export const generateThumbnail = async (
     ...size,
   });
 
-  if (onComplete === "save") {
-    fs.writeFileSync(`${folder}.thumbs/${file}`, thumbnail);
-    return thumbnail;
-  } else {
-    return thumbnail;
-  }
+  return thumbnail;
 };
