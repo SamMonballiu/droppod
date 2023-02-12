@@ -8,16 +8,6 @@ export class Format {
   }
 }
 
-export const getThumbnailPath = async (folder: string, file: string) => {
-  try {
-    fs.readFileSync(`${folder}.thumbs/${file}`);
-  } catch {
-    await generateThumbnail(folder, file, Format.Standard());
-  }
-
-  return `http://${os.hostname()}:4004/uploads/.thumbs/${file}`;
-};
-
 export const generateThumbnail = async (
   folder: string,
   file: string,
