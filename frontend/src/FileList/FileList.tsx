@@ -60,9 +60,7 @@ const File: FC<{ file: FileInfo; onSelect: (file: FileInfo) => void }> = ({
         {file.filename}
       </a>
       <span className={styles.ext}>{file.extension}</span>
-      <span className={styles.date}>
-        {new Date(file.dateAdded).toLocaleDateString()}
-      </span>
+      <span className={styles.date}>{file.dateAdded.toLocaleDateString()}</span>
       <FileSize className={styles.size} file={file} />
     </div>
   );
