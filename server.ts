@@ -10,6 +10,9 @@ import { generateThumbnail } from "./thumbnail";
 import checkDiskSpace from "check-disk-space";
 import sizeOf from "image-size";
 import { cache } from "./thumbnail-cache";
+import argv from "minimist";
+
+const args = argv(process.argv);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -109,6 +112,7 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
   res.setHeader("content-type", "image/jpeg").status(200).send(thumbnail);
 });
 
-app.listen(4004, () => {
-  console.log("Server started...");
+const port = args.port ?? 4004;
+app.listen(port, () => {
+  console.log(`Server started on port ${port}.`);
 });
