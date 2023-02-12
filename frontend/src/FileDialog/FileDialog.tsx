@@ -19,7 +19,7 @@ const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
         <ImagePreview file={file} className={styles.image} />
         <div className={styles.info}>
           <h3>{file.filename}</h3>
-          <p>{new Date(file.dateAdded).toLocaleDateString()}</p>
+          <p>{file.dateAdded.toLocaleDateString()}</p>
           <p>
             <FileSize file={file} />
           </p>
