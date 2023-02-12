@@ -1,0 +1,21 @@
+$imageHeight: 60vh;
+$imageWidth: 75vw;
+$border: 1px solid rgb(200, 200, 200);
+
+.image {
+  max-height: $imageHeight;
+  max-width: $imageWidth;
+}
+
+.preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: $border;
+
+  svg {
+    font-size: 2em;
+    color: cornflowerblue;
+    opacity: 0.15;
+  }
+}

@@ -2,13 +2,20 @@ import "./App.scss";
 import styles from "./Tabs.module.scss";
 import Upload from "./Upload/Upload";
 import { Fragment } from "react";
-import { FileInfo } from "../../models/fileinfo";
 import { FilesResponse } from "../../models/response";
 import { Tab } from "@headlessui/react";
 import Paper from "./Paper/Paper";
 import { useQuery, useQueryClient } from "react-query";
 import cx from "classnames";
 import Files from "./Files/Files";
+
+const dateReviver = (key: string, value: any) => {
+  if (key === "dateAdded" && Date.parse(value)) {
+    return new Date(value);
+  }
+
+  return value;
+};
 
 function App() {
   const queryClient = useQueryClient();
@@ -21,7 +28,8 @@ function App() {
     ["files"],
     async () => {
       const response = await fetch(url + "files");
-      return (await response.json()) as FilesResponse;
+      const text = await response.text();
+      return JSON.parse(text, dateReviver) as FilesResponse;
     },
     {
       staleTime: Infinity,

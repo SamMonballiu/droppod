@@ -13,9 +13,20 @@ $thumbnail-4: calc($dimension-4 * 0.8);
 $border: 1px solid rgb(200, 200, 200);
 $accent: rgba(100, 149, 237, 0.25);
 
+.border {
+  border: $border;
+}
+
 .container {
   display: flex;
   flex-wrap: wrap;
+
+  span {
+    color: rgba(0, 0, 0, 0.55);
+    text-overflow: ellipsis;
+    overflow: clip;
+    user-select: none;
+  }
 }
 
 .square {
@@ -82,25 +93,13 @@ $accent: rgba(100, 149, 237, 0.25);
 
   &:hover {
     background: $accent;
+    cursor: pointer;
   }
 }
 
 .folderIcon {
   font-size: 3em;
   color: $accent;
-}
-
-img {
-  object-fit: cover;
-  border: $border;
-}
-
-a {
-  text-decoration: none;
-  color: rgba(0, 0, 0, 0.55);
-  // width: $dimension-1;
-  text-overflow: ellipsis;
-  overflow: clip;
 }
 
 .thumbnail {

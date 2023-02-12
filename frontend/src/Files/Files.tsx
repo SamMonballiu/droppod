@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { FileInfo } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
 import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
@@ -9,6 +9,7 @@ import cx from "classnames";
 import { useSortedList } from "../hooks/useSortedList";
 import FileSortOptions, { SortOption } from "./FileSortOptions";
 import { FilesResponse } from "../../../models/response";
+import FileDialog from "../FileDialog/FileDialog";
 
 interface Props {
   data: FilesResponse;
@@ -16,13 +17,18 @@ interface Props {
 
 const Files: FC<Props> = ({ data }) => {
   const [view, setView] = useState<"list" | "grid">("grid");
-  const [zoom, setZoom] = useState<FileGridZoom>(2);
+  const [zoom, setZoom] = useState<FileGridZoom>(3);
+  const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
 
   const { getSorted, sortProperty, isDescending, sort } = useSortedList(
     data.files,
     "dateAdded",
     true
   );
+
+  const handleSelectFile = (file: FileInfo) => {
+    setSelectedFile(file);
+  };
 
   const sortOptions: SortOption<FileInfo>[] = [
     { property: "dateAdded", name: "Date" },
@@ -37,6 +43,13 @@ const Files: FC<Props> = ({ data }) => {
 
   return (
     <>
+      {selectedFile && (
+        <FileDialog
+          isOpen={selectedFile !== undefined}
+          onClose={() => setSelectedFile(null)}
+          file={selectedFile}
+        />
+      )}
       <div className={styles.settings}>
         {view === "grid" ? (
           <>
@@ -79,9 +92,17 @@ const Files: FC<Props> = ({ data }) => {
       </div>
 
       {view === "list" ? (
-        <FileList files={getSorted()} onSort={sort} />
+        <FileList
+          files={getSorted()}
+          onSort={sort}
+          onSelectFile={handleSelectFile}
+        />
       ) : (
-        <FileGrid files={getSorted()} zoom={zoom} />
+        <FileGrid
+          files={getSorted()}
+          zoom={zoom}
+          onSelectFile={handleSelectFile}
+        />
       )}
 
       <div className={styles.info}>
