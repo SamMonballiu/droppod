@@ -5,6 +5,7 @@ import styles from "./Gallery.module.scss";
 import cx from "classnames";
 import FileProperties from "../FileProperties/FileProperties";
 import { ImCross } from "react-icons/im";
+import { BiCaretLeft, BiCaretRight } from "react-icons/bi";
 
 interface Props {
   files: FileInfo[];
@@ -74,7 +75,9 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
         <div className={styles.content}>
           <div className={styles.topRow}>
             <div className={styles.activeImage}>
+              <BiCaretLeft onClick={() => handleNavigate("left")} />
               <ImagePreview dimension={1400} file={files[selectedFile]} />
+              <BiCaretRight onClick={() => handleNavigate("right")} />
             </div>
             <div className={styles.fileInfo}>
               <FileProperties
