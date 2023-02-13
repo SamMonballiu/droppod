@@ -1,0 +1,92 @@
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.backdrop {
+  background: black;
+  height: 100%;
+  width: 100;
+  min-height: 100%;
+  min-width: 100%;
+  opacity: 0.95;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.content {
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.topRow {
+  display: flex;
+  flex: 2;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 2vw;
+}
+
+.activeImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 8;
+}
+
+.thumbnail {
+  height: 4em;
+  width: 4em;
+  cursor: pointer;
+  outline: 2px solid white;
+  outline-offset: -2px;
+}
+
+.thumbnails {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  width: 100%;
+  padding: 1em 0.5em;
+}
+
+.selected {
+  outline: 2px solid red;
+  outline-offset: -2px;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  color: white;
+  flex: 2;
+}
+
+.info {
+  text-align: right;
+  // https://css-tricks.com/simplified-fluid-typography/
+  font-size: min(max(0.5rem, 2vw), 14px);
+}
+
+.close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 2;
+  color: rgb(150, 17, 17);
+  opacity: 0.5;
+  transition: opacity 200ms;
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+}
