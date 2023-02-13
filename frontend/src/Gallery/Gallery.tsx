@@ -6,6 +6,7 @@ import cx from "classnames";
 import FileProperties from "../FileProperties/FileProperties";
 import { ImCross } from "react-icons/im";
 import { BiCaretLeft, BiCaretRight } from "react-icons/bi";
+import { useListSelection } from "../hooks/useListSelection";
 
 interface Props {
   files: FileInfo[];
@@ -16,14 +17,17 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
   const [selectedFile, setSelectedFile] = useState<number>(0);
   const thumbnailsRef = useRef<HTMLDivElement | null>(null);
 
+  const { selectedItem, select, selectItem, isSelected } =
+    useListSelection(files);
+
   useEffect(() => {
     const onKeyPress = (e: KeyboardEvent) => {
       switch (e.key) {
         case "ArrowLeft":
-          handleNavigate("left");
+          select("previous");
           break;
         case "ArrowRight":
-          handleNavigate("right");
+          select("next");
           break;
       }
     };
@@ -52,21 +56,6 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
       ?.scrollIntoView({ behavior: "auto", block: "end", inline: "center" });
   }, [selectedFile]);
 
-  const handleNavigate = (direction: "left" | "right") => {
-    setSelectedFile((currentIndex) => {
-      let newIndex: number;
-      switch (direction) {
-        case "left":
-          newIndex = currentIndex === 0 ? files.length - 1 : currentIndex - 1;
-          break;
-        case "right":
-          newIndex = currentIndex === files.length - 1 ? 0 : currentIndex + 1;
-          break;
-      }
-      return newIndex;
-    });
-  };
-
   return (
     <>
       <ImCross className={styles.close} onClick={onClose} />
@@ -75,13 +64,13 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
         <div className={styles.content}>
           <div className={styles.topRow}>
             <div className={styles.activeImage}>
-              <BiCaretLeft onClick={() => handleNavigate("left")} />
-              <ImagePreview dimension={1400} file={files[selectedFile]} />
-              <BiCaretRight onClick={() => handleNavigate("right")} />
+              <BiCaretLeft onClick={() => select("previous")} />
+              <ImagePreview dimension={1400} file={selectedItem} />
+              <BiCaretRight onClick={() => select("next")} />
             </div>
             <div className={styles.fileInfo}>
               <FileProperties
-                file={files[selectedFile]}
+                file={selectedItem}
                 properties={["filename", "dimensions", "size", "fullPath"]}
                 className={styles.info}
               />
@@ -90,7 +79,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
           <div className={styles.thumbnails} ref={thumbnailsRef}>
             {files.map((f) => (
               <div
-                onClick={() => setSelectedFile(files.indexOf(f))}
+                onClick={() => selectItem(f)}
                 key={f.filename}
                 id={files.indexOf(f).toString()}
               >
@@ -99,7 +88,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
                   square
                   dimension={300}
                   className={cx(styles.thumbnail, {
-                    [styles.selected]: files.indexOf(f) === selectedFile,
+                    [styles.selected]: isSelected(f),
                   })}
                 />
               </div>
