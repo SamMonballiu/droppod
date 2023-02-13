@@ -1,8 +1,8 @@
-import { FC, useState, useEffect } from "react";
-import { FileInfo } from "../../../models/fileinfo";
+import { FC, useState } from "react";
+import { FileInfo, isImage } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
 import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
-import { MdGridView, MdOutlineListAlt } from "react-icons/md";
+import { MdGridView, MdOutlineListAlt, MdOutlinePhoto } from "react-icons/md";
 import { TbTelescope } from "react-icons/tb";
 import styles from "./Files.module.scss";
 import cx from "classnames";
@@ -10,13 +10,14 @@ import { useSortedList } from "../hooks/useSortedList";
 import FileSortOptions, { SortOption } from "./FileSortOptions";
 import { FilesResponse } from "../../../models/response";
 import FileDialog from "../FileDialog/FileDialog";
+import Gallery from "../Gallery/Gallery";
 
 interface Props {
   data: FilesResponse;
 }
 
 const Files: FC<Props> = ({ data }) => {
-  const [view, setView] = useState<"list" | "grid">("grid");
+  const [view, setView] = useState<"list" | "grid" | "gallery">("grid");
   const [zoom, setZoom] = useState<FileGridZoom>(3);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
 
@@ -40,6 +41,15 @@ const Files: FC<Props> = ({ data }) => {
   const handleSort = (option: SortOption<FileInfo>) => {
     sort(option.property);
   };
+
+  if (view === "gallery") {
+    return (
+      <Gallery
+        files={getSorted().filter(isImage)}
+        onClose={() => setView("grid")}
+      />
+    );
+  }
 
   return (
     <>
@@ -87,6 +97,11 @@ const Files: FC<Props> = ({ data }) => {
           <MdGridView
             className={cx({ [styles.active]: view === "grid" })}
             onClick={() => setView("grid")}
+          />
+          <MdOutlinePhoto
+            // @ts-ignore
+            className={cx({ [styles.active]: view === "gallery" })}
+            onClick={() => setView("gallery")}
           />
         </div>
       </div>
