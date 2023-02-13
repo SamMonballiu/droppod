@@ -1,14 +1,36 @@
-@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Work+Sans:wght@300&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Open+Sans&family=Work+Sans:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Open+Sans&family=Work+Sans:wght@300&display=swap&family=Atkinson+Hyperlegible");
 
 body {
   background-color: #ddd;
-  font-family: "Open Sans", "Segoe UI", sans-serif;
+  font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
   margin: 0;
 
   button {
-    font-family: "Open Sans", "Segoe UI", sans-serif;
+    font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  }
+  /* width */
+  ::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: black;
+    height: 2px;
+    opacity: 0;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    height: 4px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    height: 40px;
   }
 }
 
