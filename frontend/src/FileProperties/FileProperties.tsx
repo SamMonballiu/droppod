@@ -22,13 +22,8 @@ const FileProperties: FC<Props> = ({
   >([
     ["filename", <h3>{file.filename}</h3>],
     ["dateAdded", <p>{file.dateAdded.toLocaleDateString()}</p>],
-    [
-      "size",
-      <p>
-        <FileSize file={file} />
-      </p>,
-    ],
-    ["dimensions", file.dimensions ? <p>{dimensionsInfo}</p> : null],
+    ["size", <FileSize file={file} />],
+    ["dimensions", file.dimensions ? <p>{dimensionsInfo}</p> : <></>],
     [
       "fullPath",
       <a href={file.fullPath} target="_blank">
