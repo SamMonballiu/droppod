@@ -70,13 +70,11 @@ const File: FC<{
     >
       {isImage(file) && thumbnail ? (
         <div className={thumbZoomMap[zoom]}>{thumbnail?.element}</div>
-      ) : null}
-
-      {/* (
+      ) : (
         <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
           <GoFile className={styles.folderIcon} />
         </div>
-      ) */}
+      )}
 
       {zoom > 1 && (
         <span className={cx(styles.filename, zoomMap[zoom])}>
