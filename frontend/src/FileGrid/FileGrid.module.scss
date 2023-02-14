@@ -63,24 +63,44 @@ $accent: rgba(100, 149, 237, 0.25);
     width: $thumbnail-1;
     height: $thumbnail-1;
     min-height: $thumbnail-1;
+
+    img {
+      width: $thumbnail-1;
+      height: $thumbnail-1;
+    }
   }
 
   &2 {
     width: $thumbnail-2;
     height: $thumbnail-2;
     min-height: $thumbnail-2;
+
+    img {
+      width: $thumbnail-2;
+      height: $thumbnail-2;
+    }
   }
 
   &3 {
     width: $thumbnail-3;
     height: $thumbnail-3;
     min-height: $thumbnail-3;
+
+    img {
+      width: $thumbnail-3;
+      height: $thumbnail-3;
+    }
   }
 
   &4 {
     width: $thumbnail-4;
     height: $thumbnail-4;
     min-height: $thumbnail-4;
+
+    img {
+      width: $thumbnail-4;
+      height: $thumbnail-4;
+    }
   }
 }
 

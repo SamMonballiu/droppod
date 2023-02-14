@@ -1,40 +1,54 @@
-import { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import styles from "./FileGrid.module.scss";
 import { GoFile } from "react-icons/go";
 import cx from "classnames";
-import ImagePreview from "../ImagePreview.tsx/ImagePreview";
-import Thumbnail from "../Thumbnail/Thumbnail";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
   files: FileInfo[];
   onSelectFile: (file: FileInfo) => void;
   zoom?: FileGridZoom;
+  thumbnails: {
+    file: FileInfo;
+    element: React.ReactNode;
+  }[];
 }
 
-const FileGrid: FC<Props> = ({ files, onSelectFile, zoom = 2 }) => {
-  return (
-    <div className={styles.container}>
-      {files.map((file) => (
-        <File
-          key={file.filename}
-          file={file}
-          zoom={zoom}
-          onSelect={onSelectFile}
-        />
-      ))}
-    </div>
-  );
+const FileGrid: FC<Props> = ({ files, onSelectFile, thumbnails, zoom = 2 }) => {
+  const mapped = useMemo(() => {
+    return files.map((file) => (
+      <File
+        key={file.filename}
+        file={file}
+        zoom={zoom}
+        onSelect={onSelectFile}
+        thumbnail={thumbnails.find((t) => t.file === file)}
+      />
+    ));
+  }, [files]);
+
+  return <div className={styles.container}>{mapped}</div>;
 };
 
-export default FileGrid;
+const areEqual = (first: Props, second: Props) => {
+  const areDifferent =
+    first.zoom !== second.zoom ||
+    first.files.some((x) => second.files.indexOf(x) !== first.files.indexOf(x));
+
+  return !areDifferent;
+};
+export const MemoizedGrid = React.memo(FileGrid, areEqual);
 
 const File: FC<{
   file: FileInfo;
   zoom: FileGridZoom;
   onSelect: (file: FileInfo) => void;
-}> = ({ file, zoom, onSelect }) => {
+  thumbnail?: {
+    file: FileInfo;
+    element: React.ReactNode;
+  };
+}> = ({ file, zoom, onSelect, thumbnail }) => {
   const zoomMap: Record<FileGridZoom, string> = {
     1: styles.zoom1,
     2: styles.zoom2,
@@ -54,13 +68,15 @@ const File: FC<{
       className={cx(styles.file, zoomMap[zoom])}
       onClick={() => onSelect(file)}
     >
-      {isImage(file) ? (
-        <Thumbnail className={thumbZoomMap[zoom]} file={file} />
-      ) : (
+      {isImage(file) && thumbnail ? (
+        <div className={thumbZoomMap[zoom]}>{thumbnail?.element}</div>
+      ) : null}
+
+      {/* (
         <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
           <GoFile className={styles.folderIcon} />
         </div>
-      )}
+      ) */}
 
       {zoom > 1 && (
         <span className={cx(styles.filename, zoomMap[zoom])}>

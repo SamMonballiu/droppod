@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
-import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
+import { MemoizedGrid, FileGridZoom } from "../FileGrid/FileGrid";
 import { MdGridView, MdOutlineListAlt, MdOutlinePhoto } from "react-icons/md";
 import { TbTelescope } from "react-icons/tb";
 import styles from "./Files.module.scss";
@@ -11,6 +11,7 @@ import FileSortOptions, { SortOption } from "./FileSortOptions";
 import { FilesResponse } from "../../../models/response";
 import FileDialog from "../FileDialog/FileDialog";
 import Gallery from "../Gallery/Gallery";
+import { useThumbnails } from "../hooks/useThumbnails";
 
 interface Props {
   data: FilesResponse;
@@ -20,6 +21,7 @@ const Files: FC<Props> = ({ data }) => {
   const [view, setView] = useState<"list" | "grid" | "gallery">("grid");
   const [zoom, setZoom] = useState<FileGridZoom>(3);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
+  const { thumbnails } = useThumbnails(data.files, setSelectedFile);
 
   const { getSorted, sortProperty, isDescending, sort } = useSortedList(
     data.files,
@@ -41,15 +43,6 @@ const Files: FC<Props> = ({ data }) => {
   const handleSort = (option: SortOption<FileInfo>) => {
     sort(option.property);
   };
-
-  if (view === "gallery") {
-    return (
-      <Gallery
-        files={getSorted().filter(isImage)}
-        onClose={() => setView("grid")}
-      />
-    );
-  }
 
   return (
     <>
@@ -106,6 +99,13 @@ const Files: FC<Props> = ({ data }) => {
         </div>
       </div>
 
+      {view === "gallery" && (
+        <Gallery
+          files={getSorted().filter(isImage)}
+          onClose={() => setView("grid")}
+        />
+      )}
+
       {view === "list" ? (
         <FileList
           files={getSorted()}
@@ -113,10 +113,11 @@ const Files: FC<Props> = ({ data }) => {
           onSelectFile={handleSelectFile}
         />
       ) : (
-        <FileGrid
+        <MemoizedGrid
           files={getSorted()}
           zoom={zoom}
           onSelectFile={handleSelectFile}
+          thumbnails={thumbnails}
         />
       )}
 
