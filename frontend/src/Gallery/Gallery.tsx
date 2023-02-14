@@ -4,16 +4,17 @@ import ImagePreview from "../ImagePreview.tsx/ImagePreview";
 import styles from "./Gallery.module.scss";
 import cx from "classnames";
 import FileProperties from "../FileProperties/FileProperties";
-import { ImCross } from "react-icons/im";
 import {
   BiCaretLeft,
   BiCaretRight,
   BiFullscreen,
   BiChevronsUp,
   BiChevronsDown,
+  BiExit,
 } from "react-icons/bi";
 import { useListSelection } from "../hooks/useListSelection";
 import Thumbnail from "../Thumbnail/Thumbnail";
+import neutral from "./Gallery.neutral.module.scss";
 
 interface Props {
   files: FileInfo[];
@@ -29,6 +30,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
 
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [showLargeThumbnails, setShowLargeThumbnails] = useState<boolean>(true);
+  const [mode, setMode] = useState<"dark" | "neutral">("neutral");
 
   const toggleThumbnailZoom = () =>
     setShowLargeThumbnails(!showLargeThumbnails);
@@ -105,17 +107,45 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
     return { getThumbnail, thumbnails };
   }, [files, showLargeThumbnails]);
 
+  const handleModeSwitch = () => {
+    setMode(mode === "neutral" ? "dark" : "neutral");
+  };
+
+  const modeDependent: Record<string, string> = {
+    backdrop: cx(styles.backdrop, { [neutral.backdrop]: mode === "neutral" }),
+    icons: cx(styles.icons, {
+      [neutral.icons]: mode === "neutral",
+    }),
+    thumbnailContainer: cx({
+      [neutral.thumbnailContainer]: mode === "neutral",
+    }),
+    thumbnails: cx(styles.thumbnails, {
+      [neutral.thumbnails]: mode === "neutral",
+    }),
+    info: cx(styles.info, { [neutral.info]: mode === "neutral" }),
+    activeImage: cx(styles.activeImage, {
+      [neutral.activeImage]: mode === "neutral",
+    }),
+    modeToggle: cx(styles.modeToggle, {
+      [neutral.modeToggle]: mode === "neutral",
+    }),
+  };
+
   return (
     <div ref={galleryRef}>
-      <div className={styles.icons}>
+      <div className={modeDependent.icons}>
+        <div
+          className={modeDependent.modeToggle}
+          onClick={handleModeSwitch}
+        ></div>
         <BiFullscreen
           className={styles.fullscreen}
           onClick={() => setIsFullscreen(!isFullscreen)}
         />
-        <ImCross className={styles.close} onClick={onClose} />
+        <BiExit className={styles.close} onClick={onClose} />
       </div>
 
-      <div className={styles.backdrop}></div>
+      <div className={modeDependent.backdrop}></div>
 
       <div className={styles.container}>
         <div className={styles.content}>
@@ -125,7 +155,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
                 {showLargeThumbnails ? <BiChevronsDown /> : <BiChevronsUp />}
               </div>
             </div>
-            <div className={styles.activeImage}>
+            <div className={modeDependent.activeImage}>
               <BiCaretLeft onClick={() => select("previous")} />
               <ImagePreview dimension={1400} file={selectedItem} />
               <BiCaretRight onClick={() => select("next")} />
@@ -134,17 +164,21 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
               <FileProperties
                 file={selectedItem}
                 properties={["filename", "dimensions", "size", "fullPath"]}
-                className={styles.info}
+                className={modeDependent.info}
               />
             </div>
           </div>
 
-          <div className={styles.thumbnails} ref={thumbnailsRef}>
-            {files.map((f) =>
-              isSelected(f)
-                ? getThumbnail(f, true)
-                : thumbnails.find((x) => x.file === f)!.element
-            )}
+          <div className={modeDependent.thumbnails} ref={thumbnailsRef}>
+            {files.map((f) => {
+              return (
+                <div className={modeDependent.thumbnailContainer}>
+                  {isSelected(f)
+                    ? getThumbnail(f, true)
+                    : thumbnails.find((x) => x.file === f)!.element}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
