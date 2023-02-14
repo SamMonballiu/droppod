@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { FileInfo } from "../../../models/fileinfo";
 import ImagePreview from "../ImagePreview.tsx/ImagePreview";
 import styles from "./Gallery.module.scss";
@@ -146,6 +146,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
             {files.map((f) => {
               return (
                 <div
+                  key={f.filename}
                   className={cx(styles.thumbnail, {
                     [styles.largeThumbnail]: showLargeThumbnails,
                     [styles.selected]: isSelected(f),
@@ -162,4 +163,14 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
   );
 };
 
-export default Gallery;
+const areEqual = (first: Props, second: Props) => {
+  console.log("equals check");
+  const filesInDifferentOrder = first.files.some(
+    (x) => second.files.indexOf(x) !== first.files.indexOf(x)
+  );
+
+  console.log(filesInDifferentOrder);
+  return !filesInDifferentOrder;
+};
+
+export const MemoizedGallery = React.memo(Gallery, areEqual);
