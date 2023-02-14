@@ -13,6 +13,7 @@ import {
   BiChevronsDown,
 } from "react-icons/bi";
 import { useListSelection } from "../hooks/useListSelection";
+import Thumbnail from "../Thumbnail/Thumbnail";
 
 interface Props {
   files: FileInfo[];
@@ -36,7 +37,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
     if (isFullscreen) {
       galleryRef.current?.requestFullscreen();
     } else {
-      if (document.fullscreenEnabled) {
+      if (document.fullscreenElement !== null) {
         document.exitFullscreen();
       }
     }
@@ -81,21 +82,16 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
   const { getThumbnail, thumbnails } = useMemo(() => {
     const getThumbnail = (file: FileInfo, isSelected: boolean) => {
       return (
-        <div
+        <Thumbnail
+          file={file}
           onClick={() => selectItem(file)}
-          key={file.filename}
+          key={files.indexOf(file).toString()}
           id={files.indexOf(file).toString()}
-        >
-          <ImagePreview
-            file={file}
-            square
-            dimension={300}
-            className={cx(styles.thumbnail, {
-              [styles.selected]: isSelected,
-              [styles.thumbnailZoom]: showLargeThumbnails,
-            })}
-          />
-        </div>
+          className={cx(styles.thumbnail, {
+            [styles.selected]: isSelected,
+            [styles.thumbnailZoom]: showLargeThumbnails,
+          })}
+        />
       );
     };
 
@@ -125,7 +121,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
         <div className={styles.content}>
           <div className={styles.topRow}>
             <div className={styles.thumbnailsZoom}>
-              <div onClick={() => setShowLargeThumbnails(!showLargeThumbnails)}>
+              <div onClick={toggleThumbnailZoom}>
                 {showLargeThumbnails ? <BiChevronsDown /> : <BiChevronsUp />}
               </div>
             </div>

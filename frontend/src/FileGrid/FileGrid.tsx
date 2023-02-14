@@ -4,6 +4,7 @@ import styles from "./FileGrid.module.scss";
 import { GoFile } from "react-icons/go";
 import cx from "classnames";
 import ImagePreview from "../ImagePreview.tsx/ImagePreview";
+import Thumbnail from "../Thumbnail/Thumbnail";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -54,12 +55,7 @@ const File: FC<{
       onClick={() => onSelect(file)}
     >
       {isImage(file) ? (
-        <ImagePreview
-          file={file}
-          square
-          dimension={300}
-          className={thumbZoomMap[zoom]}
-        />
+        <Thumbnail className={thumbZoomMap[zoom]} file={file} />
       ) : (
         <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
           <GoFile className={styles.folderIcon} />
