@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { FileInfo, getSize } from "../../../models/fileinfo";
+import { FC } from "react";
+import { FileInfo } from "../../../models/fileinfo";
 import Dialog from "../Dialog/Dialog";
 import FileProperties from "../FileProperties/FileProperties";
 import ImagePreview from "../ImagePreview.tsx/ImagePreview";

@@ -38,10 +38,22 @@
   max-height: 95vh;
 }
 
+.closePanel {
+  animation-name: fade-dialog;
+  animation-direction: reverse;
+  animation-duration: 200ms;
+}
+
+.closeBackdrop {
+  animation-name: fade-backdrop;
+  animation-direction: reverse;
+  animation-duration: 200ms;
+}
+
 @keyframes fade-dialog {
   from {
     opacity: 0;
-    translate: 0 -40px;
+    translate: 0 -20px;
   }
   to {
     opacity: 1;
