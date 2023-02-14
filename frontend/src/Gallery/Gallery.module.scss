@@ -7,12 +7,11 @@
 }
 
 .backdrop {
-  background: black;
+  background: rgb(30, 30, 30);
   height: 100%;
   width: 100;
   min-height: 100%;
   min-width: 100%;
-  opacity: 0.95;
   position: absolute;
   top: 0;
   left: 0;
@@ -63,8 +62,6 @@
   height: 4em;
   width: 4em;
   cursor: pointer;
-  outline: 2px solid white;
-  outline-offset: -2px;
 }
 
 .thumbnails {
@@ -73,6 +70,15 @@
   gap: 12px;
   width: 100%;
   padding: 1em 0.5em;
+
+  background: rgb(60, 60, 60);
+  background: linear-gradient(
+    0deg,
+    rgba(60, 60, 60, 1) 0%,
+    rgba(40, 40, 40, 1) 100%
+  );
+  border-top: 1px solid rgb(40, 40, 40);
+  box-shadow: 0px 1px 0px rgb(50, 50, 50) inset;
 }
 
 .thumbnailsZoom {
@@ -84,11 +90,15 @@
 
   svg {
     cursor: pointer;
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
 .selected {
-  outline: 2px solid red;
+  outline: 2px solid rgb(200, 0, 0);
   outline-offset: -2px;
 }
 
@@ -96,7 +106,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  color: white;
+  color: rgb(220, 220, 220);
   flex: 2;
 }
 
@@ -113,7 +123,7 @@
   z-index: 2;
   display: flex;
   gap: 12px;
-  font-size: 24px;
+  font-size: 20px;
 
   svg {
     opacity: 0.25;
@@ -131,5 +141,19 @@
 }
 
 .close {
-  color: rgb(150, 17, 17);
+  color: rgb(200, 0, 0);
+}
+
+.modeToggle {
+  height: 20px;
+  width: 20px;
+  background: rgb(80, 80, 80);
+  cursor: pointer;
+  outline: 1px solid rgb(130, 130, 130);
+  outline-offset: -1px;
+  opacity: 0.5;
+  transition: opacity 200ms;
+  &:hover {
+    opacity: 1;
+  }
 }
