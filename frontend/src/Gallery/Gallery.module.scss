@@ -53,15 +53,25 @@
   }
 }
 
-.thumbnailZoom {
+.largeThumbnail {
   height: 8em !important;
   width: 8em !important;
+
+  img {
+    width: 8em !important;
+    height: 8em !important;
+  }
 }
 
 .thumbnail {
   height: 4em;
   width: 4em;
   cursor: pointer;
+
+  img {
+    width: 4em;
+    height: 4em;
+  }
 }
 
 .thumbnails {
@@ -98,8 +108,8 @@
 }
 
 .selected {
-  outline: 2px solid rgb(200, 0, 0);
-  outline-offset: -2px;
+  outline: 1px solid rgb(200, 0, 0) !important;
+  outline-offset: -1px;
 }
 
 .fileInfo {
@@ -134,14 +144,14 @@
       cursor: pointer;
     }
   }
-}
 
-.fullscreen {
-  color: white;
-}
+  .fullscreen {
+    color: white;
+  }
 
-.close {
-  color: rgb(200, 0, 0);
+  .close {
+    color: rgb(200, 0, 0);
+  }
 }
 
 .modeToggle {

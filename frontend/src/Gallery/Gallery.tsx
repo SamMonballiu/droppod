@@ -13,8 +13,8 @@ import {
   BiExit,
 } from "react-icons/bi";
 import { useListSelection } from "../hooks/useListSelection";
-import Thumbnail from "../Thumbnail/Thumbnail";
 import neutral from "./Gallery.neutral.module.scss";
+import { useThumbnails } from "../hooks/useThumbnails";
 
 interface Props {
   files: FileInfo[];
@@ -81,31 +81,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
       ?.scrollIntoView({ behavior: "auto", block: "end", inline: "center" });
   }, [selectedItem]);
 
-  const { getThumbnail, thumbnails } = useMemo(() => {
-    const getThumbnail = (file: FileInfo, isSelected: boolean) => {
-      return (
-        <Thumbnail
-          file={file}
-          onClick={() => selectItem(file)}
-          key={files.indexOf(file).toString()}
-          id={files.indexOf(file).toString()}
-          className={cx(styles.thumbnail, {
-            [styles.selected]: isSelected,
-            [styles.thumbnailZoom]: showLargeThumbnails,
-          })}
-        />
-      );
-    };
-
-    const thumbnails = files.map((f) => {
-      return {
-        file: f,
-        element: getThumbnail(f, false),
-      };
-    });
-
-    return { getThumbnail, thumbnails };
-  }, [files, showLargeThumbnails]);
+  const { thumbnails } = useThumbnails(files, selectItem);
 
   const handleModeSwitch = () => {
     setMode(mode === "neutral" ? "dark" : "neutral");
@@ -115,9 +91,6 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
     backdrop: cx(styles.backdrop, { [neutral.backdrop]: mode === "neutral" }),
     icons: cx(styles.icons, {
       [neutral.icons]: mode === "neutral",
-    }),
-    thumbnailContainer: cx({
-      [neutral.thumbnailContainer]: mode === "neutral",
     }),
     thumbnails: cx(styles.thumbnails, {
       [neutral.thumbnails]: mode === "neutral",
@@ -172,10 +145,13 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
           <div className={modeDependent.thumbnails} ref={thumbnailsRef}>
             {files.map((f) => {
               return (
-                <div className={modeDependent.thumbnailContainer}>
-                  {isSelected(f)
-                    ? getThumbnail(f, true)
-                    : thumbnails.find((x) => x.file === f)!.element}
+                <div
+                  className={cx(styles.thumbnail, {
+                    [styles.largeThumbnail]: showLargeThumbnails,
+                    [styles.selected]: isSelected(f),
+                  })}
+                >
+                  {thumbnails.find((x) => x.file === f)!.element}
                 </div>
               );
             })}
