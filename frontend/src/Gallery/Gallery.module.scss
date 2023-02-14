@@ -113,6 +113,17 @@
   z-index: 2;
   display: flex;
   gap: 12px;
+  font-size: 24px;
+
+  svg {
+    opacity: 0.25;
+    transition: opacity 200ms;
+
+    &:hover {
+      opacity: 0.75;
+      cursor: pointer;
+    }
+  }
 }
 
 .fullscreen {
@@ -121,11 +132,4 @@
 
 .close {
   color: rgb(150, 17, 17);
-  opacity: 0.5;
-  transition: opacity 200ms;
-
-  &:hover {
-    opacity: 1;
-    cursor: pointer;
-  }
 }
