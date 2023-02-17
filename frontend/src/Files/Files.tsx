@@ -21,10 +21,13 @@ const Files: FC<Props> = ({ data }) => {
   const [view, setView] = useState<"list" | "grid" | "gallery">("grid");
   const [zoom, setZoom] = useState<FileGridZoom>(3);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
-  const { thumbnails } = useThumbnails(data.files, setSelectedFile);
+  const { thumbnails } = useThumbnails(
+    data.contents.files.filter((x) => !x.isFolder),
+    setSelectedFile
+  );
 
   const { getSorted, sortProperty, isDescending, sort } = useSortedList(
-    data.files,
+    data.contents.files,
     "dateAdded",
     true
   );
@@ -110,12 +113,14 @@ const Files: FC<Props> = ({ data }) => {
         {view === "list" ? (
           <FileList
             files={getSorted()}
+            folders={data.contents.folders}
             onSort={sort}
             onSelectFile={handleSelectFile}
           />
         ) : (
           <MemoizedGrid
             files={getSorted()}
+            folders={data.contents.folders}
             zoom={zoom}
             onSelectFile={handleSelectFile}
             thumbnails={thumbnails}

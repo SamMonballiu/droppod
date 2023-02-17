@@ -3,14 +3,16 @@ import { FileInfo } from "../../../models/fileinfo";
 import styles from "./filelist.module.scss";
 import cx from "classnames";
 import FileSize from "../FileSize/FileSize";
+import { FolderInfo } from "../../../models/folderInfo";
 
 interface Props {
   files: FileInfo[];
+  folders: FolderInfo[];
   onSort: (prop: keyof FileInfo) => void;
   onSelectFile: (file: FileInfo) => void;
 }
 
-const FileList: FC<Props> = ({ files, onSort, onSelectFile }) => {
+const FileList: FC<Props> = ({ files, folders, onSort, onSelectFile }) => {
   const handleSort = (property: keyof FileInfo) => {
     return () => onSort(property);
   };
@@ -42,10 +44,23 @@ const FileList: FC<Props> = ({ files, onSort, onSelectFile }) => {
         </p>
       </div>
       <div className={styles.files}>
+        {folders.map((f) => (
+          <Folder folder={f} key={f.name} />
+        ))}
         {files.map((f) => (
           <File key={f.fullPath} file={f} onSelect={onSelectFile} />
         ))}
       </div>
+    </div>
+  );
+};
+
+const Folder: FC<{ folder: FolderInfo }> = ({ folder }) => {
+  return (
+    <div className={cx(styles.file, styles.folder)}>
+      <a target="_" className={cx(styles.link, styles.filename)}>
+        {folder.name}
+      </a>
     </div>
   );
 };
