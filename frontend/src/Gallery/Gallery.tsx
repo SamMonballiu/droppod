@@ -123,11 +123,6 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
       <div className={styles.container}>
         <div className={styles.content}>
           <div className={styles.topRow}>
-            <div className={styles.thumbnailsZoom}>
-              <div onClick={toggleThumbnailZoom}>
-                {showLargeThumbnails ? <BiChevronsDown /> : <BiChevronsUp />}
-              </div>
-            </div>
             <div className={modeDependent.activeImage}>
               <BiCaretLeft onClick={() => select("previous")} />
               <ImagePreview dimension={1400} file={selectedItem} />
@@ -143,6 +138,11 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
           </div>
 
           <div className={modeDependent.thumbnails} ref={thumbnailsRef}>
+            <div className={styles.thumbnailsZoom}>
+              <div onClick={toggleThumbnailZoom}>
+                {showLargeThumbnails ? <BiChevronsDown /> : <BiChevronsUp />}
+              </div>
+            </div>
             {files.map((f) => {
               return (
                 <div
