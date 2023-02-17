@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import { FileInfo, isImageExtension } from "./models/fileinfo";
+import { FolderInfo } from "./models/folderInfo";
 import { FilesResponse } from "./models/response";
 import cors from "cors";
 import os from "os";
@@ -44,42 +45,67 @@ app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
   res.status(200).send("ok");
 });
 
-app.get("/files", async (_, res: Response) => {
-  const folder = __dirname + "/public/uploads/";
-  const files = fs.readdirSync(folder);
+app.get("/files", async (req: Request, res: Response) => {
+  let folder = __dirname + "/public/uploads/";
 
-  const result: FileInfo[] = [];
+  if (req.query.folder) {
+    folder += req.query.folder + "/";
+  }
 
-  for (const file of files.filter((f) => !f.startsWith("."))) {
-    const extension = path.extname(folder + file);
-    const stats = fs.statSync(folder + file);
-    let dimensions:
-      | { height: number; width: number; orientation: number }
-      | undefined = undefined;
-    if (isImageExtension(extension)) {
-      const info = sizeOf(folder + file);
-      dimensions = {
-        height: info!.height!,
-        width: info!.width!,
-        orientation: info!.orientation!,
+  if (!fs.existsSync(folder)) {
+    res.status(400).send("The specified folder doesn't exist.");
+    return;
+  }
+
+  const dirEntry = fs.readdirSync(folder);
+
+  const result: FolderInfo = {
+    name: "",
+    files: [],
+    folders: [],
+  };
+
+  for (const entry of dirEntry) {
+    const extension = path.extname(folder + entry);
+    const stats = fs.statSync(folder + entry);
+    const isFolder = stats.isDirectory();
+
+    if (isFolder) {
+      result.folders.push({
+        name: entry,
+        files: [],
+        folders: [],
+      });
+    } else {
+      let dimensions:
+        | { height: number; width: number; orientation: number }
+        | undefined = undefined;
+      if (isImageExtension(extension)) {
+        const info = sizeOf(folder + entry);
+        dimensions = {
+          height: info!.height!,
+          width: info!.width!,
+          orientation: info!.orientation!,
+        };
+      }
+
+      const fileInfo: FileInfo = {
+        filename: entry,
+        fullPath: `http://${os.hostname()}:4004/uploads/${entry}`,
+        extension: path.extname(folder + entry),
+        size: stats.size,
+        dateAdded: stats.ctime,
+        dimensions,
+        isFolder: isFolder ? true : undefined,
       };
+
+      result.files.push(fileInfo);
     }
-
-    const fileInfo: FileInfo = {
-      filename: file,
-      fullPath: `http://${os.hostname()}:4004/uploads/${file}`,
-      extension: path.extname(folder + file),
-      size: stats.size,
-      dateAdded: stats.ctime,
-      dimensions,
-    };
-
-    result.push(fileInfo);
   }
 
   const filesResponse: FilesResponse = {
     freeSpace: (await checkDiskSpace(folder)).free,
-    files: result,
+    contents: result,
   };
 
   res.status(200).send(filesResponse);

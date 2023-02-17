@@ -9,6 +9,7 @@ export interface FileInfo {
     height: number;
     orientation: Orientation;
   };
+  isFolder?: boolean;
 }
 
 export const isImageExtension = (ext: string) =>

@@ -1,6 +1,6 @@
-import { FileInfo } from "./fileinfo";
+import { FolderInfo } from "./folderInfo";
 
 export interface FilesResponse {
   freeSpace: number;
-  files: FileInfo[];
+  contents: FolderInfo;
 }
