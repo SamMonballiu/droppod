@@ -60,7 +60,7 @@ function App() {
         <Tab.Panel>
           {isFetched ? (
             <Paper>
-              <Files data={data} />
+              <Files data={data!} />
             </Paper>
           ) : (
             <p>Fetching...</p>
