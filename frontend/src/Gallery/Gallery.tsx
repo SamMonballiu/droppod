@@ -164,12 +164,10 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
 };
 
 const areEqual = (first: Props, second: Props) => {
-  console.log("equals check");
   const filesInDifferentOrder = first.files.some(
     (x) => second.files.indexOf(x) !== first.files.indexOf(x)
   );
 
-  console.log(filesInDifferentOrder);
   return !filesInDifferentOrder;
 };
 
