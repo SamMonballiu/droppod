@@ -26,7 +26,7 @@ const Breadcrumbs: FC<Props> = ({ path, onClick }) => {
           </span>
         ) : (
           <AiOutlineHome
-            className={cx({ [styles.clickable]: pathElements.length > 1 })}
+            className={cx({[styles.inactive]: pathElements.length === 1, [styles.clickable]: pathElements.length > 1 })}
             onClick={() => onClick(targetUrl)}
           />
         )}
