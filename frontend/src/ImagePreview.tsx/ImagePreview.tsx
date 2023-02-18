@@ -42,7 +42,7 @@ const ImagePreview: FC<Props> = ({
     ["thumbnail", file, dimension, square],
     async () => {
       const response = await fetch(
-        `${url}thumbnail?file=${file.filename}&size=${size}&quality=${quality}`
+        `${url}thumbnail?file=${file.relativePath}&size=${size}&quality=${quality}`
       );
       const blob = await response.blob();
       const imageObjectUrl = URL.createObjectURL(blob);
