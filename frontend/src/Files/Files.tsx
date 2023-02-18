@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
 import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
@@ -6,7 +6,7 @@ import { MdGridView, MdOutlineListAlt, MdOutlinePhoto } from "react-icons/md";
 import { TbTelescope } from "react-icons/tb";
 import styles from "./Files.module.scss";
 import cx from "classnames";
-import { useSortedList } from "../hooks/useSortedList";
+import { sortBy, useSortedList } from "../hooks/useSortedList";
 import FileSortOptions, { SortOption } from "./FileSortOptions";
 import { FilesResponse } from "../../../models/response";
 import FileDialog from "../FileDialog/FileDialog";
@@ -32,6 +32,28 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
     "dateAdded",
     true
   );
+
+  const sortedFolders = useMemo(() => {
+    if (data.contents.folders.length === 0) {
+      return [];
+    }
+
+    let sorted = data.contents.folders;
+
+    if (sortProperty === "dateAdded") {
+      sorted = [...data.contents.folders].sort((a, b) =>
+        sortBy(a, b, "dateAdded")
+      );
+    }
+
+    if (sortProperty === "filename") {
+      sorted = [...data.contents.folders].sort((a, b) => sortBy(a, b, "name"));
+    }
+
+    return isDescending && ["dateAdded", "filename"].includes(sortProperty!)
+      ? sorted.reverse()
+      : sorted;
+  }, [data, sortProperty, isDescending, sortBy]);
 
   const handleSelectFile = (file: FileInfo) => {
     setSelectedFile(file);
@@ -114,7 +136,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
         {view === "list" ? (
           <FileList
             files={getSorted()}
-            folders={data.contents.folders}
+            folders={sortedFolders}
             onSort={sort}
             onSelectFile={handleSelectFile}
             onSelectFolder={onSelectFolder}
@@ -122,7 +144,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
         ) : (
           <FileGrid
             files={getSorted()}
-            folders={data.contents.folders}
+            folders={sortedFolders}
             zoom={zoom}
             onSelectFile={handleSelectFile}
             onSelectFolder={onSelectFolder}

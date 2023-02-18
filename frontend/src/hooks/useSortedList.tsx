@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-const sortBy = <T,>(a: T, b: T, property: keyof T) => {
+export const sortBy = <T,>(a: T, b: T, property: keyof T) => {
   return (a[property] ?? 0) < (b[property] ?? 0) ? -1 : 0;
 };
 
