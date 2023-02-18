@@ -70,6 +70,10 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
     sort(option.property);
   };
 
+  if (data.contents.folders.length === 0 && data.contents.files.length === 0) {
+    return <p>This folder is empty.</p>;
+  }
+
   return (
     <>
       {selectedFile && (
