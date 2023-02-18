@@ -16,8 +16,9 @@ import argv from "minimist";
 const args = argv(process.argv);
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, __dirname + "/public/uploads");
+  destination: function (req: Request, file, cb) {
+    const folder = req.query.folder as string;
+    cb(null, path.join(__dirname, "/public/uploads", folder));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
