@@ -4,18 +4,19 @@ import { QueryClient, useMutation, useQueryClient } from "react-query";
 import cx from "classnames";
 
 interface Props {
+  folder: string;
   onError?: (err: Error | string) => void;
   baseUrl: string;
 }
 
-const Upload: FC<Props> = ({ onError, baseUrl }) => {
+const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
   const [state, setState] = useState<"progress" | "success">("progress");
   const files = useRef<HTMLInputElement | null>(null);
 
   const queryClient = useQueryClient();
   const { mutateAsync, isLoading, isSuccess } = useMutation(
     async (formData: FormData) => {
-      const url = `${baseUrl}upload_files`;
+      const url = `${baseUrl}upload_files?folder=${folder}`;
       try {
         return await fetch(url, {
           method: "POST",
