@@ -125,11 +125,13 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
               className={cx({ [styles.active]: view === "grid" })}
               onClick={() => setView("grid")}
             />
-            <MdOutlinePhoto
-              // @ts-ignore
-              className={cx({ [styles.active]: view === "gallery" })}
-              onClick={() => setView("gallery")}
-            />
+            {data.contents.files.some(isImage) && (
+              <MdOutlinePhoto
+                // @ts-ignore
+                className={cx({ [styles.active]: view === "gallery" })}
+                onClick={() => setView("gallery")}
+              />
+            )}
           </div>
         </div>
 
