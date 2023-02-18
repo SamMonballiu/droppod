@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
-import { MemoizedGrid, FileGridZoom } from "../FileGrid/FileGrid";
+import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
 import { MdGridView, MdOutlineListAlt, MdOutlinePhoto } from "react-icons/md";
 import { TbTelescope } from "react-icons/tb";
 import styles from "./Files.module.scss";
@@ -15,9 +15,10 @@ import { useThumbnails } from "../hooks/useThumbnails";
 
 interface Props {
   data: FilesResponse;
+  onSelectFolder: (folder: string) => void;
 }
 
-const Files: FC<Props> = ({ data }) => {
+const Files: FC<Props> = ({ data, onSelectFolder }) => {
   const [view, setView] = useState<"list" | "grid" | "gallery">("grid");
   const [zoom, setZoom] = useState<FileGridZoom>(3);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
@@ -116,13 +117,15 @@ const Files: FC<Props> = ({ data }) => {
             folders={data.contents.folders}
             onSort={sort}
             onSelectFile={handleSelectFile}
+            onSelectFolder={onSelectFolder}
           />
         ) : (
-          <MemoizedGrid
+          <FileGrid
             files={getSorted()}
             folders={data.contents.folders}
             zoom={zoom}
             onSelectFile={handleSelectFile}
+            onSelectFolder={onSelectFolder}
             thumbnails={thumbnails}
           />
         )}
