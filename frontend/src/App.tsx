@@ -43,6 +43,10 @@ function App() {
     }
   );
 
+  const breadcrumbs = (
+    <Breadcrumbs path={activeFolder} onClick={setActiveFolder} />
+  );
+
   return (
     <Tab.Group
       onChange={(index) => {
@@ -67,19 +71,20 @@ function App() {
         <Tab.Panel>
           {isFetched ? (
             <Paper>
-              <Breadcrumbs path={activeFolder} onClick={setActiveFolder} />
+              {breadcrumbs}
               <Files data={data!} onSelectFolder={setActiveFolder} />
             </Paper>
           ) : (
             <Paper>
-              <Breadcrumbs path={activeFolder} onClick={setActiveFolder} />
+              {breadcrumbs}
               <p>Fetching...</p>
             </Paper>
           )}
         </Tab.Panel>
         <Tab.Panel>
           <Paper>
-            <Upload baseUrl={baseUrl} />
+            {breadcrumbs}
+            <Upload baseUrl={baseUrl} folder={activeFolder} />
           </Paper>
         </Tab.Panel>
       </Tab.Panels>
