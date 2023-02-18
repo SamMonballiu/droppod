@@ -46,7 +46,8 @@ app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
 });
 
 app.get("/files", async (req: Request, res: Response) => {
-  let folder = __dirname + "/public/uploads/";
+  const rootFolder = "/public/uploads";
+  let folder = __dirname + rootFolder + "/";
 
   if (req.query.folder) {
     folder += req.query.folder + "/";
@@ -60,7 +61,11 @@ app.get("/files", async (req: Request, res: Response) => {
   const dirEntry = fs.readdirSync(folder);
 
   const result: FolderInfo = {
-    name: "",
+    name: (req.query.folder as string) ?? "",
+    parent: path
+      .dirname(folder)
+      .replace(__dirname + rootFolder, "")
+      .substring(1),
     files: [],
     folders: [],
   };
@@ -73,6 +78,7 @@ app.get("/files", async (req: Request, res: Response) => {
     if (isFolder) {
       result.folders.push({
         name: entry,
+        parent: (req.query.folder as string) ?? "",
         files: [],
         folders: [],
       });
@@ -92,6 +98,7 @@ app.get("/files", async (req: Request, res: Response) => {
       const fileInfo: FileInfo = {
         filename: entry,
         fullPath: `http://${os.hostname()}:4004/uploads/${entry}`,
+        relativePath: path.join(req.query.folder?.toString() ?? "", entry),
         extension: path.extname(folder + entry),
         size: stats.size,
         dateAdded: stats.ctime,
