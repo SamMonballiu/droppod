@@ -10,9 +10,16 @@ interface Props {
   folders: FolderInfo[];
   onSort: (prop: keyof FileInfo) => void;
   onSelectFile: (file: FileInfo) => void;
+  onSelectFolder: (folder: string) => void;
 }
 
-const FileList: FC<Props> = ({ files, folders, onSort, onSelectFile }) => {
+const FileList: FC<Props> = ({
+  files,
+  folders,
+  onSort,
+  onSelectFile,
+  onSelectFolder,
+}) => {
   const handleSort = (property: keyof FileInfo) => {
     return () => onSort(property);
   };
@@ -45,7 +52,11 @@ const FileList: FC<Props> = ({ files, folders, onSort, onSelectFile }) => {
       </div>
       <div className={styles.files}>
         {folders.map((f) => (
-          <Folder folder={f} key={f.name} />
+          <Folder
+            folder={f}
+            key={f.name}
+            onSelect={() => onSelectFolder(f.parent + "/" + f.name)}
+          />
         ))}
         {files.map((f) => (
           <File key={f.fullPath} file={f} onSelect={onSelectFile} />
@@ -55,9 +66,12 @@ const FileList: FC<Props> = ({ files, folders, onSort, onSelectFile }) => {
   );
 };
 
-const Folder: FC<{ folder: FolderInfo }> = ({ folder }) => {
+const Folder: FC<{ folder: FolderInfo; onSelect: () => void }> = ({
+  folder,
+  onSelect,
+}) => {
   return (
-    <div className={cx(styles.file, styles.folder)}>
+    <div className={cx(styles.file, styles.folder)} onClick={onSelect}>
       <a target="_" className={cx(styles.link, styles.filename)}>
         {folder.name}
       </a>

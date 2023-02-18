@@ -10,6 +10,7 @@ interface Props {
   files: FileInfo[];
   folders: FolderInfo[];
   onSelectFile: (file: FileInfo) => void;
+  onSelectFolder: (folder: string) => void;
   zoom?: FileGridZoom;
   thumbnails: {
     file: FileInfo;
@@ -21,6 +22,7 @@ const FileGrid: FC<Props> = ({
   files,
   folders,
   onSelectFile,
+  onSelectFolder,
   thumbnails,
   zoom = 2,
 }) => {
@@ -39,21 +41,19 @@ const FileGrid: FC<Props> = ({
   return (
     <div className={styles.container}>
       {folders.map((f) => (
-        <Folder folder={f} key={f.name} zoom={zoom} />
+        <Folder
+          folder={f}
+          key={f.name}
+          zoom={zoom}
+          onSelect={() => onSelectFolder(f.parent + "/" + f.name)}
+        />
       ))}
       {mapped}
     </div>
   );
 };
 
-const areEqual = (first: Props, second: Props) => {
-  const areDifferent =
-    first.zoom !== second.zoom ||
-    first.files.some((x) => second.files.indexOf(x) !== first.files.indexOf(x));
-
-  return !areDifferent;
-};
-export const MemoizedGrid = React.memo(FileGrid, areEqual);
+export default FileGrid;
 
 const zoomMap: Record<FileGridZoom, string> = {
   1: styles.zoom1,
@@ -69,12 +69,13 @@ const thumbZoomMap: Record<FileGridZoom, string> = {
   4: styles.thumbZoom4,
 };
 
-const Folder: FC<{ folder: FolderInfo; zoom: FileGridZoom }> = ({
-  folder,
-  zoom,
-}) => {
+const Folder: FC<{
+  folder: FolderInfo;
+  zoom: FileGridZoom;
+  onSelect: () => void;
+}> = ({ folder, zoom, onSelect }) => {
   return (
-    <div className={cx(styles.file, zoomMap[zoom])}>
+    <div className={cx(styles.file, zoomMap[zoom])} onClick={onSelect}>
       <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
         <GoFileDirectory className={styles.folderIcon} />
       </div>
