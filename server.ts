@@ -1,3 +1,4 @@
+import { CreateFolderPostmodel } from "./models/post/index";
 import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
@@ -12,6 +13,8 @@ import checkDiskSpace from "check-disk-space";
 import sizeOf from "image-size";
 import { cache } from "./thumbnail-cache";
 import argv from "minimist";
+import { CommandHandlerFactory, handleResult } from "./commands/base";
+import { CreateFolderCommand } from "./commands/createFolderCommand";
 
 const args = argv(process.argv);
 
@@ -42,8 +45,21 @@ app.use(
   })
 );
 
+const handler = new CommandHandlerFactory();
+
 app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
   res.status(200).send("ok");
+});
+
+app.post("/folders/create", async (req: Request, res: Response) => {
+  const rootFolder = __dirname + "/public/uploads";
+  const postmodel = req.body as CreateFolderPostmodel;
+  const command = new CreateFolderCommand(
+    path.join(rootFolder, postmodel.location),
+    postmodel.folderName
+  );
+  const result = await handler.handle(command);
+  handleResult(result, res);
 });
 
 app.get("/files", async (req: Request, res: Response) => {
