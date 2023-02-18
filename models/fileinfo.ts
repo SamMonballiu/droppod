@@ -1,6 +1,7 @@
 export interface FileInfo {
   filename: string;
   fullPath: string;
+  relativePath: string;
   extension: string;
   size: number;
   dateAdded: Date;
