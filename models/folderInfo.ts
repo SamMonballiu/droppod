@@ -5,4 +5,5 @@ export interface FolderInfo {
   parent: string;
   files: FileInfo[];
   folders: FolderInfo[];
+  dateAdded?: Date;
 }

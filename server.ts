@@ -81,6 +81,7 @@ app.get("/files", async (req: Request, res: Response) => {
         parent: (req.query.folder as string) ?? "",
         files: [],
         folders: [],
+        dateAdded: stats.birthtime,
       });
     } else {
       let dimensions:
@@ -101,7 +102,7 @@ app.get("/files", async (req: Request, res: Response) => {
         relativePath: path.join(req.query.folder?.toString() ?? "", entry),
         extension: path.extname(folder + entry),
         size: stats.size,
-        dateAdded: stats.ctime,
+        dateAdded: stats.birthtime,
         dimensions,
         isFolder: isFolder ? true : undefined,
       };
