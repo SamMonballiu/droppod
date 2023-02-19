@@ -1,0 +1,14 @@
+.btn {
+  width: 100%;
+  border: none;
+  font-size: 1.2em;
+  background: rgb(37, 83, 3);
+  color: white;
+  padding: 1em;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.5) saturate(0.75);
+  }
+}
