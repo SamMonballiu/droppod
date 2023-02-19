@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
 import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";

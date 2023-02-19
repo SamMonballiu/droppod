@@ -37,3 +37,25 @@ body {
 * {
   box-sizing: border-box;
 }
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.button {
+  svg {
+    cursor: pointer;
+    color: white;
+    color: rgb(100, 149, 237);
+    opacity: 0.15;
+    height: 100%;
+    font-size: 1.1em;
+    cursor: pointer;
+    &:hover {
+      opacity: 0.75;
+    }
+    margin-top: 6px;
+  }
+}
