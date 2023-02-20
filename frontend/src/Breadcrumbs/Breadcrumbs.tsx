@@ -7,9 +7,10 @@ import cx from "classnames";
 interface Props {
   path: string;
   onClick: (destination: string) => void;
+  isReadOnly?: boolean;
 }
 
-const Breadcrumbs: FC<Props> = ({ path, onClick }) => {
+const Breadcrumbs: FC<Props> = ({ path, onClick, isReadOnly = false }) => {
   const pathElements = path.split("/");
 
   const mapped = pathElements.map((el, idx) => {
@@ -19,15 +20,22 @@ const Breadcrumbs: FC<Props> = ({ path, onClick }) => {
       <div className={styles.crumb} key={targetUrl}>
         {targetUrl !== "" ? (
           <span
-            className={cx({ [styles.clickable]: !isLastElement })}
-            onClick={isLastElement ? undefined : () => onClick(targetUrl)}
+            className={cx({
+              [styles.clickable]: !isLastElement && !isReadOnly,
+            })}
+            onClick={
+              isLastElement || isReadOnly ? undefined : () => onClick(targetUrl)
+            }
           >
             {el}
           </span>
         ) : (
           <AiOutlineHome
-            className={cx({[styles.inactive]: pathElements.length === 1, [styles.clickable]: pathElements.length > 1 })}
-            onClick={() => onClick(targetUrl)}
+            className={cx({
+              [styles.inactive]: pathElements.length === 1,
+              [styles.clickable]: pathElements.length > 1 && !isReadOnly,
+            })}
+            onClick={isReadOnly ? undefined : () => onClick(targetUrl)}
           />
         )}
 
