@@ -1,4 +1,6 @@
 import { CreateFolderPostmodel } from "./models/post/index";
+import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
 import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
@@ -17,6 +19,15 @@ import { CommandHandlerFactory, handleResult } from "./commands/base";
 import { CreateFolderCommand } from "./commands/createFolderCommand";
 
 const args = argv(process.argv);
+const basePath = process.env.BASE_PATH ?? "";
+
+if (!fs.existsSync(basePath)) {
+  console.log("The base path specified in the .env doesn't exist: ", basePath);
+  console.log(
+    "Please ensure that the .env file exists and the BASE_PATH parameter points to a valid path."
+  );
+  process.exit();
+}
 
 const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {
@@ -31,6 +42,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const app = express();
+app.use(express.static(basePath));
 app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -53,10 +65,9 @@ app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
 });
 
 app.post("/folders/create", async (req: Request, res: Response) => {
-  const rootFolder = __dirname + "/public/uploads";
   const postmodel = req.body as CreateFolderPostmodel;
   const command = new CreateFolderCommand(
-    path.join(rootFolder, postmodel.location),
+    path.join(basePath, postmodel.location),
     postmodel.folderName
   );
   const result = await handler.handle(command);
@@ -64,8 +75,7 @@ app.post("/folders/create", async (req: Request, res: Response) => {
 });
 
 app.get("/files", async (req: Request, res: Response) => {
-  const rootFolder = "/public/uploads";
-  let folder = __dirname + rootFolder + "/";
+  let folder = basePath;
 
   if (req.query.folder) {
     folder += req.query.folder + "/";
@@ -80,10 +90,7 @@ app.get("/files", async (req: Request, res: Response) => {
 
   const result: FolderInfo = {
     name: (req.query.folder as string) ?? "",
-    parent: path
-      .dirname(folder)
-      .replace(__dirname + rootFolder, "")
-      .substring(1),
+    parent: path.dirname(folder).replace(basePath, "").substring(1),
     files: [],
     folders: [],
   };
@@ -119,7 +126,7 @@ app.get("/files", async (req: Request, res: Response) => {
         fullPath:
           "http://" +
           path.join(
-            `${os.hostname()}:${port}/uploads`,
+            `${os.hostname()}:${port}`,
             (req.query.folder as string) ?? "",
             entry
           ),
@@ -144,7 +151,6 @@ app.get("/files", async (req: Request, res: Response) => {
 });
 
 app.get("/thumbnail", async (req: Request, res: Response) => {
-  const folder = __dirname + "/public/uploads/";
   const file = req.query.file as string;
   const [height, width] = (req.query.size as string)
     .split("x")
@@ -158,7 +164,7 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
     thumbnail = cache.get(file, req.query.size as string, quality)!;
   } else {
     thumbnail = await generateThumbnail(
-      folder,
+      basePath,
       file,
       { height, width },
       quality
