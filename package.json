@@ -14,6 +14,7 @@
     "@types/image-size": "^0.8.0",
     "check-disk-space": "^3.3.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "image-size": "^1.0.2",
     "image-thumbnail": "^1.0.15",
