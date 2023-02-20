@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from "react";
-import { FileInfo, isImage } from "../../../models/fileinfo";
+import { FileInfo, hasRawExtension, isImage } from "../../../models/fileinfo";
 import styles from "./FileGrid.module.scss";
 import { GoFile, GoFileDirectory } from "react-icons/go";
 import cx from "classnames";
@@ -103,7 +103,7 @@ const File: FC<{
       className={cx(styles.file, zoomMap[zoom])}
       onClick={() => onSelect(file)}
     >
-      {isImage(file) && thumbnail ? (
+      {(isImage(file) || hasRawExtension(file.filename)) && thumbnail ? (
         <div className={thumbZoomMap[zoom]}>{thumbnail?.element}</div>
       ) : (
         <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
