@@ -46,6 +46,7 @@ app.use(
 );
 
 const handler = new CommandHandlerFactory();
+const port = args.port ?? 4004;
 
 app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
   res.status(200).send("ok");
@@ -98,7 +99,7 @@ app.get("/files", async (req: Request, res: Response) => {
         parent: (req.query.folder as string) ?? "",
         files: [],
         folders: [],
-        dateAdded: stats.birthtime,
+        dateAdded: stats.ctime,
       });
     } else {
       let dimensions:
@@ -115,11 +116,17 @@ app.get("/files", async (req: Request, res: Response) => {
 
       const fileInfo: FileInfo = {
         filename: entry,
-        fullPath: `http://${os.hostname()}:4004/uploads/${entry}`,
+        fullPath:
+          "http://" +
+          path.join(
+            `${os.hostname()}:${port}/uploads`,
+            (req.query.folder as string) ?? "",
+            entry
+          ),
         relativePath: path.join(req.query.folder?.toString() ?? "", entry),
         extension: path.extname(folder + entry),
         size: stats.size,
-        dateAdded: stats.birthtime,
+        dateAdded: stats.ctime,
         dimensions,
         isFolder: isFolder ? true : undefined,
       };
@@ -163,7 +170,6 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
   res.setHeader("content-type", "image/jpeg").status(200).send(thumbnail);
 });
 
-const port = args.port ?? 4004;
 app.listen(port, () => {
   console.log(`Server started on port ${port}.`);
 });
