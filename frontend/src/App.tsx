@@ -22,8 +22,14 @@ const dateReviver = (key: string, value: any) => {
   return value;
 };
 
+enum Tabs {
+  Files = 0,
+  Upload = 1,
+}
+
 function App() {
   const [activeFolder, setActiveFolder] = useState("");
+  const [activeTab, setActiveTab] = useState<number>(0);
   const queryClient = useQueryClient();
   const createFolderDialog = useToggle(false);
 
@@ -81,10 +87,16 @@ function App() {
 
   const breadcrumbs = (
     <div className={app.breadcrumbs}>
-      <Breadcrumbs path={activeFolder} onClick={setActiveFolder} />
-      <div className={app.button} onClick={createFolderDialog.toggle}>
-        <GoFileDirectory />
-      </div>
+      <Breadcrumbs
+        path={activeFolder}
+        onClick={setActiveFolder}
+        isReadOnly={activeTab === Tabs.Upload}
+      />
+      {activeTab !== Tabs.Upload && (
+        <div className={app.button} onClick={createFolderDialog.toggle}>
+          <GoFileDirectory />
+        </div>
+      )}
     </div>
   );
 
@@ -105,6 +117,7 @@ function App() {
           if (index === 0) {
             queryClient.invalidateQueries(["files", activeFolder]);
           }
+          setActiveTab(index);
         }}
       >
         <Tab.List className={styles.tabList}>
@@ -126,11 +139,7 @@ function App() {
             {isFetched ? (
               <Paper>
                 {breadcrumbs}
-                <Files
-                  data={data!}
-                  onSelectFolder={setActiveFolder}
-                  onCreateFolder={onCreateFolder}
-                />
+                <Files data={data!} onSelectFolder={setActiveFolder} />
               </Paper>
             ) : (
               <Paper>
