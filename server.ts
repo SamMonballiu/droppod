@@ -4,7 +4,7 @@ dotenv.config();
 import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
-import { FileInfo, isImageExtension } from "./models/fileinfo";
+import { FileInfo, hasRawExtension, isImageExtension } from "./models/fileinfo";
 import { FolderInfo } from "./models/folderInfo";
 import { FilesResponse } from "./models/response";
 import cors from "cors";
@@ -113,6 +113,7 @@ app.get("/files", async (req: Request, res: Response) => {
         | { height: number; width: number; orientation: number }
         | undefined = undefined;
       if (isImageExtension(extension)) {
+        //TODO library does not support RAW files
         const info = sizeOf(folder + entry);
         dimensions = {
           height: info!.height!,
@@ -152,9 +153,24 @@ app.get("/files", async (req: Request, res: Response) => {
 
 app.get("/thumbnail", async (req: Request, res: Response) => {
   const file = req.query.file as string;
-  const [height, width] = (req.query.size as string)
-    .split("x")
-    .map((d) => parseInt(d));
+  if (!req.query.size && !req.query.percentage) {
+    res.status(400).send("Must supply either a size or a percentage.");
+  }
+
+  let size = null;
+  if (req.query.size) {
+    const [height, width] = (req.query.size as string)
+      .split("x")
+      .map((d) => parseInt(d));
+
+    size = { height, width };
+  }
+
+  let percentage = 0;
+  if (req.query.percentage) {
+    percentage = parseInt(req.query.percentage as string);
+  }
+
   const quality = req.query.quality
     ? parseInt(req.query.quality as string)
     : 60;
@@ -163,14 +179,19 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
   if (cache.has(file, req.query.size as string, quality)) {
     thumbnail = cache.get(file, req.query.size as string, quality)!;
   } else {
-    thumbnail = await generateThumbnail(
-      basePath,
-      file,
-      { height, width },
-      quality
-    );
+    try {
+      thumbnail = await generateThumbnail(
+        basePath,
+        file,
+        size ?? { percentage },
+        quality
+      );
 
-    cache.add(file, req.query.size as string, quality, thumbnail);
+      cache.add(file, req.query.size as string, quality, thumbnail);
+    } catch (err) {
+      console.log(err);
+      thumbnail = Buffer.from([]);
+    }
   }
 
   res.setHeader("content-type", "image/jpeg").status(200).send(thumbnail);

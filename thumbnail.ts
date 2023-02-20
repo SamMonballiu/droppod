@@ -1,6 +1,7 @@
 import imageThumbnail from "image-thumbnail";
-import fs from "fs";
-import os from "os";
+//@ts-ignore
+import extractd from "extractd";
+import { hasRawExtension } from "./models/fileinfo";
 
 export class Format {
   public static Standard() {
@@ -22,7 +23,14 @@ export const generateThumbnail = async (
   quality: number = 60
 ) => {
   //@ts-ignore
-  const thumbnail = await imageThumbnail(folder + file, {
+  let stream: ReadStream | null = null;
+  if (hasRawExtension(file)) {
+    const gen = await extractd.generate(folder + file, { stream: true });
+    stream = gen.preview;
+  }
+
+  //@ts-ignore
+  const thumbnail = await imageThumbnail(stream ?? folder + file, {
     fit: "cover",
     responseType: "buffer",
     jpegOptions: {

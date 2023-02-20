@@ -18,7 +18,13 @@ export const isImageExtension = (ext: string) =>
     ext.toLowerCase()
   );
 
-export const isImage = (file: FileInfo) => isImageExtension(file.extension);
+export const hasRawExtension = (file: string) => {
+  const extensions = [".cr2", ".raf", ".dng"];
+  return extensions.some((ext) => file.endsWith(ext));
+};
+
+export const isImage = (file: FileInfo) =>
+  isImageExtension(file.extension) || hasRawExtension(file.filename);
 
 export const getOrientation = (
   file: FileInfo
