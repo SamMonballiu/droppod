@@ -1,6 +1,6 @@
 import { FileInfo, getOrientation } from "../../../models/fileinfo";
 import styles from "./ImagePreview.module.scss";
-import React, { FC } from "react";
+import { FC } from "react";
 import { useQuery } from "react-query";
 import { GoFileMedia } from "react-icons/go";
 import cx from "classnames";
@@ -27,10 +27,6 @@ const ImagePreview: FC<Props> = ({
 }) => {
   const { ref, inView } = useInView();
 
-  if (file.dimensions === undefined) {
-    return null;
-  }
-
   const orientation = getOrientation(file);
   const size = square
     ? `${dimension}x${dimension}`
@@ -41,9 +37,10 @@ const ImagePreview: FC<Props> = ({
   const { data: imageData, isFetching: isFetchingImage } = useQuery(
     ["thumbnail", file, dimension, square],
     async () => {
-      const response = await fetch(
-        `${url}thumbnail?file=${file.relativePath}&size=${size}&quality=${quality}`
-      );
+      const fetchUrl = file.dimensions
+        ? `${url}thumbnail?file=${file.relativePath}&size=${size}&quality=${quality}`
+        : `${url}thumbnail?file=${file.relativePath}&percentage=30&quality=${quality}`;
+      const response = await fetch(fetchUrl);
       const blob = await response.blob();
       const imageObjectUrl = URL.createObjectURL(blob);
       return imageObjectUrl;
