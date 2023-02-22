@@ -13,10 +13,12 @@ import fs from "fs";
 import { generateThumbnail } from "./thumbnail";
 import checkDiskSpace from "check-disk-space";
 import sizeOf from "image-size";
-import { cache } from "./thumbnail-cache";
+import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
 import { CommandHandlerFactory, handleResult } from "./commands/base";
 import { CreateFolderCommand } from "./commands/createFolderCommand";
+import { fdir } from "fdir";
+import { filesCache } from "./files-cache";
 
 const args = argv(process.argv);
 const basePath = process.env.BASE_PATH ?? "";
@@ -32,7 +34,8 @@ if (!fs.existsSync(basePath)) {
 const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {
     const folder = req.query.folder as string;
-    cb(null, path.join(__dirname, "/public/uploads", folder));
+    filesCache.invalidate(folder);
+    cb(null, path.join(basePath, folder));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -86,67 +89,82 @@ app.get("/files", async (req: Request, res: Response) => {
     return;
   }
 
-  const dirEntry = fs.readdirSync(folder);
+  if (filesCache.has(folder) && !filesCache.isStale(folder)) {
+    res.status(200).send(filesCache.get(folder));
+    return;
+  }
+
+  const fileCrawler = new fdir()
+    .withMaxDepth(0)
+    .withRelativePaths()
+    .crawl(folder);
+
+  const directoryCrawler = new fdir()
+    .withMaxDepth(1)
+    .withRelativePaths()
+    .onlyDirs()
+    .crawl(folder);
+
+  const files = fileCrawler.sync();
+  const directories = directoryCrawler.sync();
 
   const result: FolderInfo = {
     name: (req.query.folder as string) ?? "",
     parent: path.dirname(folder).replace(basePath, "").substring(1),
     files: [],
-    folders: [],
+    folders: directories.slice(1).map((dir) => ({
+      name: dir.replace(folder, "").replace("/", ""),
+      parent: (req.query.folder as string) ?? "",
+      files: [],
+      folders: [],
+      dateAdded: new Date(),
+    })),
   };
 
-  for (const entry of dirEntry) {
+  for (const entry of files) {
     const extension = path.extname(folder + entry);
     const stats = fs.statSync(folder + entry);
-    const isFolder = stats.isDirectory();
 
-    if (isFolder) {
-      result.folders.push({
-        name: entry,
-        parent: (req.query.folder as string) ?? "",
-        files: [],
-        folders: [],
-        dateAdded: stats.ctime,
-      });
-    } else {
-      let dimensions:
-        | { height: number; width: number; orientation: number }
-        | undefined = undefined;
-      if (isImageExtension(extension)) {
-        //TODO library does not support RAW files
-        const info = sizeOf(folder + entry);
-        dimensions = {
-          height: info!.height!,
-          width: info!.width!,
-          orientation: info!.orientation!,
-        };
-      }
-
-      const fileInfo: FileInfo = {
-        filename: entry,
-        fullPath:
-          "http://" +
-          path.join(
-            `${os.hostname()}:${port}`,
-            (req.query.folder as string) ?? "",
-            entry
-          ),
-        relativePath: path.join(req.query.folder?.toString() ?? "", entry),
-        extension: path.extname(folder + entry),
-        size: stats.size,
-        dateAdded: stats.ctime,
-        dimensions,
-        isFolder: isFolder ? true : undefined,
+    let dimensions:
+      | { height: number; width: number; orientation: number }
+      | undefined = undefined;
+    if (isImageExtension(extension)) {
+      //TODO library does not support RAW files
+      const info = sizeOf(folder + entry);
+      dimensions = {
+        height: info!.height!,
+        width: info!.width!,
+        orientation: info!.orientation!,
       };
-
-      result.files.push(fileInfo);
     }
+
+    const fileInfo: FileInfo = {
+      filename: entry,
+      fullPath:
+        "http://" +
+        path.join(
+          `${os.hostname()}:${port}`,
+          (req.query.folder as string) ?? "",
+          entry
+        ),
+      relativePath: path.join(req.query.folder?.toString() ?? "", entry),
+      extension: path.extname(folder + entry),
+      size: stats.size,
+      dateAdded: stats.ctime,
+      dimensions,
+    };
+
+    result.files.push(fileInfo);
   }
 
   const filesResponse: FilesResponse = {
     freeSpace: (await checkDiskSpace(folder)).free,
     contents: result,
   };
+
+  if (!filesCache.has(folder)) {
+    filesCache.add(folder, filesResponse);
+  }
 
   res.status(200).send(filesResponse);
 });
@@ -176,8 +194,8 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
     : 60;
 
   let thumbnail: Buffer;
-  if (cache.has(file, req.query.size as string, quality)) {
-    thumbnail = cache.get(file, req.query.size as string, quality)!;
+  if (thumbnailCache.has(file, req.query.size as string, quality)) {
+    thumbnail = thumbnailCache.get(file, req.query.size as string, quality)!;
   } else {
     try {
       thumbnail = await generateThumbnail(
@@ -187,7 +205,7 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
         quality
       );
 
-      cache.add(file, req.query.size as string, quality, thumbnail);
+      thumbnailCache.add(file, req.query.size as string, quality, thumbnail);
     } catch (err) {
       console.log(err);
       thumbnail = Buffer.from([]);
