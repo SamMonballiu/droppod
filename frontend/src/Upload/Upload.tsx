@@ -28,7 +28,7 @@ const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["files"]);
+        queryClient.invalidateQueries(["files", folder]);
         setState("success");
       },
     }
