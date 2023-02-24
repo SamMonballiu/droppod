@@ -85,7 +85,11 @@ const File: FC<{ file: FileInfo; onSelect: (file: FileInfo) => void }> = ({
 }) => {
   return (
     <div className={styles.file} onClick={() => onSelect(file)}>
-      <a target="_" className={cx(styles.link, styles.filename)}>
+      <a
+        target="_"
+        id={file.filename}
+        className={cx(styles.link, styles.filename)}
+      >
         {file.filename}
       </a>
       <span className={styles.ext}>{file.extension}</span>

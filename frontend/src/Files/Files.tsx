@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import FileList from "../FileList/FileList";
 import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
@@ -12,6 +12,8 @@ import { FilesResponse } from "../../../models/response";
 import FileDialog from "../FileDialog/FileDialog";
 import { MemoizedGallery } from "../Gallery/Gallery";
 import { useThumbnails } from "../hooks/useThumbnails";
+import useSelectList from "../hooks/useSelectList";
+import SelectionInfo from "../SelectionInfo/SelectionInfo";
 
 interface Props {
   data: FilesResponse;
@@ -21,11 +23,64 @@ interface Props {
 const Files: FC<Props> = ({ data, onSelectFolder }) => {
   const [view, setView] = useState<"list" | "grid" | "gallery">("grid");
   const [zoom, setZoom] = useState<FileGridZoom>(3);
-  const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
-  const { thumbnails } = useThumbnails(
-    data.contents.files.filter((x) => !x.isFolder),
-    setSelectedFile
-  );
+  const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
+  const [isSelecting, setIsSelecting] = useState<boolean>(false);
+  const [, isSelected, toggleSelected, , setAllSelected, events] =
+    useSelectList(data.contents.files.map((f) => f.filename));
+
+  const handleSelectedStyle = (filename: string, isSelected: boolean) => {
+    const thumbnail = document.getElementById(filename)?.parentElement;
+    thumbnail?.classList.toggle(
+      view === "grid" ? styles.gridSelection : styles.listSelection,
+      isSelected
+    );
+  };
+
+  useEffect(() => {
+    let unsubscribes: (() => void)[] = [];
+    if (isSelecting) {
+      unsubscribes.push(
+        events.onSelectedChanged.subscribe((info) =>
+          handleSelectedStyle(info.element, info.selected)
+        )
+      );
+    }
+
+    const className =
+      view === "grid" ? styles.gridSelection : styles.listSelection;
+
+    unsubscribes.push(
+      events.onSetAllSelected.subscribe((value) => {
+        const thumbnails = data.contents.files
+          .map((f) => f.filename)
+          .map((fn) => document.getElementById(fn)?.parentElement);
+        if (value) {
+          thumbnails.forEach((thumbnail) =>
+            thumbnail?.classList.add(className)
+          );
+        } else {
+          thumbnails.forEach((thumbnail) =>
+            thumbnail?.classList.remove(className)
+          );
+        }
+      })
+    );
+
+    return () => {
+      unsubscribes.forEach((fn) => fn());
+    };
+  }, [isSelecting, view]);
+
+  const handleFocusFile = (file: FileInfo) => {
+    if (isSelecting) {
+      toggleSelected(file.filename);
+      return;
+    }
+
+    setFocusedFile(file);
+  };
+
+  const { thumbnails } = useThumbnails(data.contents.files, handleFocusFile);
 
   const { getSorted, sortProperty, isDescending, sort } = useSortedList(
     data.contents.files,
@@ -55,10 +110,6 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
       : sorted;
   }, [data, sortProperty, isDescending, sortBy]);
 
-  const handleSelectFile = (file: FileInfo) => {
-    setSelectedFile(file);
-  };
-
   const sortOptions: SortOption<FileInfo>[] = [
     { property: "dateAdded", name: "Date" },
     { property: "filename", name: "Filename" },
@@ -76,11 +127,26 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
 
   return (
     <>
-      {selectedFile && (
+      {isSelecting && (
+        <SelectionInfo
+          items={getSorted()
+            .filter((f) => isSelected(f.filename))
+            .map((f) => f.filename)}
+          renderItem={(name: string) => <p key={name}>{name}</p>}
+          onClearSelection={() => {
+            setAllSelected(false);
+            setIsSelecting(false);
+          }}
+          onSelectAll={() => {
+            setAllSelected(true);
+          }}
+        />
+      )}
+      {focusedFile && (
         <FileDialog
-          isOpen={selectedFile !== undefined}
-          onClose={() => setSelectedFile(null)}
-          file={selectedFile}
+          isOpen={focusedFile !== undefined}
+          onClose={() => setFocusedFile(null)}
+          file={focusedFile}
         />
       )}
       {view === "gallery" && (
@@ -120,23 +186,25 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
             <div>&nbsp;</div>
           )}
 
-          <div className={styles.icons}>
-            <MdOutlineListAlt
-              className={cx({ [styles.active]: view === "list" })}
-              onClick={() => setView("list")}
-            />
-            <MdGridView
-              className={cx({ [styles.active]: view === "grid" })}
-              onClick={() => setView("grid")}
-            />
-            {data.contents.files.some(isImage) && (
-              <MdOutlinePhoto
-                // @ts-ignore
-                className={cx({ [styles.active]: view === "gallery" })}
-                onClick={() => setView("gallery")}
+          {!isSelecting && (
+            <div className={styles.icons}>
+              <MdOutlineListAlt
+                className={cx({ [styles.active]: view === "list" })}
+                onClick={() => setView("list")}
               />
-            )}
-          </div>
+              <MdGridView
+                className={cx({ [styles.active]: view === "grid" })}
+                onClick={() => setView("grid")}
+              />
+              {data.contents.files.some(isImage) && (
+                <MdOutlinePhoto
+                  // @ts-ignore
+                  className={cx({ [styles.active]: view === "gallery" })}
+                  onClick={() => setView("gallery")}
+                />
+              )}
+            </div>
+          )}
         </div>
 
         {view === "list" ? (
@@ -144,7 +212,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
             files={getSorted()}
             folders={sortedFolders}
             onSort={sort}
-            onSelectFile={handleSelectFile}
+            onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
           />
         ) : (
@@ -152,7 +220,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
             files={getSorted()}
             folders={sortedFolders}
             zoom={zoom}
-            onSelectFile={handleSelectFile}
+            onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
             thumbnails={thumbnails}
           />

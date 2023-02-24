@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { FileInfo, hasRawExtension, isImage } from "../../../models/fileinfo";
 import styles from "./FileGrid.module.scss";
 import { GoFile, GoFileDirectory } from "react-icons/go";
@@ -97,17 +97,29 @@ const File: FC<{
     file: FileInfo;
     element: React.ReactNode;
   };
-}> = ({ file, zoom, onSelect, thumbnail }) => {
+  isSelected?: boolean;
+}> = ({ file, zoom, onSelect, thumbnail, isSelected }) => {
   return (
     <div
       className={cx(styles.file, zoomMap[zoom])}
-      onClick={() => onSelect(file)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelect(file);
+      }}
     >
       {(isImage(file) || hasRawExtension(file.filename)) && thumbnail ? (
-        <div className={thumbZoomMap[zoom]}>{thumbnail?.element}</div>
+        <div
+          className={cx(thumbZoomMap[zoom], { [styles.selected]: isSelected })}
+        >
+          {thumbnail?.element}
+        </div>
       ) : (
-        <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
-          <GoFile className={styles.folderIcon} />
+        <div
+          className={cx(styles.square, styles.border, thumbZoomMap[zoom], {
+            [styles.selected]: isSelected,
+          })}
+        >
+          <GoFile className={styles.folderIcon} id={file.filename} />
         </div>
       )}
 

@@ -56,3 +56,20 @@
 .hidden {
   display: none;
 }
+
+.gridSelection {
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.15);
+  outline: 4px solid cornflowerblue;
+  outline-offset: -4px;
+  transform: translateY(-10px);
+  transition: transform 0.1s ease-in;
+}
+
+.listSelection {
+  color: white !important;
+  background: cornflowerblue !important;
+
+  a {
+    color: white !important;
+  }
+}
