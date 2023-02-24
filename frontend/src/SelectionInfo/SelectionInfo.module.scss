@@ -1,0 +1,51 @@
+.container {
+  position: fixed;
+  top: 0;
+  right: 12px;
+  margin-top: 2em;
+  padding: 0.3em 2em;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  box-shadow: -2px 5px 15px rgba(0, 0, 0, 0.35);
+  border-radius: 5px;
+  z-index: 20;
+  max-width: 33vw;
+  user-select: none;
+}
+
+.shortInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  svg {
+    font-size: 20px;
+  }
+}
+
+.expand {
+  color: cornflowerblue;
+  cursor: pointer;
+}
+
+.clearAll {
+  color: red;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.selectAll {
+  color: green;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.longInfo {
+  font-size: 0.9em;
+  opacity: 0.65;
+  line-height: 0.5em;
+  text-overflow: ellipsis;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
