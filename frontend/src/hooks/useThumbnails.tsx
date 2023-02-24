@@ -1,20 +1,22 @@
 import { useMemo } from "react";
 import { FileInfo } from "../../../models/fileinfo";
+import { FilesResponse } from "../../../models/response";
 import Thumbnail from "../Thumbnail/Thumbnail";
 
 export function useThumbnails(
-  files: FileInfo[],
+  allFiles: FileInfo[],
   onClick: (file: FileInfo) => void,
   className?: string
 ) {
   const { thumbnails } = useMemo(() => {
-    const getThumbnail = (file: FileInfo, isSelected: boolean) => {
+    const files = allFiles.filter((x) => !x.isFolder);
+    const getThumbnail = (file: FileInfo) => {
       return (
         <Thumbnail
           file={file}
           onClick={() => onClick(file)}
           key={files.indexOf(file).toString()}
-          id={files.indexOf(file).toString()}
+          id={file.filename}
           className={className}
         />
       );
@@ -28,7 +30,7 @@ export function useThumbnails(
     });
 
     return { getThumbnail, thumbnails };
-  }, [files]);
+  }, [allFiles]);
 
   return {
     thumbnails,
