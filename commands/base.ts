@@ -3,6 +3,10 @@ import {
   CreateFolderCommandHandler,
   CreateFolderCommandValidator,
 } from "./createFolderCommand";
+import {
+  SetFileRatingCommandHandler,
+  SetFileRatingCommandValidator,
+} from "./setFileRatingCommand";
 
 export interface Command {}
 
@@ -71,8 +75,14 @@ export class CommandHandlerFactory {
   private readonly handlers: CommandHandler<any>[];
 
   constructor() {
-    this.validators = [new CreateFolderCommandValidator()];
-    this.handlers = [new CreateFolderCommandHandler()];
+    this.validators = [
+      new CreateFolderCommandValidator(),
+      new SetFileRatingCommandValidator(),
+    ];
+    this.handlers = [
+      new CreateFolderCommandHandler(),
+      new SetFileRatingCommandHandler(),
+    ];
   }
 
   public async handle(command: Command): Promise<CommandHandleResult> {
