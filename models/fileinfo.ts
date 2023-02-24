@@ -1,3 +1,5 @@
+import { FileRating } from "./post";
+
 export interface FileInfo {
   filename: string;
   fullPath: string;
@@ -11,6 +13,7 @@ export interface FileInfo {
     orientation: Orientation;
   };
   isFolder?: boolean;
+  rating?: FileRating;
 }
 
 export const isImageExtension = (ext: string) =>

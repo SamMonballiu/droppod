@@ -1,4 +1,7 @@
-import { CreateFolderPostmodel } from "./models/post/index";
+import {
+  CreateFolderPostmodel,
+  SetFileRatingPostmodel,
+} from "./models/post/index";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
 import express, { Request, Response } from "express";
@@ -19,12 +22,17 @@ import { CommandHandlerFactory, handleResult } from "./commands/base";
 import { CreateFolderCommand } from "./commands/createFolderCommand";
 import { fdir } from "fdir";
 import { filesCache } from "./files-cache";
+import { config } from "./config";
+import { SetFileRatingCommand } from "./commands/setFileRatingCommand";
+import { ratings } from "./ratings";
 
 const args = argv(process.argv);
-const basePath = process.env.BASE_PATH ?? "";
 
-if (!fs.existsSync(basePath)) {
-  console.log("The base path specified in the .env doesn't exist: ", basePath);
+if (!fs.existsSync(config.basePath)) {
+  console.log(
+    "The base path specified in the .env doesn't exist: ",
+    config.basePath
+  );
   console.log(
     "Please ensure that the .env file exists and the BASE_PATH parameter points to a valid path."
   );
@@ -35,7 +43,7 @@ const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {
     const folder = req.query.folder as string;
     filesCache.invalidate(folder);
-    cb(null, path.join(basePath, folder));
+    cb(null, path.join(config.basePath, folder));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -45,7 +53,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const app = express();
-app.use(express.static(basePath));
+app.use(express.static(config.basePath));
 app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -70,15 +78,25 @@ app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
 app.post("/folders/create", async (req: Request, res: Response) => {
   const postmodel = req.body as CreateFolderPostmodel;
   const command = new CreateFolderCommand(
-    path.join(basePath, postmodel.location),
+    path.join(config.basePath, postmodel.location),
     postmodel.folderName
   );
   const result = await handler.handle(command);
   handleResult(result, res);
 });
 
+app.post("/rate-file", async (req: Request, res: Response) => {
+  const postmodel = req.body as SetFileRatingPostmodel;
+  const command = new SetFileRatingCommand(
+    postmodel.filename,
+    postmodel.rating
+  );
+  const result = await handler.handle(command);
+  handleResult(result, res);
+});
+
 app.get("/files", async (req: Request, res: Response) => {
-  let folder = basePath;
+  let folder = config.basePath;
 
   if (req.query.folder) {
     folder += req.query.folder + "/";
@@ -110,7 +128,7 @@ app.get("/files", async (req: Request, res: Response) => {
 
   const result: FolderInfo = {
     name: (req.query.folder as string) ?? "",
-    parent: path.dirname(folder).replace(basePath, "").substring(1),
+    parent: path.dirname(folder).replace(config.basePath, "").substring(1),
     files: [],
     folders: directories.slice(1).map((dir) => ({
       name: dir.replace(folder, "").replace("/", ""),
@@ -151,6 +169,9 @@ app.get("/files", async (req: Request, res: Response) => {
       extension: path.extname(folder + entry),
       size: stats.size,
       dateAdded: stats.ctime,
+      rating: await ratings.get(
+        path.join((req.query.folder as string) ?? "", entry)
+      ),
       dimensions,
     };
 
@@ -199,7 +220,7 @@ app.get("/thumbnail", async (req: Request, res: Response) => {
   } else {
     try {
       thumbnail = await generateThumbnail(
-        basePath,
+        config.basePath,
         file,
         size ?? { percentage },
         quality
