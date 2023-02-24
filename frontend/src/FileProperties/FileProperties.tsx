@@ -3,6 +3,7 @@ import { FileInfo, FileInfo as FileProperties } from "../../../models/fileinfo";
 import FileSize from "../FileSize/FileSize";
 import styles from "./FileProperties.module.scss";
 import cx from "classnames";
+import Rating from "../Rating/Rating";
 
 interface Props {
   file: FileProperties;
@@ -12,7 +13,14 @@ interface Props {
 const FileProperties: FC<Props> = ({
   file,
   className,
-  properties = ["filename", "dateAdded", "dimensions", "size", "fullPath"],
+  properties = [
+    "filename",
+    "rating",
+    "dateAdded",
+    "dimensions",
+    "size",
+    "fullPath",
+  ],
 }) => {
   const dimensionsInfo = `${file.dimensions?.width}x${file.dimensions?.height}px`;
 
@@ -29,6 +37,13 @@ const FileProperties: FC<Props> = ({
       <a href={file.fullPath} target="_blank">
         link
       </a>,
+    ],
+    [
+      "rating",
+      <Rating
+        value={file.rating ?? 0}
+        onClickValue={(val) => console.log("TODO ", val)}
+      />,
     ],
   ]);
 
