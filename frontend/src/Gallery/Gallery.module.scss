@@ -122,9 +122,11 @@
 }
 
 .info {
-  text-align: right;
   // https://css-tricks.com/simplified-fluid-typography/
   font-size: min(max(0.5rem, 2vw), 14px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .icons {
