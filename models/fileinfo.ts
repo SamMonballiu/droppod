@@ -20,7 +20,7 @@ export const isImageExtension = (ext: string) =>
 
 export const hasRawExtension = (file: string) => {
   const extensions = [".cr2", ".raf", ".dng"];
-  return extensions.some((ext) => file.endsWith(ext));
+  return extensions.some((ext) => file.toLowerCase().endsWith(ext));
 };
 
 export const isImage = (file: FileInfo) =>
