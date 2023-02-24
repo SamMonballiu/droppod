@@ -131,7 +131,13 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
             <div className={styles.fileInfo}>
               <FileProperties
                 file={selectedItem}
-                properties={["filename", "dimensions", "size", "fullPath"]}
+                properties={[
+                  "filename",
+                  "rating",
+                  "dimensions",
+                  "size",
+                  "fullPath",
+                ]}
                 className={modeDependent.info}
               />
             </div>
