@@ -38,13 +38,7 @@ const FileProperties: FC<Props> = ({
         link
       </a>,
     ],
-    [
-      "rating",
-      <Rating
-        value={file.rating ?? 0}
-        onClickValue={(val) => console.log("TODO ", val)}
-      />,
-    ],
+    ["rating", <Rating file={file} />],
   ]);
 
   return (
