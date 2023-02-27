@@ -97,42 +97,42 @@ app.post("/rate-file", async (req: Request, res: Response) => {
 });
 
 app.get("/files", async (req: Request, res: Response) => {
-  let folder = config.basePath;
+  let fullFolder = config.basePath;
 
   if (req.query.folder) {
-    folder += req.query.folder + "/";
+    fullFolder += req.query.folder + "/";
   }
 
-  if (!fs.existsSync(folder)) {
+  if (!fs.existsSync(fullFolder)) {
     res.status(400).send("The specified folder doesn't exist.");
     return;
   }
 
-  if (filesCache.has(folder) && !filesCache.isStale(folder)) {
-    res.status(200).send(filesCache.get(folder));
+  if (filesCache.has(fullFolder) && !filesCache.isStale(fullFolder)) {
+    res.status(200).send(filesCache.get(fullFolder));
     return;
   }
 
   const fileCrawler = new fdir()
     .withMaxDepth(0)
     .withRelativePaths()
-    .crawl(folder);
+    .crawl(fullFolder);
 
   const directoryCrawler = new fdir()
     .withMaxDepth(1)
     .withRelativePaths()
     .onlyDirs()
-    .crawl(folder);
+    .crawl(fullFolder);
 
   const files = fileCrawler.sync();
   const directories = directoryCrawler.sync();
 
   const result: FolderInfo = {
     name: (req.query.folder as string) ?? "",
-    parent: path.dirname(folder).replace(config.basePath, "").substring(1),
+    parent: path.dirname(fullFolder).replace(config.basePath, "").substring(1),
     files: [],
     folders: directories.slice(1).map((dir) => ({
-      name: dir.replace(folder, "").replace("/", ""),
+      name: dir.replace(fullFolder, "").replace("/", ""),
       parent: (req.query.folder as string) ?? "",
       files: [],
       folders: [],
@@ -141,15 +141,15 @@ app.get("/files", async (req: Request, res: Response) => {
   };
 
   for (const entry of files) {
-    const extension = path.extname(folder + entry);
-    const stats = fs.statSync(folder + entry);
+    const extension = path.extname(fullFolder + entry);
+    const stats = fs.statSync(fullFolder + entry);
 
     let dimensions:
       | { height: number; width: number; orientation: number }
       | undefined = undefined;
     if (isImageExtension(extension)) {
       //TODO library does not support RAW files
-      const info = sizeOf(folder + entry);
+      const info = sizeOf(fullFolder + entry);
       dimensions = {
         height: info!.height!,
         width: info!.width!,
@@ -167,7 +167,7 @@ app.get("/files", async (req: Request, res: Response) => {
           entry
         ),
       relativePath: req.query.folder?.toString() ?? "",
-      extension: path.extname(folder + entry),
+      extension: path.extname(fullFolder + entry),
       size: stats.size,
       dateAdded: stats.ctime,
       rating: await ratings.get(
@@ -180,12 +180,12 @@ app.get("/files", async (req: Request, res: Response) => {
   }
 
   const filesResponse: FilesResponse = {
-    freeSpace: (await checkDiskSpace(folder)).free,
+    freeSpace: (await checkDiskSpace(fullFolder)).free,
     contents: result,
   };
 
-  if (!filesCache.has(folder)) {
-    filesCache.add(folder, filesResponse);
+  if (!filesCache.has(req.query.folder as string)) {
+    filesCache.add(req.query.folder as string, filesResponse);
   }
 
   res.status(200).send(filesResponse);
