@@ -115,6 +115,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
     { property: "filename", name: "Filename" },
     { property: "size", name: "Size" },
     { property: "extension", name: "Extension" },
+    { property: "rating", name: "Rating" },
   ];
 
   const handleSort = (option: SortOption<FileInfo>) => {
