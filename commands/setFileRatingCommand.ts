@@ -8,14 +8,17 @@ import {
   CommandValidator,
 } from "./base";
 import fs from "fs";
-import storage from "node-persist";
 import { ratings } from "../ratings";
+import { filesCache } from "../files-cache";
+import path from "path";
 
 export class SetFileRatingCommand implements Command {
+  public path: string;
   public filename: string;
   public rating: FileRating;
 
-  constructor(filename: string, rating: FileRating) {
+  constructor(path: string, filename: string, rating: FileRating) {
+    this.path = path;
     this.filename = filename;
     this.rating = rating;
   }
@@ -31,10 +34,12 @@ export class SetFileRatingCommandHandler
     const rating = command.rating;
 
     if (rating === 0) {
-      ratings.remove(command.filename);
+      ratings.remove(path.join(command.path, command.filename));
     } else {
-      ratings.set(command.filename, rating);
+      ratings.set(path.join(command.path, command.filename), rating);
     }
+
+    filesCache.invalidate(command.path);
 
     return CommandHandleResult.Success;
   }
@@ -48,7 +53,9 @@ export class SetFileRatingCommandValidator
 
   public validate = (command: SetFileRatingCommand) => {
     let errors = [];
-    if (!fs.existsSync(config.basePath + command.filename)) {
+    if (
+      !fs.existsSync(path.join(config.basePath, command.path, command.filename))
+    ) {
       errors.push(
         "The specified file could not be found: ",
         config.basePath + command.filename

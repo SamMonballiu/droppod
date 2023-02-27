@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 import { GoFileMedia } from "react-icons/go";
 import cx from "classnames";
 import { useInView } from "react-intersection-observer";
+import axios from "axios";
 
 interface Props {
   file: FileInfo;
@@ -34,15 +35,20 @@ const ImagePreview: FC<Props> = ({
     ? `${dimension}x0`
     : `0x${dimension}`;
 
+  const path =
+    file.relativePath === ""
+      ? file.filename
+      : `${file.relativePath}/${file.filename}`;
+
   const { data: imageData, isFetching: isFetchingImage } = useQuery(
     ["thumbnail", file, dimension, square],
     async () => {
       const fetchUrl = file.dimensions
-        ? `${url}thumbnail?file=${file.relativePath}&size=${size}&quality=${quality}`
-        : `${url}thumbnail?file=${file.relativePath}&percentage=30&quality=${quality}`;
-      const response = await fetch(fetchUrl);
-      const blob = await response.blob();
-      const imageObjectUrl = URL.createObjectURL(blob);
+        ? `${url}thumbnail?file=${path}&size=${size}&quality=${quality}`
+        : `${url}thumbnail?file=${path}&percentage=30&quality=${quality}`;
+      const response = (await axios.get(fetchUrl, { responseType: "blob" }))
+        .data;
+      const imageObjectUrl = URL.createObjectURL(response);
       return imageObjectUrl;
     },
     {

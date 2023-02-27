@@ -88,6 +88,7 @@ app.post("/folders/create", async (req: Request, res: Response) => {
 app.post("/rate-file", async (req: Request, res: Response) => {
   const postmodel = req.body as SetFileRatingPostmodel;
   const command = new SetFileRatingCommand(
+    postmodel.path,
     postmodel.filename,
     postmodel.rating
   );
@@ -165,7 +166,7 @@ app.get("/files", async (req: Request, res: Response) => {
           (req.query.folder as string) ?? "",
           entry
         ),
-      relativePath: path.join(req.query.folder?.toString() ?? "", entry),
+      relativePath: req.query.folder?.toString() ?? "",
       extension: path.extname(folder + entry),
       size: stats.size,
       dateAdded: stats.ctime,
