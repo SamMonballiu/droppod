@@ -2,6 +2,7 @@ import styles from "./upload.module.scss";
 import React, { FC, useRef, useState } from "react";
 import { QueryClient, useMutation, useQueryClient } from "react-query";
 import cx from "classnames";
+import axios from "axios";
 
 interface Props {
   folder: string;
@@ -18,10 +19,7 @@ const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
     async (formData: FormData) => {
       const url = `${baseUrl}upload_files?folder=${folder}`;
       try {
-        return await fetch(url, {
-          method: "POST",
-          body: formData,
-        });
+        return await axios.post(url, formData);
       } catch (err) {
         onError?.(err as unknown as string | Error);
       }
