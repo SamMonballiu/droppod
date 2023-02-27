@@ -13,6 +13,7 @@ import { CreateFolderPostmodel } from "../../models/post";
 import { GoFileDirectory } from "react-icons/go";
 import useToggle from "./hooks/useToggle";
 import CreateFolderDialog from "./CreateFolderDialog/CreateFolderDialog";
+import axios from "axios";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -45,9 +46,11 @@ function App() {
         url += `?folder=${activeFolder}`;
       }
 
-      const response = await fetch(url);
-      const text = await response.text();
-      return JSON.parse(text, dateReviver) as FilesResponse;
+      return (
+        await axios.get<FilesResponse>(url, {
+          transformResponse: (data) => JSON.parse(data, dateReviver),
+        })
+      ).data;
     },
     {
       staleTime: Infinity,
@@ -59,17 +62,12 @@ function App() {
       create: useMutation(
         async (postmodel: CreateFolderPostmodel) => {
           const url = baseUrl + "folders/create";
-          return await fetch(url, {
-            method: "POST",
-            body: JSON.stringify(postmodel),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          return (await axios.post(url, postmodel)).data;
         },
         {
           onSuccess: () => {
             queryClient.invalidateQueries(["files", activeFolder]);
+            createFolderDialog.set(false);
           },
         }
       ),
