@@ -52,7 +52,7 @@ const Rating: FC<Props> = ({ file }) => {
         onMouseOver={() => setTempValue(v + 1)}
         onMouseLeave={() => setTempValue(0)}
         onClick={async () => {
-          const newRating = ratingOverride === v + 1 ? 0 : v + 1;
+          const newRating = relevantRating === v + 1 ? 0 : v + 1;
           setRatingOverride(newRating);
           await rate.mutateAsync({
             filename: file.filename,
