@@ -4,8 +4,6 @@ import { FileRating } from "./models/post";
 storage.init({
   dir: "ratings",
   encoding: "utf8",
-  ttl: Infinity,
-  expiredInterval: 1000 * 60 * 60,
 });
 
 const get = async (filename: string): Promise<FileRating | undefined> => {
