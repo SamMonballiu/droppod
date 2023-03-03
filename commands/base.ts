@@ -86,21 +86,27 @@ export class CommandHandlerFactory {
   }
 
   public async handle(command: Command): Promise<CommandHandleResult> {
-    const validator = this.validators.find((x) => x.canValidate(command));
-    const handler = this.handlers.find((x) => x.canHandle(command));
+    try {
+      const validator = this.validators.find((x) => x.canValidate(command));
+      const handler = this.handlers.find((x) => x.canHandle(command));
 
-    if (validator !== undefined) {
-      const { errors, isSuccess } = validator.validate(command);
-      if (!isSuccess) {
-        return CommandHandleResult.ValidationError(errors.join("\n"));
+      if (validator !== undefined) {
+        const { errors, isSuccess } = validator.validate(command);
+        if (!isSuccess) {
+          return CommandHandleResult.ValidationError(errors.join("\n"));
+        }
       }
-    }
 
-    return handler !== undefined
-      ? handler.handle(command)
-      : CommandHandleResult.Error(
-          "Couldn't find a handler for a command of this type."
-        );
+      return handler !== undefined
+        ? handler.handle(command)
+        : CommandHandleResult.Error(
+            "Couldn't find a handler for a command of this type."
+          );
+    } catch (err: unknown) {
+      return CommandHandleResult.Error(
+        `An error occurred: ${(err as Error).toString()}`
+      );
+    }
   }
 }
 
