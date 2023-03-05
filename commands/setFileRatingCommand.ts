@@ -41,7 +41,7 @@ export class SetFileRatingCommandHandler
 
     filesCache.invalidate(command.path);
 
-    return CommandHandleResult.Success;
+    return CommandHandleResult.Success.WithoutResult();
   }
 }
 

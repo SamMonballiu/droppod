@@ -10,8 +10,10 @@ import {
 
 export interface Command {}
 
-export interface CommandHandler<T extends Command> {
-  handle: (command: T) => Promise<CommandHandleResult> | CommandHandleResult;
+export interface CommandHandler<T extends Command, TResult = undefined> {
+  handle: (
+    command: T
+  ) => Promise<CommandHandleResult<TResult>> | CommandHandleResult<TResult>;
   canHandle: (command: T) => boolean;
 }
 
@@ -27,32 +29,52 @@ export enum CommandHandleResultType {
   ValidationError,
   Error,
 }
-export class CommandHandleResult {
+export class CommandHandleResult<T> {
   public type: CommandHandleResultType;
   public message?: string;
+  public result?: T;
 
-  private constructor(type: CommandHandleResultType, message?: string) {
+  private constructor(
+    result: T,
+    type: CommandHandleResultType,
+    message?: string
+  ) {
+    this.result = result;
     this.type = type;
     this.message = message;
   }
 
   public static get Success() {
-    return new CommandHandleResult(CommandHandleResultType.Success);
+    return {
+      WithoutResult: () =>
+        new CommandHandleResult(undefined, CommandHandleResultType.Success),
+      WithResult: <T>(result: T) =>
+        new CommandHandleResult(result, CommandHandleResultType.Success),
+    };
   }
 
   public static NotFound(message?: string) {
-    return new CommandHandleResult(CommandHandleResultType.NotFound, message);
+    return new CommandHandleResult(
+      undefined,
+      CommandHandleResultType.NotFound,
+      message
+    );
   }
 
   public static ValidationError(message: string) {
     return new CommandHandleResult(
+      undefined,
       CommandHandleResultType.ValidationError,
       message
     );
   }
 
   public static Error(message: string) {
-    return new CommandHandleResult(CommandHandleResultType.Error, message);
+    return new CommandHandleResult(
+      undefined,
+      CommandHandleResultType.Error,
+      message
+    );
   }
 }
 
@@ -70,9 +92,23 @@ export class CommandValidateResult {
   public static Success = () => new CommandValidateResult([]);
 }
 
+export class CommandResponse<T> {
+  public result: T;
+  public message?: string;
+
+  private constructor(result: T, message: string | undefined) {
+    this.result = result;
+    this.message = message;
+  }
+
+  public static FromResult<T>(response: CommandHandleResult<T>) {
+    return new CommandResponse(response.result, response.message);
+  }
+}
+
 export class CommandHandlerFactory {
   private readonly validators: CommandValidator<any>[];
-  private readonly handlers: CommandHandler<any>[];
+  private readonly handlers: CommandHandler<any, any>[];
 
   constructor() {
     this.validators = [
@@ -85,7 +121,7 @@ export class CommandHandlerFactory {
     ];
   }
 
-  public async handle(command: Command): Promise<CommandHandleResult> {
+  public async handle(command: Command): Promise<CommandHandleResult<unknown>> {
     try {
       const validator = this.validators.find((x) => x.canValidate(command));
       const handler = this.handlers.find((x) => x.canHandle(command));
@@ -110,20 +146,22 @@ export class CommandHandlerFactory {
   }
 }
 
-export const handleResult = (result: CommandHandleResult, res: Response) => {
+export const handleResult = (
+  result: CommandHandleResult<unknown>,
+  res: Response
+) => {
   const { Success, NotFound, ValidationError, Error } = CommandHandleResultType;
+  const response = CommandResponse.FromResult(result);
   switch (result.type) {
     case Success:
-      res.status(200).send();
+      res.status(200).send(response);
       break;
     case NotFound:
-      res.status(404).send(result.message);
-      break;
     case ValidationError:
-      res.status(400).send(result.message);
+      res.status(404).send(response);
       break;
     case Error:
-      res.status(500).send(result.message);
+      res.status(500).send(response);
       break;
   }
 };

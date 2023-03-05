@@ -29,7 +29,7 @@ export class CreateFolderCommandHandler
       const folder = path.join(command.location, command.folderName);
       fs.mkdirSync(folder);
 
-      return CommandHandleResult.Success;
+      return CommandHandleResult.Success.WithoutResult();
     } catch {
       return CommandHandleResult.Error("Something went wrong.");
     }
