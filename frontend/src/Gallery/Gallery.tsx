@@ -125,7 +125,7 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
           <div className={styles.topRow}>
             <div className={modeDependent.activeImage}>
               <BiCaretLeft onClick={() => select("previous")} />
-              <ImagePreview dimension={1400} file={selectedItem} />
+              <ImagePreview dimension={1000} file={selectedItem} />
               <BiCaretRight onClick={() => select("next")} />
             </div>
             <div className={styles.fileInfo}>

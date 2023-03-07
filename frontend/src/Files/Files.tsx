@@ -127,7 +127,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
   }
 
   return (
-    <>
+    <div className={styles.container}>
       {isSelecting && (
         <SelectionInfo
           items={getSorted()
@@ -143,6 +143,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
           }}
         />
       )}
+
       {focusedFile && (
         <FileDialog
           isOpen={focusedFile !== undefined}
@@ -156,9 +157,12 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
           onClose={() => setView("grid")}
         />
       )}
-
-      <div className={cx({ [styles.hidden]: view === "gallery" })}>
-        <div className={styles.settings}>
+      <div className={styles.topBar}>
+        <div
+          className={cx(styles.settings, {
+            [styles.hidden]: view === "gallery",
+          })}
+        >
           {view === "grid" ? (
             <>
               <FileSortOptions
@@ -207,7 +211,8 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
             </div>
           )}
         </div>
-
+      </div>
+      <div className={styles.content}>
         {view === "list" ? (
           <FileList
             files={getSorted()}
@@ -231,7 +236,7 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
           Free space: {(data.freeSpace / 1024 / 1024).toFixed(2)} mb
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

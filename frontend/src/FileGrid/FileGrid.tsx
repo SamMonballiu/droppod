@@ -1,9 +1,10 @@
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useMemo } from "react";
 import { FileInfo, hasRawExtension, isImage } from "../../../models/fileinfo";
 import styles from "./FileGrid.module.scss";
-import { GoFile, GoFileDirectory } from "react-icons/go";
+import { GoFile } from "react-icons/go";
 import cx from "classnames";
 import { FolderInfo } from "../../../models/folderInfo";
+import { FcFolder } from "react-icons/fc";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -77,7 +78,7 @@ const Folder: FC<{
   return (
     <div className={cx(styles.file, zoomMap[zoom])} onClick={onSelect}>
       <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
-        <GoFileDirectory className={styles.folderIcon} />
+        <FcFolder className={styles.folderIcon} />
       </div>
 
       {zoom > 1 && (

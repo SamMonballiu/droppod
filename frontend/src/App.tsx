@@ -1,12 +1,9 @@
 import app from "./App.module.scss";
 import styles from "./Tabs.module.scss";
 import Upload from "./Upload/Upload";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { FilesResponse } from "../../models/response";
-import { Tab } from "@headlessui/react";
-import Paper from "./Paper/Paper";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import cx from "classnames";
 import Files from "./Files/Files";
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
 import { CreateFolderPostmodel } from "../../models/post";
@@ -14,6 +11,9 @@ import { GoFileDirectory } from "react-icons/go";
 import useToggle from "./hooks/useToggle";
 import CreateFolderDialog from "./CreateFolderDialog/CreateFolderDialog";
 import axios from "axios";
+import { GoFileSubmodule, GoCloudUpload } from "react-icons/go";
+import Paper from "./Paper/Paper";
+import cx from "classnames";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -102,6 +102,39 @@ function App() {
     return await onCreateFolder(folderName);
   };
 
+  const content =
+    activeTab == 0 ? (
+      isFetched ? (
+        <div className={styles.contentX}>
+          {breadcrumbs}
+          <Files data={data!} onSelectFolder={setActiveFolder} />
+        </div>
+      ) : (
+        <>
+          {breadcrumbs}
+          <p>Fetching...</p>
+        </>
+      )
+    ) : (
+      <>
+        {breadcrumbs}
+        <Upload baseUrl={baseUrl} folder={activeFolder} />
+      </>
+    );
+
+  const tabs = (
+    <>
+      <GoFileSubmodule
+        className={cx({ [styles.active]: activeTab === 0 })}
+        onClick={() => setActiveTab(0)}
+      />
+      <GoCloudUpload
+        className={cx({ [styles.active]: activeTab === 1 })}
+        onClick={() => setActiveTab(1)}
+      />
+    </>
+  );
+
   return (
     <>
       {createFolderDialog.value && (
@@ -110,50 +143,11 @@ function App() {
           onSubmit={handleCreateFolder}
         />
       )}
-      <Tab.Group
-        onChange={(index) => {
-          if (index === 0) {
-            queryClient.invalidateQueries(["files", activeFolder]);
-          }
-          setActiveTab(index);
-        }}
-      >
-        <Tab.List className={styles.tabList}>
-          <Tab as={Fragment}>
-            {({ selected }) => (
-              <span className={cx({ [styles.selected]: selected })}>Files</span>
-            )}
-          </Tab>
-          <Tab as={Fragment}>
-            {({ selected }) => (
-              <span className={cx({ [styles.selected]: selected })}>
-                Upload
-              </span>
-            )}
-          </Tab>
-        </Tab.List>
-        <Tab.Panels>
-          <Tab.Panel>
-            {isFetched ? (
-              <Paper>
-                {breadcrumbs}
-                <Files data={data!} onSelectFolder={setActiveFolder} />
-              </Paper>
-            ) : (
-              <Paper>
-                {breadcrumbs}
-                <p>Fetching...</p>
-              </Paper>
-            )}
-          </Tab.Panel>
-          <Tab.Panel>
-            <Paper>
-              {breadcrumbs}
-              <Upload baseUrl={baseUrl} folder={activeFolder} />
-            </Paper>
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+      <div className={styles.container}>
+        <div className={cx(styles.tabs, styles.vertical)}>{tabs}</div>
+        <div className={cx(styles.tabs, styles.horizontal)}>{tabs}</div>
+        <div className={styles.content}>{content}</div>
+      </div>
     </>
   );
 }
