@@ -14,14 +14,16 @@ import { MemoizedGallery } from "../Gallery/Gallery";
 import { useThumbnails } from "../hooks/useThumbnails";
 import useSelectList from "../hooks/useSelectList";
 import SelectionInfo from "../SelectionInfo/SelectionInfo";
+import { View } from "../App";
 
 interface Props {
   data: FilesResponse;
   onSelectFolder: (folder: string) => void;
+  view: View;
+  setView: (view: View) => void;
 }
 
-const Files: FC<Props> = ({ data, onSelectFolder }) => {
-  const [view, setView] = useState<"list" | "grid" | "gallery">("grid");
+const Files: FC<Props> = ({ data, onSelectFolder, view, setView }) => {
   const [zoom, setZoom] = useState<FileGridZoom>(3);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
@@ -163,17 +165,17 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
             [styles.hidden]: view === "gallery",
           })}
         >
-          {view === "grid" ? (
-            <>
-              <FileSortOptions
-                options={sortOptions}
-                value={sortProperty!}
-                onChange={(opt) => {
-                  //@ts-ignore
-                  handleSort(opt);
-                }}
-                isDescending={isDescending}
-              />
+          <>
+            <FileSortOptions
+              options={sortOptions}
+              value={sortProperty!}
+              onChange={(opt) => {
+                //@ts-ignore
+                handleSort(opt);
+              }}
+              isDescending={isDescending}
+            />
+            {view === "grid" && (
               <div className={styles.zoomSlider}>
                 <TbTelescope />
                 <input
@@ -186,10 +188,8 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
                   }
                 />
               </div>
-            </>
-          ) : (
-            <div>&nbsp;</div>
-          )}
+            )}
+          </>
 
           {!isSelecting && (
             <div className={styles.icons}>
@@ -212,12 +212,13 @@ const Files: FC<Props> = ({ data, onSelectFolder }) => {
           )}
         </div>
       </div>
-      <div className={styles.content}>
+      <div
+        className={cx(styles.content, { [styles.hidden]: view === "gallery" })}
+      >
         {view === "list" ? (
           <FileList
             files={getSorted()}
             folders={sortedFolders}
-            onSort={sort}
             onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
           />

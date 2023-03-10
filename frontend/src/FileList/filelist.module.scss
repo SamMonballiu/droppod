@@ -1,3 +1,5 @@
+$hoverColor: rgba(0, 0, 0, 0.075);
+
 .container {
   // https://css-tricks.com/simplified-fluid-typography/
   font-size: min(max(0.5rem, 2vw), 14px);
@@ -7,6 +9,7 @@
   display: flex;
   flex-direction: column;
   opacity: 0.8;
+  gap: 8px;
 }
 
 .file {
@@ -20,24 +23,41 @@
   text-overflow: ellipsis;
   overflow: clip;
   user-select: none;
+
+  cursor: pointer;
+  &:hover {
+    background: $hoverColor;
+  }
 }
 
 .folder {
   font-weight: 900;
+  cursor: pointer;
+  &:hover {
+    background: $hoverColor;
+  }
 }
 
 .link {
+  display: flex;
+  align-items: center;
   color: black;
   text-decoration-line: none;
 
   &:visited {
     text-decoration: none;
   }
+
+  svg {
+    margin-right: 4px;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.75);
+  }
 }
 
 .filename {
   overflow: hidden;
-  flex-basis: 70vw;
+  flex-basis: 25vw;
 }
 
 .ext {
@@ -54,24 +74,4 @@
   font-family: "Fira Code", monospace;
   flex-basis: 10vw;
   margin: 0;
-}
-
-.header {
-  font-weight: 700;
-  font-family: "Work Sans";
-  margin: 0 !important;
-
-  &:hover {
-    background: inherit;
-  }
-
-  .size {
-    font-family: "Work Sans", monospace;
-  }
-
-  p {
-    cursor: pointer;
-    margin: 0;
-    margin-bottom: 12px;
-  }
 }
