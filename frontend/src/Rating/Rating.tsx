@@ -54,8 +54,8 @@ const Rating: FC<Props> = ({ file, readonly, noHollowStars, className }) => {
           [styles.blue]: !readonly && tempValue > 0 && tempValue >= v + 1,
           [styles.hidden]: noHollowStars && relevantRating < v + 1,
         })}
-        onMouseOver={() => setTempValue(v + 1)}
-        onMouseLeave={() => setTempValue(0)}
+        onMouseOver={readonly ? undefined : () => setTempValue(v + 1)}
+        onMouseLeave={readonly ? undefined : () => setTempValue(0)}
         onClick={async () => {
           if (readonly) {
             return;
