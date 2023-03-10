@@ -6,6 +6,7 @@ import FileSize from "../FileSize/FileSize";
 import { FolderInfo } from "../../../models/folderInfo";
 import { GoFile, GoFileMedia } from "react-icons/go";
 import { FcFolder } from "react-icons/fc";
+import Rating from "../Rating/Rating";
 
 interface Props {
   files: FileInfo[];
@@ -68,6 +69,9 @@ const File: FC<{ file: FileInfo; onSelect: (file: FileInfo) => void }> = ({
       </a>
       <span className={styles.ext}>{file.extension}</span>
       <span className={styles.date}>{file.dateAdded.toLocaleDateString()}</span>
+      <span className={styles.rating}>
+        {file.rating ? <Rating file={file} readonly /> : null}
+      </span>
       <FileSize className={styles.size} file={file} />
     </div>
   );
