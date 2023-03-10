@@ -5,6 +5,7 @@ import { GoFile } from "react-icons/go";
 import cx from "classnames";
 import { FolderInfo } from "../../../models/folderInfo";
 import { FcFolder } from "react-icons/fc";
+import Rating from "../Rating/Rating";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -100,6 +101,9 @@ const File: FC<{
   };
   isSelected?: boolean;
 }> = ({ file, zoom, onSelect, thumbnail, isSelected }) => {
+  const rating = file.rating ? (
+    <Rating file={file} readonly noHollowStars className={styles.rating} />
+  ) : null;
   return (
     <div
       className={cx(styles.file, zoomMap[zoom])}
@@ -112,6 +116,7 @@ const File: FC<{
         <div
           className={cx(thumbZoomMap[zoom], { [styles.selected]: isSelected })}
         >
+          {rating}
           {thumbnail?.element}
         </div>
       ) : (
@@ -120,6 +125,7 @@ const File: FC<{
             [styles.selected]: isSelected,
           })}
         >
+          {rating}
           <GoFile className={styles.folderIcon} id={file.filename} />
         </div>
       )}

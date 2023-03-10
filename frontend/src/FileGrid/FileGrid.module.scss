@@ -68,6 +68,12 @@ $accent: rgba(100, 149, 237, 0.25);
       width: $thumbnail-1;
       height: $thumbnail-1;
     }
+
+    .rating {
+      svg {
+        font-size: 12px;
+      }
+    }
   }
 
   &2 {
@@ -79,6 +85,12 @@ $accent: rgba(100, 149, 237, 0.25);
       width: $thumbnail-2;
       height: $thumbnail-2;
     }
+
+    .rating {
+      svg {
+        font-size: 16px;
+      }
+    }
   }
 
   &3 {
@@ -89,6 +101,12 @@ $accent: rgba(100, 149, 237, 0.25);
     img {
       width: $thumbnail-3;
       height: $thumbnail-3;
+    }
+
+    .rating {
+      svg {
+        font-size: 20px;
+      }
     }
   }
 
@@ -110,6 +128,7 @@ $accent: rgba(100, 149, 237, 0.25);
   align-items: center;
   padding-top: 12px;
   transition: background 0.2s;
+  position: relative;
 
   &:hover {
     background: $accent;
@@ -131,4 +150,9 @@ $accent: rgba(100, 149, 237, 0.25);
 .filename {
   font-size: 0.7em;
   text-align: center;
+}
+
+.rating {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.35);
 }
