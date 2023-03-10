@@ -64,6 +64,13 @@ $hoverColor: rgba(0, 0, 0, 0.075);
   flex-basis: 10vw;
 }
 
+.rating {
+  min-width: 10vw;
+  svg {
+    font-size: 20px !important;
+  }
+}
+
 .date {
   flex-basis: 10vw;
 }
