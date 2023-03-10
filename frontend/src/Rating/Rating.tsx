@@ -9,9 +9,12 @@ import { FileInfo } from "../../../models/fileinfo";
 
 interface Props {
   file: FileInfo;
+  readonly?: boolean;
+  noHollowStars?: boolean;
+  className?: string;
 }
 
-const Rating: FC<Props> = ({ file }) => {
+const Rating: FC<Props> = ({ file, readonly, noHollowStars, className }) => {
   const [tempValue, setTempValue] = useState<number>(0);
   const [ratingOverride, setRatingOverride] = useState<number | undefined>(
     undefined
@@ -46,12 +49,17 @@ const Rating: FC<Props> = ({ file }) => {
         className={cx({
           [styles.star]: relevantRating >= v + 1,
           [styles.hollow]:
-            relevantRating < v + 1 || (tempValue > 0 && tempValue <= v + 1),
-          [styles.blue]: tempValue > 0 && tempValue >= v + 1,
+            !noHollowStars &&
+            (relevantRating < v + 1 || (tempValue > 0 && tempValue <= v + 1)),
+          [styles.blue]: !readonly && tempValue > 0 && tempValue >= v + 1,
+          [styles.hidden]: noHollowStars && relevantRating < v + 1,
         })}
         onMouseOver={() => setTempValue(v + 1)}
         onMouseLeave={() => setTempValue(0)}
         onClick={async () => {
+          if (readonly) {
+            return;
+          }
           const newRating = relevantRating === v + 1 ? 0 : v + 1;
           setRatingOverride(newRating);
           await rate.mutateAsync({
@@ -65,7 +73,7 @@ const Rating: FC<Props> = ({ file }) => {
     ));
   };
 
-  return <div className={styles.rating}>{getStars()}</div>;
+  return <div className={cx(className, styles.rating)}>{getStars()}</div>;
 };
 
 export default Rating;
