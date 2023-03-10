@@ -1,14 +1,15 @@
 import React, { FC } from "react";
-import { FileInfo } from "../../../models/fileinfo";
+import { FileInfo, isImage } from "../../../models/fileinfo";
 import styles from "./filelist.module.scss";
 import cx from "classnames";
 import FileSize from "../FileSize/FileSize";
 import { FolderInfo } from "../../../models/folderInfo";
+import { GoFile, GoFileMedia } from "react-icons/go";
+import { FcFolder } from "react-icons/fc";
 
 interface Props {
   files: FileInfo[];
   folders: FolderInfo[];
-  onSort: (prop: keyof FileInfo) => void;
   onSelectFile: (file: FileInfo) => void;
   onSelectFolder: (folder: string) => void;
 }
@@ -16,40 +17,11 @@ interface Props {
 const FileList: FC<Props> = ({
   files,
   folders,
-  onSort,
   onSelectFile,
   onSelectFolder,
 }) => {
-  const handleSort = (property: keyof FileInfo) => {
-    return () => onSort(property);
-  };
-
   return (
     <div className={styles.container}>
-      <div className={cx(styles.file, styles.header)}>
-        <p
-          className={cx(styles.link, styles.filename)}
-          onClick={handleSort("filename")}
-        >
-          Name
-        </p>
-        <p
-          className={cx(styles.link, styles.ext)}
-          onClick={handleSort("extension")}
-        >
-          Ext.
-        </p>
-        <p
-          className={cx(styles.link, styles.date)}
-          onClick={handleSort("dateAdded")}
-        >
-          Date
-        </p>
-
-        <p className={styles.size} onClick={() => handleSort("size")}>
-          Size
-        </p>
-      </div>
       <div className={styles.files}>
         {folders.map((f) => (
           <Folder
@@ -73,6 +45,7 @@ const Folder: FC<{ folder: FolderInfo; onSelect: () => void }> = ({
   return (
     <div className={cx(styles.file, styles.folder)} onClick={onSelect}>
       <a target="_" className={cx(styles.link, styles.filename)}>
+        <FcFolder />
         {folder.name}
       </a>
     </div>
@@ -90,6 +63,7 @@ const File: FC<{ file: FileInfo; onSelect: (file: FileInfo) => void }> = ({
         id={file.filename}
         className={cx(styles.link, styles.filename)}
       >
+        {isImage(file) ? <GoFileMedia /> : <GoFile />}
         {file.filename}
       </a>
       <span className={styles.ext}>{file.extension}</span>

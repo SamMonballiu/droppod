@@ -28,8 +28,11 @@ enum Tabs {
   Upload = 1,
 }
 
+export type View = "list" | "grid" | "gallery";
+
 function App() {
   const [activeFolder, setActiveFolder] = useState("");
+  const [view, setView] = useState<View>("list");
   const [activeTab, setActiveTab] = useState<number>(0);
   const queryClient = useQueryClient();
   const createFolderDialog = useToggle(false);
@@ -107,7 +110,12 @@ function App() {
       isFetched ? (
         <div className={styles.contentX}>
           {breadcrumbs}
-          <Files data={data!} onSelectFolder={setActiveFolder} />
+          <Files
+            data={data!}
+            onSelectFolder={setActiveFolder}
+            view={view}
+            setView={setView}
+          />
         </div>
       ) : (
         <>
