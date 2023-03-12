@@ -36,6 +36,11 @@ $hoverColor: rgba(0, 0, 0, 0.075);
   &:hover {
     background: $hoverColor;
   }
+
+  a span {
+    width: 200px;
+    overflow: hidden;
+  }
 }
 
 .link {

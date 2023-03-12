@@ -40,7 +40,7 @@ const isStale = (folderName: string) => {
     .sync();
 
   return !(
-    fileCrawler.length === cached!.contents.files.length &&
+    fileCrawler.length === cached!.contents.files?.length &&
     directoryCrawler.slice(1).length === cached!.contents.folders.length
   );
 };

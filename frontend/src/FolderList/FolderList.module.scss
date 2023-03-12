@@ -1,0 +1,13 @@
+.folderList {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.folder {
+  font-weight: normal;
+}
+
+.subList {
+  margin-left: 8px;
+}
