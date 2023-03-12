@@ -5,7 +5,7 @@ import cx from "classnames";
 import FileSize from "../FileSize/FileSize";
 import { FolderInfo } from "../../../models/folderInfo";
 import { GoFile, GoFileMedia } from "react-icons/go";
-import { FcFolder } from "react-icons/fc";
+import { FcFolder, FcOpenedFolder } from "react-icons/fc";
 import Rating from "../Rating/Rating";
 
 interface Props {
@@ -39,15 +39,22 @@ const FileList: FC<Props> = ({
   );
 };
 
-const Folder: FC<{ folder: FolderInfo; onSelect: () => void }> = ({
-  folder,
-  onSelect,
-}) => {
+export const Folder: FC<{
+  className?: string;
+  folder: FolderInfo;
+  onSelect: () => void;
+  variant?: "open" | "closed";
+  truncate?: number;
+}> = ({ folder, onSelect, variant = "closed", className, truncate }) => {
+  const folderName =
+    truncate && folder.name.length >= truncate
+      ? folder.name.substring(0, truncate - 3) + "..."
+      : folder.name;
   return (
     <div className={cx(styles.file, styles.folder)} onClick={onSelect}>
-      <a target="_" className={cx(styles.link, styles.filename)}>
-        <FcFolder />
-        {folder.name}
+      <a target="_" className={cx(styles.link, styles.filename, className)}>
+        {variant === "closed" ? <FcFolder /> : <FcOpenedFolder />}
+        <span>{folderName}</span>
       </a>
     </div>
   );

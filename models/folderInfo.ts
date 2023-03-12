@@ -3,7 +3,7 @@ import { FileInfo } from "./fileinfo";
 export interface FolderInfo {
   name: string;
   parent: string;
-  files: FileInfo[];
+  files?: FileInfo[];
   folders: FolderInfo[];
   dateAdded?: Date;
 }
