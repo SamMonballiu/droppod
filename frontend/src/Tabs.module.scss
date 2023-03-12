@@ -13,6 +13,17 @@ $tabWidth: 40px;
   overflow: hidden;
 }
 
+.foldersFiles {
+  display: flex;
+
+  flex-grow: 1;
+
+  section:nth-child(2) {
+    flex-grow: 2;
+    overflow: auto;
+  }
+}
+
 .vertical {
   height: 100vh;
   width: $tabWidth;

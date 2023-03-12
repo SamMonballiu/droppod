@@ -1,7 +1,7 @@
 import app from "./App.module.scss";
 import styles from "./Tabs.module.scss";
 import Upload from "./Upload/Upload";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FilesResponse } from "../../models/response";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import Files from "./Files/Files";
@@ -14,6 +14,8 @@ import axios from "axios";
 import { GoFileSubmodule, GoCloudUpload } from "react-icons/go";
 import Paper from "./Paper/Paper";
 import cx from "classnames";
+import { FolderInfo } from "../../models/folderInfo";
+import FolderList from "./FolderList/FolderList";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -57,6 +59,14 @@ function App() {
     },
     {
       staleTime: Infinity,
+    }
+  );
+
+  const { data: folderList, isFetched: hasFetchedFolders } = useQuery(
+    ["folders"],
+    async () => {
+      let url = baseUrl + "folders";
+      return (await axios.get<FolderInfo>(url)).data;
     }
   );
 
@@ -105,24 +115,42 @@ function App() {
     return await onCreateFolder(folderName);
   };
 
+  const handleSelectFolder = (folderName: string) => {
+    setActiveFolder(folderName === "" ? "" : "/" + folderName);
+  };
+
   const content =
     activeTab == 0 ? (
-      isFetched ? (
-        <div className={styles.contentX}>
-          {breadcrumbs}
-          <Files
-            data={data!}
-            onSelectFolder={setActiveFolder}
-            view={view}
-            setView={setView}
-          />
+      <div className={styles.contentX}>
+        {breadcrumbs}
+        <div className={styles.foldersFiles}>
+          <section>
+            {hasFetchedFolders && (
+              <FolderList
+                onSelect={handleSelectFolder}
+                data={folderList!}
+                activeFolder={activeFolder}
+                isExpanded={(folderName) =>
+                  activeFolder !== "" && activeFolder.includes(folderName)
+                }
+              />
+            )}
+          </section>
+
+          <section>
+            {isFetched ? (
+              <Files
+                data={data!}
+                onSelectFolder={setActiveFolder}
+                view={view}
+                setView={setView}
+              />
+            ) : (
+              <p>Fetching...</p>
+            )}
+          </section>
         </div>
-      ) : (
-        <>
-          {breadcrumbs}
-          <p>Fetching...</p>
-        </>
-      )
+      </div>
     ) : (
       <>
         {breadcrumbs}
