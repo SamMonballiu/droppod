@@ -17,7 +17,13 @@ body {
 .breadcrumbs {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+
+  div:nth-child(1) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 }
 
 .button {
@@ -97,4 +103,29 @@ body {
   font-size: 0.8em;
   opacity: 0.5;
   margin-top: 4px;
+}
+
+.folderListIcon {
+  font-size: 24px;
+  z-index: 2;
+  opacity: 0.75;
+  border-radius: 40px;
+  opacity: 0.25;
+
+  &:hover {
+    background: rgb(235, 235, 235);
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    opacity: 1;
+  }
+}
+
+.folderListContainer {
+  position: relative;
+
+  .collapse {
+    position: absolute;
+    top: 0.25em;
+    right: 1em;
+  }
 }

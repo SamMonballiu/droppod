@@ -24,7 +24,10 @@ import {
   MdGridView,
   MdOutlinePhoto,
   MdOutlineCreateNewFolder,
+  MdChevronRight,
+  MdChevronLeft,
 } from "react-icons/md";
+import Collapsible from "./Collapsible/Collapsible";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -49,6 +52,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<number>(0);
   const queryClient = useQueryClient();
   const createFolderDialog = useToggle(false);
+  const showFolderList = useToggle(true);
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -145,16 +149,18 @@ function App() {
 
   const breadcrumbs = (
     <div className={app.breadcrumbs}>
-      <Breadcrumbs
-        path={activeFolder}
-        onClick={setActiveFolder}
-        isReadOnly={activeTab === Tabs.Upload}
-      />
-      {activeTab !== Tabs.Upload && (
-        <div className={app.button} onClick={createFolderDialog.toggle}>
-          <MdOutlineCreateNewFolder />
-        </div>
-      )}
+      <div>
+        <Breadcrumbs
+          path={activeFolder}
+          onClick={setActiveFolder}
+          isReadOnly={activeTab === Tabs.Upload}
+        />
+        {activeTab !== Tabs.Upload && (
+          <div className={app.button} onClick={createFolderDialog.toggle}>
+            <MdOutlineCreateNewFolder />
+          </div>
+        )}
+      </div>
       {data && (
         <div className={app.info}>
           Free space: {(data!.freeSpace / 1024 / 1024).toFixed(2)} mb
@@ -169,7 +175,6 @@ function App() {
 
   const topbar = (
     <div className={tabStyles.topBar}>
-      {breadcrumbs}
       <div
         className={cx(app.settings, {
           [app.hidden]: view === "gallery",
@@ -221,6 +226,7 @@ function App() {
           </div>
         )}
       </div>
+      {breadcrumbs}
     </div>
   );
 
@@ -239,23 +245,40 @@ function App() {
         <div className={tabStyles.foldersFiles}>
           <section>
             {hasFetchedFolders && (
-              <FolderList
-                className={tabStyles.folderList}
-                onSelect={handleSelectFolder}
-                data={folderList!}
-                activeFolder={activeFolder}
-                isExpanded={(folder) => {
-                  const hasActiveFolder = activeFolder !== "";
-                  const isActiveFolder = activeFolder === "/" + folder.name;
+              //@ts-ignore
+              <Collapsible
+                collapsed={!showFolderList.value}
+                expandButton={
+                  <MdChevronRight
+                    className={app.folderListIcon}
+                    onClick={showFolderList.toggle}
+                  />
+                }
+              >
+                <div className={app.folderListContainer}>
+                  <MdChevronLeft
+                    className={cx(app.collapse, app.folderListIcon)}
+                    onClick={showFolderList.toggle}
+                  />
+                  <FolderList
+                    className={tabStyles.folderList}
+                    onSelect={handleSelectFolder}
+                    data={folderList!}
+                    activeFolder={activeFolder}
+                    isExpanded={(folder) => {
+                      const hasActiveFolder = activeFolder !== "";
+                      const isActiveFolder = activeFolder === "/" + folder.name;
 
-                  return (
-                    hasActiveFolder &&
-                    (isActiveFolder ||
-                      (activeFolder.includes(folder.name) &&
-                        activeFolder.includes(folder.parent)))
-                  );
-                }}
-              />
+                      return (
+                        hasActiveFolder &&
+                        (isActiveFolder ||
+                          (activeFolder.includes(folder.name) &&
+                            activeFolder.includes(folder.parent)))
+                      );
+                    }}
+                  />
+                </div>
+              </Collapsible>
             )}
           </section>
 
