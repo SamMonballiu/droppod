@@ -1,5 +1,6 @@
 $tabWidth: 40px;
 $topBarHeight: 60px;
+$padding: 0.5em;
 
 .selected {
   border-bottom: 3px solid white !important;
@@ -26,9 +27,16 @@ $topBarHeight: 60px;
   section:nth-child(2) {
     flex-grow: 2;
     overflow: auto;
-    height: calc(100vh - $topBarHeight - 2em);
+    height: calc(100vh - $topBarHeight - $padding - $padding);
     display: flex;
   }
+}
+
+.folderList {
+  height: calc(100vh - $topBarHeight - $padding - $padding);
+  font-size: 0.9em;
+  opacity: 0.9;
+  overflow: auto;
 }
 
 .vertical {
@@ -72,7 +80,7 @@ $topBarHeight: 60px;
   background: rgb(250, 250, 250);
   width: calc(100vw - $tabWidth);
   height: 100vh;
-  padding: 1em;
+  padding: $padding;
 }
 
 .horizontal {
