@@ -32,6 +32,17 @@ $padding: 0.5em;
   }
 }
 
+.loadingFolderList {
+  width: 200px;
+}
+
+.loadingFiles {
+  flex-grow: 2;
+  overflow: auto;
+  height: calc(100vh - $topBarHeight - $padding - $padding);
+  display: flex;
+}
+
 .folderList {
   height: calc(100vh - $topBarHeight - $padding - $padding);
   font-size: 0.9em;

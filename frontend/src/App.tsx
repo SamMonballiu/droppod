@@ -28,6 +28,7 @@ import {
   MdChevronLeft,
 } from "react-icons/md";
 import Collapsible from "./Collapsible/Collapsible";
+import Loading from "./Loading/Loading";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -77,7 +78,7 @@ function App() {
     }
   );
 
-  const { data: folderList, isFetched: hasFetchedFolders } = useQuery(
+  const { data: folderList, isFetching: isFetchingFolderList } = useQuery(
     ["folders"],
     async () => {
       let url = baseUrl + "folders";
@@ -131,6 +132,7 @@ function App() {
         {
           onSuccess: () => {
             queryClient.invalidateQueries(["files", activeFolder]);
+            queryClient.invalidateQueries(["folders"]);
             createFolderDialog.set(false);
           },
         }
@@ -244,7 +246,14 @@ function App() {
         {topbar}
         <div className={tabStyles.foldersFiles}>
           <section>
-            {hasFetchedFolders && (
+            {isFetchingFolderList ? (
+              <Loading
+                className={cx(
+                  tabStyles.folderList,
+                  tabStyles.loadingFolderList
+                )}
+              />
+            ) : (
               //@ts-ignore
               <Collapsible
                 collapsed={!showFolderList.value}
@@ -294,7 +303,7 @@ function App() {
                 isSelecting={false}
               />
             ) : (
-              <p>Fetching...</p>
+              <Loading className={cx(tabStyles.loadingFiles)} />
             )}
           </section>
         </div>
