@@ -1,0 +1,26 @@
+.loading {
+  background: rgb(240, 240, 242);
+  animation-name: fade;
+  animation-direction: alternate;
+  animation-duration: 600ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.icon {
+  font-size: 64px;
+  opacity: 0.25;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.75;
+  }
+}
