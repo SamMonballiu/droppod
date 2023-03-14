@@ -240,6 +240,7 @@ function App() {
           <section>
             {hasFetchedFolders && (
               <FolderList
+                className={tabStyles.folderList}
                 onSelect={handleSelectFolder}
                 data={folderList!}
                 activeFolder={activeFolder}
