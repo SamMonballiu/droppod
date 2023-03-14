@@ -7,7 +7,7 @@ interface Props {
   data: FolderInfo;
   activeFolder: string;
   onSelect: (folder: string) => void;
-  isExpanded: (folder: string) => boolean;
+  isExpanded: (folder: FolderInfo) => boolean;
 }
 
 const FolderList: FC<Props> = ({
@@ -26,7 +26,7 @@ const FolderList: FC<Props> = ({
         onSelect={() => onSelect(f.parent + f.name)}
       />
 
-      {isExpanded(f.name) && (
+      {isExpanded(f) && (
         <div className={styles.subList}>
           <FolderList
             data={f}

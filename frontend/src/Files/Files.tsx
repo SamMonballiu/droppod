@@ -1,34 +1,40 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import { FileInfo, isImage } from "../../../models/fileinfo";
-import FileList from "../FileList/FileList";
-import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
-import { MdGridView, MdOutlineListAlt, MdOutlinePhoto } from "react-icons/md";
-import { TbTelescope } from "react-icons/tb";
-import styles from "./Files.module.scss";
 import cx from "classnames";
-import { sortBy, useSortedList } from "../hooks/useSortedList";
-import FileSortOptions, { SortOption } from "./FileSortOptions";
-import { FilesResponse } from "../../../models/response";
-import FileDialog from "../FileDialog/FileDialog";
-import { MemoizedGallery } from "../Gallery/Gallery";
-import { useThumbnails } from "../hooks/useThumbnails";
-import useSelectList from "../hooks/useSelectList";
-import SelectionInfo from "../SelectionInfo/SelectionInfo";
+import { FC, useEffect, useState } from "react";
+import { FileInfo, isImage } from "../../../models/fileinfo";
+import { FolderInfo } from "../../../models/folderInfo";
 import { View } from "../App";
+import FileDialog from "../FileDialog/FileDialog";
+import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
+import FileList from "../FileList/FileList";
+import { MemoizedGallery } from "../Gallery/Gallery";
+import useSelectList from "../hooks/useSelectList";
+import { useThumbnails } from "../hooks/useThumbnails";
+import SelectionInfo from "../SelectionInfo/SelectionInfo";
+import styles from "./Files.module.scss";
 
 interface Props {
-  data: FilesResponse;
+  data: FileInfo[];
+  folders: FolderInfo[];
   onSelectFolder: (folder: string) => void;
   view: View;
+  zoom: FileGridZoom;
   setView: (view: View) => void;
+  isSelecting: boolean;
 }
 
-const Files: FC<Props> = ({ data, onSelectFolder, view, setView }) => {
-  const [zoom, setZoom] = useState<FileGridZoom>(3);
+const Files: FC<Props> = ({
+  data,
+  folders,
+  onSelectFolder,
+  view,
+  setView,
+  zoom,
+  isSelecting,
+}) => {
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
-  const [isSelecting, setIsSelecting] = useState<boolean>(false);
+
   const [, isSelected, toggleSelected, , setAllSelected, events] =
-    useSelectList(data.contents.files.map((f) => f.filename));
+    useSelectList(data.map((f) => f.filename));
 
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
@@ -53,7 +59,7 @@ const Files: FC<Props> = ({ data, onSelectFolder, view, setView }) => {
 
     unsubscribes.push(
       events.onSetAllSelected.subscribe((value) => {
-        const thumbnails = data.contents.files
+        const thumbnails = data
           .map((f) => f.filename)
           .map((fn) => document.getElementById(fn)?.parentElement);
         if (value) {
@@ -82,49 +88,9 @@ const Files: FC<Props> = ({ data, onSelectFolder, view, setView }) => {
     setFocusedFile(file);
   };
 
-  const { thumbnails } = useThumbnails(data.contents.files, handleFocusFile);
+  const { thumbnails } = useThumbnails(data, handleFocusFile);
 
-  const { getSorted, sortProperty, isDescending, sort } = useSortedList(
-    data.contents.files,
-    "dateAdded",
-    true
-  );
-
-  const sortedFolders = useMemo(() => {
-    if (data.contents.folders.length === 0) {
-      return [];
-    }
-
-    let sorted = data.contents.folders;
-
-    if (sortProperty === "dateAdded") {
-      sorted = [...data.contents.folders].sort((a, b) =>
-        sortBy(a, b, "dateAdded")
-      );
-    }
-
-    if (sortProperty === "filename") {
-      sorted = [...data.contents.folders].sort((a, b) => sortBy(a, b, "name"));
-    }
-
-    return isDescending && ["dateAdded", "filename"].includes(sortProperty!)
-      ? sorted.reverse()
-      : sorted;
-  }, [data, sortProperty, isDescending, sortBy]);
-
-  const sortOptions: SortOption<FileInfo>[] = [
-    { property: "dateAdded", name: "Date" },
-    { property: "filename", name: "Filename" },
-    { property: "size", name: "Size" },
-    { property: "extension", name: "Extension" },
-    { property: "rating", name: "Rating" },
-  ];
-
-  const handleSort = (option: SortOption<FileInfo>) => {
-    sort(option.property);
-  };
-
-  if (data.contents.folders.length === 0 && data.contents.files.length === 0) {
+  if (folders.length === 0 && data.length === 0) {
     return <p>This folder is empty.</p>;
   }
 
@@ -132,13 +98,13 @@ const Files: FC<Props> = ({ data, onSelectFolder, view, setView }) => {
     <div className={styles.container}>
       {isSelecting && (
         <SelectionInfo
-          items={getSorted()
+          items={data
             .filter((f) => isSelected(f.filename))
             .map((f) => f.filename)}
           renderItem={(name: string) => <p key={name}>{name}</p>}
           onClearSelection={() => {
             setAllSelected(false);
-            setIsSelecting(false);
+            //setIsSelecting(false);
           }}
           onSelectAll={() => {
             setAllSelected(true);
@@ -155,87 +121,29 @@ const Files: FC<Props> = ({ data, onSelectFolder, view, setView }) => {
       )}
       {view === "gallery" && (
         <MemoizedGallery
-          files={getSorted().filter(isImage)}
+          files={data.filter(isImage)}
           onClose={() => setView("grid")}
         />
       )}
-      <div className={styles.topBar}>
-        <div
-          className={cx(styles.settings, {
-            [styles.hidden]: view === "gallery",
-          })}
-        >
-          <>
-            <FileSortOptions
-              options={sortOptions}
-              value={sortProperty!}
-              onChange={(opt) => {
-                //@ts-ignore
-                handleSort(opt);
-              }}
-              isDescending={isDescending}
-            />
-            {view === "grid" && (
-              <div className={styles.zoomSlider}>
-                <TbTelescope />
-                <input
-                  type="range"
-                  min="1"
-                  max="4"
-                  value={zoom}
-                  onChange={(e) =>
-                    setZoom(parseInt(e.target.value) as FileGridZoom)
-                  }
-                />
-              </div>
-            )}
-          </>
 
-          {!isSelecting && (
-            <div className={styles.icons}>
-              <MdOutlineListAlt
-                className={cx({ [styles.active]: view === "list" })}
-                onClick={() => setView("list")}
-              />
-              <MdGridView
-                className={cx({ [styles.active]: view === "grid" })}
-                onClick={() => setView("grid")}
-              />
-              {data.contents.files.some(isImage) && (
-                <MdOutlinePhoto
-                  // @ts-ignore
-                  className={cx({ [styles.active]: view === "gallery" })}
-                  onClick={() => setView("gallery")}
-                />
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      <div
-        className={cx(styles.content, { [styles.hidden]: view === "gallery" })}
-      >
+      <div className={cx({ [styles.hidden]: view === "gallery" })}>
         {view === "list" ? (
           <FileList
-            files={getSorted()}
-            folders={sortedFolders}
+            files={data}
+            folders={folders}
             onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
           />
         ) : (
           <FileGrid
-            files={getSorted()}
-            folders={sortedFolders}
+            files={data}
+            folders={folders}
             zoom={zoom}
             onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
             thumbnails={thumbnails}
           />
         )}
-
-        <div className={styles.info}>
-          Free space: {(data.freeSpace / 1024 / 1024).toFixed(2)} mb
-        </div>
       </div>
     </div>
   );

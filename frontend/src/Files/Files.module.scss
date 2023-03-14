@@ -9,61 +9,6 @@
   overflow-y: auto;
 }
 
-.settings {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  min-height: 2em;
-  flex-wrap: wrap;
-}
-
-.zoomSlider {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  svg {
-    opacity: 0.3;
-    font-size: 1.2em;
-  }
-
-  input {
-    height: 4px;
-  }
-}
-
-.icons {
-  font-size: 1.4em;
-  display: flex;
-  justify-content: flex-end;
-  gap: 4px;
-  margin-bottom: 8px;
-
-  svg {
-    opacity: 0.25;
-    cursor: pointer;
-
-    &:hover {
-      color: rgb(100, 149, 237);
-    }
-  }
-
-  .active {
-    color: cornflowerblue;
-    opacity: 1;
-    cursor: default;
-  }
-}
-
-.info {
-  display: flex;
-  justify-content: flex-end;
-  font-size: 0.8em;
-  opacity: 0.5;
-  margin-top: 4px;
-}
-
 .hidden {
   display: none;
 }
