@@ -83,8 +83,8 @@ function App() {
 
   const { getSorted, sortProperty, isDescending, sort } = useSortedList(
     data?.contents.files ?? [],
-    "dateAdded",
-    true
+    "filename",
+    false
   );
 
   const sortedFolders = useMemo(() => {
@@ -110,8 +110,8 @@ function App() {
   }, [data, sortProperty, isDescending, sortBy]);
 
   const sortOptions: SortOption<FileInfo>[] = [
-    { property: "dateAdded", name: "Date" },
     { property: "filename", name: "Filename" },
+    { property: "dateAdded", name: "Date" },
     { property: "size", name: "Size" },
     { property: "extension", name: "Extension" },
     { property: "rating", name: "Rating" },
