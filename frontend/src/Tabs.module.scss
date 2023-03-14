@@ -1,7 +1,12 @@
 $tabWidth: 40px;
+$topBarHeight: 60px;
 
 .selected {
   border-bottom: 3px solid white !important;
+}
+
+.topBar {
+  height: $topBarHeight;
 }
 
 .container {
@@ -21,6 +26,8 @@ $tabWidth: 40px;
   section:nth-child(2) {
     flex-grow: 2;
     overflow: auto;
+    height: calc(100vh - $topBarHeight - 2em);
+    display: flex;
   }
 }
 
@@ -97,6 +104,12 @@ $tabWidth: 40px;
 
   .content {
     width: 100vw;
+  }
+
+  .foldersFiles {
+    section:nth-child(1) {
+      display: none;
+    }
   }
 }
 
