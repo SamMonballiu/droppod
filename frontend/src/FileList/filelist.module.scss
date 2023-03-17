@@ -2,7 +2,7 @@ $hoverColor: rgba(0, 0, 0, 0.075);
 
 .container {
   // https://css-tricks.com/simplified-fluid-typography/
-  font-size: min(max(0.5rem, 2vw), 14px);
+  font-size: clamp(0.8em, 2vw, 14px);
 }
 
 .files {
@@ -18,6 +18,10 @@ $hoverColor: rgba(0, 0, 0, 0.075);
     background: rgb(250, 250, 250);
   }
   justify-content: space-between;
+
+  a svg {
+    min-width: 20px;
+  }
 
   color: rgba(0, 0, 0, 0.55);
   text-overflow: ellipsis;
@@ -91,4 +95,22 @@ $hoverColor: rgba(0, 0, 0, 0.075);
   font-family: "Fira Code", monospace;
   flex-basis: 10vw;
   margin: 0;
+}
+
+@media (orientation: portrait) {
+  .ext,
+  .rating,
+  .date {
+    display: none;
+  }
+
+  .filename {
+    flex-basis: 80vw;
+  }
+}
+
+@media (orientation: portrait) and (max-width: 400px) {
+  .files {
+    gap: 4px;
+  }
 }
