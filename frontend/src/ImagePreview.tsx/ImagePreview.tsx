@@ -2,10 +2,10 @@ import { FileInfo, getOrientation } from "../../../models/fileinfo";
 import styles from "./ImagePreview.module.scss";
 import { FC } from "react";
 import { useQuery } from "react-query";
-import { GoFileMedia } from "react-icons/go";
 import cx from "classnames";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
+import Loading from "../Loading/Loading";
 
 interface Props {
   file: FileInfo;
@@ -58,13 +58,11 @@ const ImagePreview: FC<Props> = ({
   );
 
   return (
-    <div className={className} ref={ref}>
+    <div className={cx(styles.container, className)} ref={ref}>
       {isFetchingImage ? (
-        <div className={cx(styles.preview, styles.image, className)}>
-          <GoFileMedia />
-        </div>
+        <Loading className={styles.preview} />
       ) : (
-        <img src={imageData} className={cx(styles.image, className)} />
+        <img src={imageData} className={styles.image} />
       )}
     </div>
   );
