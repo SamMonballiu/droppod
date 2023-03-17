@@ -61,7 +61,7 @@ function App() {
 
   const { data, isFetched } = useQuery(
     ["files", activeFolder],
-    async () => {
+    async ({ signal }) => {
       let url = baseUrl + "files";
       if (activeFolder !== "") {
         url += `?folder=${activeFolder}`;
@@ -70,6 +70,7 @@ function App() {
       return (
         await axios.get<FilesResponse>(url, {
           transformResponse: (data) => JSON.parse(data, dateReviver),
+          signal,
         })
       ).data;
     },
@@ -237,6 +238,7 @@ function App() {
   };
 
   const handleSelectFolder = (folderName: string) => {
+    queryClient.cancelQueries(["files"]);
     setActiveFolder(folderName === "" ? "" : "/" + folderName);
   };
 
