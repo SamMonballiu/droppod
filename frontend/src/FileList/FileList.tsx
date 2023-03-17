@@ -44,17 +44,12 @@ export const Folder: FC<{
   folder: FolderInfo;
   onSelect: () => void;
   variant?: "open" | "closed";
-  truncate?: number;
-}> = ({ folder, onSelect, variant = "closed", className, truncate }) => {
-  const folderName =
-    truncate && folder.name.length >= truncate
-      ? folder.name.substring(0, truncate - 3) + "..."
-      : folder.name;
+}> = ({ folder, onSelect, variant = "closed", className }) => {
   return (
     <div className={cx(styles.file, styles.folder)} onClick={onSelect}>
       <a target="_" className={cx(styles.link, styles.filename, className)}>
         {variant === "closed" ? <FcFolder /> : <FcOpenedFolder />}
-        <span>{folderName}</span>
+        <span>{folder.name}</span>
       </a>
     </div>
   );
