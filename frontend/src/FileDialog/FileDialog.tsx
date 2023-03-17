@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FileInfo } from "../../../models/fileinfo";
+import { FileInfo, isImage } from "../../../models/fileinfo";
 import Dialog from "../Dialog/Dialog";
 import FileProperties from "../FileProperties/FileProperties";
 import ImagePreview from "../ImagePreview.tsx/ImagePreview";
@@ -15,7 +15,7 @@ const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <div>
-        <ImagePreview file={file} className={styles.image} />
+        {isImage(file) && <ImagePreview file={file} className={styles.image} />}
         <FileProperties file={file} />
       </div>
     </Dialog>
