@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { FileInfo } from "../../../models/fileinfo";
-import { FilesResponse } from "../../../models/response";
 import Thumbnail from "../Thumbnail/Thumbnail";
 
 export function useThumbnails(
@@ -25,7 +24,7 @@ export function useThumbnails(
     const thumbnails = files.map((f) => {
       return {
         file: f,
-        element: getThumbnail(f, false),
+        element: getThumbnail(f),
       };
     });
 
