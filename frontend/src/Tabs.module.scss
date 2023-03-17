@@ -1,7 +1,7 @@
 $tabWidth: 40px;
 $topBarHeight: 60px;
 $padding: 0.5em;
-$folderListWidth: clamp(12vw, 200px, 16vw);
+$folderListWidth: clamp(12vw, 220px, 16vw);
 
 .selected {
   border-bottom: 3px solid white !important;
@@ -51,7 +51,7 @@ $folderListWidth: clamp(12vw, 200px, 16vw);
   font-size: 0.9em;
   opacity: 0.9;
   overflow: auto;
-  margin: 0 1em;
+  margin: 0 0.5em;
   width: $folderListWidth;
 }
 

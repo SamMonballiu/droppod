@@ -54,6 +54,7 @@ function App() {
   const queryClient = useQueryClient();
   const createFolderDialog = useToggle(false);
   const showFolderList = useToggle(true);
+  const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -240,6 +241,17 @@ function App() {
   const handleSelectFolder = (folderName: string) => {
     queryClient.cancelQueries(["files"]);
     setActiveFolder(folderName === "" ? "" : "/" + folderName);
+    if (!expandedFolders.includes(folderName)) {
+      handleToggleExpanded(folderName);
+    }
+  };
+
+  const handleToggleExpanded = (folderName: string) => {
+    if (expandedFolders.includes(folderName)) {
+      setExpandedFolders(expandedFolders.filter((x) => x !== folderName));
+    } else {
+      setExpandedFolders([...expandedFolders, folderName]);
+    }
   };
 
   const content =
@@ -276,18 +288,13 @@ function App() {
                     className={tabStyles.folderList}
                     onSelect={handleSelectFolder}
                     data={folderList!}
-                    activeFolder={activeFolder}
-                    isExpanded={(folder) => {
-                      const hasActiveFolder = activeFolder !== "";
-                      const isActiveFolder = activeFolder === "/" + folder.name;
-
-                      return (
-                        hasActiveFolder &&
-                        (isActiveFolder ||
-                          (activeFolder.includes(folder.name) &&
-                            activeFolder.includes(folder.parent)))
-                      );
-                    }}
+                    isExpanded={(folder) =>
+                      expandedFolders.includes(folder.parent + folder.name)
+                    }
+                    isActiveFolder={(folder) =>
+                      activeFolder === `/${folder.parent}${folder.name}`
+                    }
+                    onToggleExpanded={handleToggleExpanded}
                   />
                 </div>
               </Collapsible>
