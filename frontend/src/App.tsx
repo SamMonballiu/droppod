@@ -248,6 +248,7 @@ function App() {
           <section>
             {isFetchingFolderList ? (
               <Loading
+                animated
                 className={cx(
                   tabStyles.folderList,
                   tabStyles.loadingFolderList
@@ -303,7 +304,7 @@ function App() {
                 isSelecting={false}
               />
             ) : (
-              <Loading className={cx(tabStyles.loadingFiles)} />
+              <Loading animated className={cx(tabStyles.loadingFiles)} />
             )}
           </section>
         </div>
