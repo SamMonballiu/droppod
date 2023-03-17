@@ -23,7 +23,6 @@ const FolderList: FC<Props> = ({
     <div key={f.name ?? "base"}>
       <Folder
         variant={activeFolder.includes(f.name) ? "open" : "closed"}
-        truncate={20}
         className={styles.folder}
         folder={f}
         onSelect={() => onSelect(f.parent + f.name)}

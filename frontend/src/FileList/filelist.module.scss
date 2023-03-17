@@ -37,9 +37,14 @@ $hoverColor: rgba(0, 0, 0, 0.075);
     background: $hoverColor;
   }
 
+  a svg {
+    min-width: 20px;
+  }
+
   a span {
-    width: 200px;
     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 

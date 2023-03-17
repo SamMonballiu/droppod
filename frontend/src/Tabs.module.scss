@@ -1,6 +1,7 @@
 $tabWidth: 40px;
 $topBarHeight: 60px;
 $padding: 0.5em;
+$folderListWidth: clamp(12vw, 200px, 16vw);
 
 .selected {
   border-bottom: 3px solid white !important;
@@ -33,7 +34,7 @@ $padding: 0.5em;
 }
 
 .loadingFolderList {
-  width: 200px;
+  width: $folderListWidth;
   border-radius: 8px;
 }
 
@@ -51,6 +52,7 @@ $padding: 0.5em;
   opacity: 0.9;
   overflow: auto;
   margin: 0 0.5em;
+  width: $folderListWidth;
 }
 
 .vertical {
