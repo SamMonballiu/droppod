@@ -1,7 +1,7 @@
 import { FileInfo, getOrientation } from "../../../models/fileinfo";
 import styles from "./ImagePreview.module.scss";
-import { FC } from "react";
-import { useQuery } from "react-query";
+import { FC, useEffect } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import cx from "classnames";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
@@ -27,6 +27,11 @@ const ImagePreview: FC<Props> = ({
   dimension = 1000,
 }) => {
   const { ref, inView } = useInView();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.cancelQueries(["thumbnail", file, dimension, square]);
+  }, []);
 
   const orientation = getOrientation(file);
   const size = square
@@ -42,12 +47,13 @@ const ImagePreview: FC<Props> = ({
 
   const { data: imageData, isFetching: isFetchingImage } = useQuery(
     ["thumbnail", file, dimension, square],
-    async () => {
+    async ({ signal }) => {
       const fetchUrl = file.dimensions
         ? `${url}thumbnail?file=${path}&size=${size}&quality=${quality}`
         : `${url}thumbnail?file=${path}&percentage=30&quality=${quality}`;
-      const response = (await axios.get(fetchUrl, { responseType: "blob" }))
-        .data;
+      const response = (
+        await axios.get(fetchUrl, { responseType: "blob", signal })
+      ).data;
       const imageObjectUrl = URL.createObjectURL(response);
       return imageObjectUrl;
     },
