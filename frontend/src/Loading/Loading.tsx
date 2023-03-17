@@ -3,9 +3,15 @@ import styles from "./Loading.module.scss";
 import cx from "classnames";
 import { MdHourglassEmpty } from "react-icons/md";
 
-const Loading: FC<{ className?: string }> = ({ className }) => {
+interface Props {
+  animated?: boolean;
+  className?: string;
+}
+const Loading: FC<Props> = ({ animated, className }) => {
   return (
-    <div className={cx(className, styles.loading)}>
+    <div
+      className={cx(className, styles.loading, { [styles.animated]: animated })}
+    >
       <MdHourglassEmpty className={styles.icon} />
     </div>
   );

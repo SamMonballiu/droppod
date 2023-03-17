@@ -1,14 +1,16 @@
 .loading {
   background: rgb(240, 240, 242);
-  animation-name: fade;
-  animation-direction: alternate;
-  animation-duration: 600ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+}
+
+.animated {
+  animation-name: fade;
+  animation-direction: alternate;
+  animation-duration: 1200ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
 
 .icon {
