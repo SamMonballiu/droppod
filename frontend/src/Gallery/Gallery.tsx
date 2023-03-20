@@ -5,8 +5,6 @@ import styles from "./Gallery.module.scss";
 import cx from "classnames";
 import FileProperties from "../FileProperties/FileProperties";
 import {
-  BiCaretLeft,
-  BiCaretRight,
   BiFullscreen,
   BiChevronsUp,
   BiChevronsDown,
@@ -124,13 +122,13 @@ const Gallery: FC<Props> = ({ files, onClose }) => {
         <div className={styles.content}>
           <div className={styles.topRow}>
             <div className={modeDependent.activeImage}>
-              <BiCaretLeft onClick={() => select("previous")} />
-              <ImagePreview
-                dimension={1000}
-                file={selectedItem}
-                className={styles.image}
-              />
-              <BiCaretRight onClick={() => select("next")} />
+              <div className={styles.navigators}>
+                <div onClick={() => select("previous")}></div>
+                <div onClick={() => select("next")}></div>
+              </div>
+              <div className={styles.image}>
+                <ImagePreview dimension={1000} file={selectedItem} />
+              </div>
             </div>
             <div className={styles.fileInfo}>
               <FileProperties
