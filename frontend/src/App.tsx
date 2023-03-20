@@ -24,9 +24,9 @@ import {
   MdGridView,
   MdOutlinePhoto,
   MdOutlineCreateNewFolder,
-  MdChevronRight,
-  MdChevronLeft,
 } from "react-icons/md";
+
+import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import Collapsible from "./Collapsible/Collapsible";
 import Loading from "./Loading/Loading";
 
@@ -273,14 +273,14 @@ function App() {
               <Collapsible
                 collapsed={!showFolderList.value}
                 expandButton={
-                  <MdChevronRight
+                  <RxDoubleArrowRight
                     className={app.folderListIcon}
                     onClick={showFolderList.toggle}
                   />
                 }
               >
                 <div className={app.folderListContainer}>
-                  <MdChevronLeft
+                  <RxDoubleArrowLeft
                     className={cx(app.collapse, app.folderListIcon)}
                     onClick={showFolderList.toggle}
                   />
