@@ -1,5 +1,6 @@
 import cx from "classnames";
 import { FC, useEffect, useState } from "react";
+import { SubscribableEvent } from "../../../models/event";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import { FolderInfo } from "../../../models/folderInfo";
 import { View } from "../App";
@@ -20,6 +21,9 @@ interface Props {
   zoom: FileGridZoom;
   setView: (view: View) => void;
   isSelecting: boolean;
+  onToggleSelected: (name: string) => void;
+  onSelectedChanged: SubscribableEvent<{ element: string; selected: boolean }>;
+  onSetAllSelected: SubscribableEvent<boolean>;
 }
 
 const Files: FC<Props> = ({
@@ -30,11 +34,11 @@ const Files: FC<Props> = ({
   setView,
   zoom,
   isSelecting,
+  onToggleSelected,
+  onSelectedChanged,
+  onSetAllSelected,
 }) => {
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
-
-  const [, isSelected, toggleSelected, , setAllSelected, events] =
-    useSelectList(data.map((f) => f.filename));
 
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
@@ -48,7 +52,7 @@ const Files: FC<Props> = ({
     let unsubscribes: (() => void)[] = [];
     if (isSelecting) {
       unsubscribes.push(
-        events.onSelectedChanged.subscribe((info) =>
+        onSelectedChanged.subscribe((info) =>
           handleSelectedStyle(info.element, info.selected)
         )
       );
@@ -58,7 +62,7 @@ const Files: FC<Props> = ({
       view === "grid" ? styles.gridSelection : styles.listSelection;
 
     unsubscribes.push(
-      events.onSetAllSelected.subscribe((value) => {
+      onSetAllSelected.subscribe((value) => {
         const thumbnails = data
           .map((f) => f.filename)
           .map((fn) => document.getElementById(fn)?.parentElement);
@@ -75,13 +79,13 @@ const Files: FC<Props> = ({
     );
 
     return () => {
-      unsubscribes.forEach((fn) => fn());
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
   }, [isSelecting, view]);
 
   const handleFocusFile = (file: FileInfo) => {
     if (isSelecting) {
-      toggleSelected(file.filename);
+      onToggleSelected(file.filename);
       return;
     }
 
@@ -96,22 +100,6 @@ const Files: FC<Props> = ({
 
   return (
     <div className={styles.container}>
-      {isSelecting && (
-        <SelectionInfo
-          items={data
-            .filter((f) => isSelected(f.filename))
-            .map((f) => f.filename)}
-          renderItem={(name: string) => <p key={name}>{name}</p>}
-          onClearSelection={() => {
-            setAllSelected(false);
-            //setIsSelecting(false);
-          }}
-          onSelectAll={() => {
-            setAllSelected(true);
-          }}
-        />
-      )}
-
       {focusedFile && (
         <FileDialog
           isOpen={focusedFile !== undefined}

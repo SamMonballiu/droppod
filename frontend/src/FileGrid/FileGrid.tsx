@@ -79,7 +79,10 @@ const Folder: FC<{
   return (
     <div className={cx(styles.file, zoomMap[zoom])} onClick={onSelect}>
       <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
-        <FcFolder className={styles.folderIcon} />
+        <FcFolder
+          className={styles.folderIcon}
+          id={folder.parent + "/" + folder.name}
+        />
       </div>
 
       {zoom > 1 && (

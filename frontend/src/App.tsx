@@ -1,7 +1,7 @@
 import app from "./App.module.scss";
 import tabStyles from "./Tabs.module.scss";
 import Upload from "./Upload/Upload";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FilesResponse } from "../../models/response";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import Files from "./Files/Files";
@@ -29,6 +29,9 @@ import {
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import Collapsible from "./Collapsible/Collapsible";
 import Loading from "./Loading/Loading";
+import useSelectList from "./hooks/useSelectList";
+import SelectionInfo from "./SelectionInfo/SelectionInfo";
+import FileSelectionInfo from "./FileSelectionInfo/FileSelectionInfo";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -47,8 +50,8 @@ export type View = "list" | "grid" | "gallery";
 
 function App() {
   const [activeFolder, setActiveFolder] = useState("");
-  const [view, setView] = useState<View>("list");
-  const [isSelecting, setIsSelecting] = useState<boolean>(false);
+  const [view, setView] = useState<View>("grid");
+  const [selectMode, setSelectMode] = useState<"single" | "multiple">("single");
   const [zoom, setZoom] = useState<FileGridZoom>(2);
   const [activeTab, setActiveTab] = useState<number>(0);
   const queryClient = useQueryClient();
@@ -79,6 +82,13 @@ function App() {
       staleTime: Infinity,
     }
   );
+
+  const [, isSelected, toggleSelected, , setAllSelected, events] =
+    useSelectList(
+      (data?.contents.files?.map((f) => f.filename) ?? []).concat(
+        data?.contents.folders.map((f) => f.name) ?? []
+      )
+    );
 
   const { data: folderList, isFetching: isFetchingFolderList } = useQuery(
     ["folders"],
@@ -194,7 +204,7 @@ function App() {
             }}
             isDescending={isDescending}
           />
-          {view === "grid" && (
+          {view === "grid" && selectMode === "single" && (
             <div className={app.zoomSlider}>
               <TbTelescope />
               <input
@@ -210,7 +220,7 @@ function App() {
           )}
         </>
 
-        {!isSelecting && (
+        {selectMode === "single" && (
           <div className={app.icons}>
             <MdOutlineListAlt
               className={cx({ [app.active]: view === "list" })}
@@ -239,10 +249,17 @@ function App() {
   };
 
   const handleSelectFolder = (folderName: string) => {
-    queryClient.cancelQueries(["files"]);
-    setActiveFolder(folderName === "" ? "" : "/" + folderName);
-    if (!expandedFolders.includes(folderName)) {
-      handleToggleExpanded(folderName);
+    switch (selectMode) {
+      case "single":
+        queryClient.cancelQueries(["files"]);
+        setActiveFolder(folderName === "" ? "" : "/" + folderName);
+        if (!expandedFolders.includes(folderName)) {
+          handleToggleExpanded(folderName);
+        }
+        break;
+      case "multiple":
+        //toggleSelected(folderName);
+        break;
     }
   };
 
@@ -305,12 +322,15 @@ function App() {
             {isFetched ? (
               <Files
                 data={getSorted()}
-                onSelectFolder={setActiveFolder}
+                onSelectFolder={handleSelectFolder}
                 view={view}
                 setView={setView}
                 folders={sortedFolders}
                 zoom={zoom}
-                isSelecting={false}
+                isSelecting={selectMode === "multiple"}
+                onToggleSelected={toggleSelected}
+                onSelectedChanged={events.onSelectedChanged}
+                onSetAllSelected={events.onSetAllSelected}
               />
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
@@ -344,6 +364,16 @@ function App() {
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}
           onSubmit={handleCreateFolder}
+        />
+      )}
+      {selectMode === "multiple" && isFetched && (
+        <FileSelectionInfo
+          data={data!}
+          isSelected={isSelected}
+          onClearSelection={() => setAllSelected(false)}
+          onSelectAll={() => {
+            setAllSelected(true);
+          }}
         />
       )}
       <div className={tabStyles.container}>

@@ -22,7 +22,7 @@ const SelectionInfo = <T,>({
   return (
     <div className={styles.container}>
       <div className={styles.shortInfo}>
-        <p onClick={toggleExpanded}>{items.length}</p>
+        <p onClick={toggleExpanded}>{items?.length ?? 0}</p>
         {isExpanded ? (
           <GoChevronUp onClick={toggleExpanded} className={styles.expand} />
         ) : (
