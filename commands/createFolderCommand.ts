@@ -7,6 +7,7 @@ import {
 } from "./base";
 import fs from "fs";
 import path from "path";
+import { qualify } from "../config";
 
 export class CreateFolderCommand implements Command {
   public location: string;
@@ -43,8 +44,12 @@ export class CreateFolderCommandValidator
     command instanceof CreateFolderCommand;
 
   public validate(command: CreateFolderCommand) {
+    if (!fs.existsSync(qualify(command.location))) {
+      return CommandValidateResult.Error("Location doesn't exist.");
+    }
+
     if (command.folderName === "") {
-      return new CommandValidateResult(["Folder name cannot be blank."]);
+      return CommandValidateResult.Error("Folder name cannot be blank.");
     }
 
     return CommandValidateResult.Success();
