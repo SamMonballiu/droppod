@@ -1,4 +1,6 @@
 import { Response } from "express";
+import { filesCache } from "../files-cache";
+import { ratings } from "../ratings";
 import {
   CreateFolderCommandHandler,
   CreateFolderCommandValidator,
@@ -124,7 +126,7 @@ export class CommandHandlerFactory {
     ];
     this.handlers = [
       new CreateFolderCommandHandler(),
-      new SetFileRatingCommandHandler(),
+      new SetFileRatingCommandHandler(ratings, filesCache),
       new MoveFilesCommandHandler(),
     ];
   }

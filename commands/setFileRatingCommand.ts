@@ -8,8 +8,8 @@ import {
   CommandValidator,
 } from "./base";
 import fs from "fs";
-import { ratings } from "../ratings";
-import { filesCache } from "../files-cache";
+import { ratings, RatingsService } from "../ratings";
+import { FilesCache } from "../files-cache";
 import path from "path";
 
 export class SetFileRatingCommand implements Command {
@@ -27,6 +27,14 @@ export class SetFileRatingCommand implements Command {
 export class SetFileRatingCommandHandler
   implements CommandHandler<SetFileRatingCommand>
 {
+  public ratings: RatingsService;
+  public filesCache: FilesCache;
+
+  constructor(ratings: RatingsService, filesCache: FilesCache) {
+    this.ratings = ratings;
+    this.filesCache = filesCache;
+  }
+
   public canHandle = (command: Command) =>
     command instanceof SetFileRatingCommand;
 
@@ -34,12 +42,12 @@ export class SetFileRatingCommandHandler
     const rating = command.rating;
 
     if (rating === 0) {
-      ratings.remove(path.join(command.path, command.filename));
+      this.ratings.remove(path.join(command.path, command.filename));
     } else {
-      ratings.set(path.join(command.path, command.filename), rating);
+      this.ratings.set(path.join(command.path, command.filename), rating);
     }
 
-    filesCache.invalidate(command.path);
+    this.filesCache.invalidate(command.path);
 
     return CommandHandleResult.Success.WithoutResult();
   }
