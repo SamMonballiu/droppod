@@ -44,7 +44,7 @@ export class CreateFolderCommandValidator
     command instanceof CreateFolderCommand;
 
   public validate(command: CreateFolderCommand) {
-    if (!fs.existsSync(qualify(command.location))) {
+    if (!fs.existsSync(command.location)) {
       return CommandValidateResult.Error("Location doesn't exist.");
     }
 

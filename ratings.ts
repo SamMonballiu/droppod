@@ -16,7 +16,13 @@ const set = async (filename: string, rating: FileRating) => {
 
 const remove = async (filename: string) => await storage.removeItem(filename);
 
-export const ratings = {
+export interface RatingsService {
+  get: (filename: string) => Promise<FileRating | undefined>;
+  set: (filename: string, rating: FileRating) => Promise<void>;
+  remove: (filename: string) => Promise<unknown>;
+}
+
+export const ratings: RatingsService = {
   get,
   set,
   remove,
