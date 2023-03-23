@@ -4,6 +4,10 @@ import {
   CreateFolderCommandValidator,
 } from "./createFolderCommand";
 import {
+  MoveFilesCommandHandler,
+  MoveFilesCommandValidator,
+} from "./moveFilesCommand";
+import {
   SetFileRatingCommandHandler,
   SetFileRatingCommandValidator,
 } from "./setFileRatingCommand";
@@ -114,10 +118,12 @@ export class CommandHandlerFactory {
     this.validators = [
       new CreateFolderCommandValidator(),
       new SetFileRatingCommandValidator(),
+      new MoveFilesCommandValidator(),
     ];
     this.handlers = [
       new CreateFolderCommandHandler(),
       new SetFileRatingCommandHandler(),
+      new MoveFilesCommandHandler(),
     ];
   }
 

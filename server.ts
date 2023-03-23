@@ -1,5 +1,6 @@
 import {
   CreateFolderPostmodel,
+  MoveFilesPostModel,
   SetFileRatingPostmodel,
 } from "./models/post/index";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
@@ -25,6 +26,7 @@ import { filesCache } from "./files-cache";
 import { config } from "./config";
 import { SetFileRatingCommand } from "./commands/setFileRatingCommand";
 import { ratings } from "./ratings";
+import { MoveFilesCommand } from "./commands/moveFilesCommand";
 
 const args = argv(process.argv);
 
@@ -80,6 +82,18 @@ app.post("/folders/create", async (req: Request, res: Response) => {
   const command = new CreateFolderCommand(
     path.join(config.basePath, postmodel.location),
     postmodel.folderName
+  );
+  const result = await handler.handle(command);
+  handleResult(result, res);
+});
+
+app.post("/files/move", async (req: Request, res: Response) => {
+  const postmodel = req.body as MoveFilesPostModel;
+  const command = new MoveFilesCommand(
+    postmodel.location,
+    postmodel.filenames,
+    postmodel.destination,
+    filesCache
   );
   const result = await handler.handle(command);
   handleResult(result, res);

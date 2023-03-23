@@ -45,7 +45,15 @@ const isStale = (folderName: string) => {
   );
 };
 
-export const filesCache = {
+export interface FilesCache {
+  add: (folderName: string, response: FilesResponse) => void;
+  invalidate: (folderName: string) => void;
+  has: (folderName: string) => boolean;
+  get: (folderName: string) => FilesResponse | undefined;
+  isStale: (folderName: string) => boolean;
+}
+
+export const filesCache: FilesCache = {
   add: addToCache,
   invalidate: removeFromCache,
   has: isCached,

@@ -9,3 +9,9 @@ export interface SetFileRatingPostmodel {
   filename: string;
   rating: FileRating;
 }
+
+export interface MoveFilesPostModel {
+  location: string;
+  filenames: string[];
+  destination: string;
+}
