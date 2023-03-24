@@ -7,7 +7,6 @@ import {
 } from "./base";
 import fs from "fs";
 import path from "path";
-import { qualify } from "../config";
 
 export class CreateFolderCommand implements Command {
   public location: string;

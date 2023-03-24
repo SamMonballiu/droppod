@@ -6,26 +6,18 @@ import {
   CommandValidator,
 } from "./base";
 import fs from "fs-extra";
-import path from "path";
-import { config, qualify } from "../config";
-import { FilesCache, filesCache } from "../files-cache";
+import { qualify } from "../config";
+import { FilesCache } from "../files-cache";
 
 export class MoveFilesCommand implements Command {
   public location: string;
   public filenames: string[];
   public destination: string;
-  public filesCache: FilesCache;
 
-  constructor(
-    location: string,
-    filenames: string[],
-    destination: string,
-    filesCache: FilesCache
-  ) {
+  constructor(location: string, filenames: string[], destination: string) {
     this.location = location;
     this.filenames = filenames;
     this.destination = destination;
-    this.filesCache = filesCache;
   }
 }
 
@@ -62,6 +54,12 @@ export class MoveFilesCommandValidator
 export class MoveFilesCommandHandler
   implements CommandHandler<MoveFilesCommand>
 {
+  private _filesCache: FilesCache;
+
+  constructor(filesCache: FilesCache) {
+    this._filesCache = filesCache;
+  }
+
   public canHandle = (command: Command) => command instanceof MoveFilesCommand;
 
   public handle(command: MoveFilesCommand) {
@@ -72,8 +70,8 @@ export class MoveFilesCommandHandler
         fs.moveSync(currentPath, newPath, { overwrite: true });
       }
 
-      filesCache.invalidate(command.location);
-      filesCache.invalidate(command.destination);
+      this._filesCache.invalidate(command.location);
+      this._filesCache.invalidate(command.destination);
       return CommandHandleResult.Success.WithoutResult();
     } catch (err: any) {
       return CommandHandleResult.Error("Error: " + err.toString());

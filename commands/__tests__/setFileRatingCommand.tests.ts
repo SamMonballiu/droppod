@@ -1,16 +1,10 @@
 import { filesCache } from "../../files-cache";
-import { RatingsService } from "../../ratings";
 import { CommandHandleResultType } from "../base";
 import {
   SetFileRatingCommand,
   SetFileRatingCommandHandler,
 } from "../setFileRatingCommand";
-
-const mockRatings: RatingsService = {
-  get: () => Promise.resolve(undefined),
-  set: () => Promise.resolve(),
-  remove: () => Promise.resolve(),
-};
+import { mockRatings } from "../mocks";
 
 const command = new SetFileRatingCommand("path", "filename", 5);
 

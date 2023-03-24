@@ -92,8 +92,7 @@ app.post("/files/move", async (req: Request, res: Response) => {
   const command = new MoveFilesCommand(
     postmodel.location,
     postmodel.filenames,
-    postmodel.destination,
-    filesCache
+    postmodel.destination
   );
   const result = await handler.handle(command);
   handleResult(result, res);
