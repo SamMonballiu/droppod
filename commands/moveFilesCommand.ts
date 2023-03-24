@@ -28,26 +28,33 @@ export class MoveFilesCommandValidator
     command instanceof MoveFilesCommand;
 
   public validate(command: MoveFilesCommand) {
-    let errors: string[] = [];
-
     if (!fs.existsSync(qualify(command.location))) {
-      errors.push("Location doesn't exist.");
-    }
-
-    for (const filename of command.filenames) {
-      const filePath = qualify(command.location, filename);
-      if (!fs.existsSync(filePath)) {
-        errors.push(`${filePath} doesn't exist.`);
-      }
+      return CommandValidateResult.Error("Location doesn't exist.");
     }
 
     if (!fs.existsSync(qualify(command.destination))) {
-      errors.push("Destination doesn't exist.");
+      return CommandValidateResult.Error("Destination doesn't exist.");
     }
 
-    return errors.length > 0
-      ? new CommandValidateResult(errors)
-      : CommandValidateResult.Success();
+    if (command.location === command.destination) {
+      return CommandValidateResult.Error(
+        "Location and destination are identical."
+      );
+    }
+
+    let fileErrors: string[] = [];
+    for (const filename of command.filenames) {
+      const filePath = qualify(command.location, filename);
+      if (!fs.existsSync(filePath)) {
+        fileErrors.push(`${filePath} doesn't exist.`);
+      }
+    }
+
+    if (fileErrors.length > 0) {
+      return CommandValidateResult.Errors(fileErrors);
+    }
+
+    return CommandValidateResult.Success();
   }
 }
 

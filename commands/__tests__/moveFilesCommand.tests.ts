@@ -26,11 +26,7 @@ describe("MoveFilesCommandValidator", () => {
     // Arrange
     const existsSpy = jest.spyOn(fs, "existsSync");
     existsSpy.mockImplementation((path: fs.PathLike) => {
-      if (path.toString().endsWith("location")) {
-        return false;
-      }
-
-      return true;
+      return path.toString().endsWith("location") ? false : true;
     });
 
     // Act
@@ -46,11 +42,7 @@ describe("MoveFilesCommandValidator", () => {
     // Arrange
     const existsSpy = jest.spyOn(fs, "existsSync");
     existsSpy.mockImplementation((path: fs.PathLike) => {
-      if (path.toString().endsWith("destination")) {
-        return false;
-      }
-
-      return true;
+      return path.toString().endsWith("destination") ? false : true;
     });
 
     // Act
@@ -84,6 +76,21 @@ describe("MoveFilesCommandValidator", () => {
     expect(result.errors.length).toBe(2);
     expect(result.errors[0]).toBe("location/file2 doesn't exist.");
     expect(result.errors[1]).toBe("location/file3 doesn't exist.");
+  });
+
+  it("returns an error if location and destination are identical", () => {
+    // Arrange
+    const existsSpy = jest.spyOn(fs, "existsSync");
+    existsSpy.mockImplementation(() => true);
+
+    // Act
+    const result = validator.validate({ ...command, destination: "location" });
+
+    // Assert
+    expect(result.isSuccess).toBe(false);
+    expect(result.errors.length).toBe(1);
+    expect(result.errors[0]).toBe("Location and destination are identical.");
+    existsSpy.mockRestore();
   });
 
   it("return no errors if location, files and destination all exist", () => {
