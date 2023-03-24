@@ -9,6 +9,7 @@ interface Props<T> {
   renderItem: (item: T) => React.ReactNode;
   onClearSelection: () => void;
   onSelectAll: () => void;
+  actions?: React.ReactNode;
 }
 
 const SelectionInfo = <T,>({
@@ -16,6 +17,7 @@ const SelectionInfo = <T,>({
   renderItem,
   onClearSelection,
   onSelectAll,
+  actions,
 }: Props<T>) => {
   const { value: isExpanded, toggle: toggleExpanded } = useToggle(false);
 
@@ -37,6 +39,7 @@ const SelectionInfo = <T,>({
       {isExpanded && (
         <div className={styles.longInfo}>{items.map(renderItem)}</div>
       )}
+      {actions}
     </div>
   );
 };
