@@ -5,16 +5,15 @@ import {
   MoveFilesCommandHandler,
   MoveFilesCommandValidator,
 } from "../moveFilesCommand";
-import { filesCache } from "../../files-cache";
+import { mockFilesCache } from "../mocks";
 
 const command = new MoveFilesCommand(
   "location",
   ["file", "file2", "file3"],
-  "destination",
-  filesCache
+  "destination"
 );
 
-const handler = new MoveFilesCommandHandler();
+const handler = new MoveFilesCommandHandler(mockFilesCache);
 
 const validator = new MoveFilesCommandValidator();
 
@@ -119,7 +118,7 @@ describe("MoveFilesCommandHandler", () => {
   });
 
   it("should invalidate the files cache", () => {
-    const invalidateSpy = jest.spyOn(filesCache, "invalidate");
+    const invalidateSpy = jest.spyOn(mockFilesCache, "invalidate");
 
     handler.handle(command);
 

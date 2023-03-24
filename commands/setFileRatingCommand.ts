@@ -8,7 +8,7 @@ import {
   CommandValidator,
 } from "./base";
 import fs from "fs";
-import { ratings, RatingsService } from "../ratings";
+import { RatingsService } from "../ratings";
 import { FilesCache } from "../files-cache";
 import path from "path";
 

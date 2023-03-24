@@ -127,7 +127,7 @@ export class CommandHandlerFactory {
     this.handlers = [
       new CreateFolderCommandHandler(),
       new SetFileRatingCommandHandler(ratings, filesCache),
-      new MoveFilesCommandHandler(),
+      new MoveFilesCommandHandler(filesCache),
     ];
   }
 
