@@ -1,12 +1,12 @@
 import app from "./App.module.scss";
 import tabStyles from "./Tabs.module.scss";
 import Upload from "./Upload/Upload";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FilesResponse } from "../../models/response";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import Files from "./Files/Files";
 import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
-import { CreateFolderPostmodel } from "../../models/post";
+import { CreateFolderPostmodel, MoveFilesPostModel } from "../../models/post";
 import useToggle from "./hooks/useToggle";
 import CreateFolderDialog from "./CreateFolderDialog/CreateFolderDialog";
 import axios from "axios";
@@ -32,6 +32,7 @@ import Loading from "./Loading/Loading";
 import useSelectList from "./hooks/useSelectList";
 import FileSelectionInfo from "./FileSelectionInfo/FileSelectionInfo";
 import MoveFilesDialog from "./MoveFilesDialog/MoveFilesDialog";
+import { AiOutlineSelect, AiOutlineSend } from "react-icons/ai";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -90,6 +91,12 @@ function App() {
         data?.contents.folders.map((f) => f.name) ?? []
       )
     );
+
+  useEffect(() => {
+    if (selectMode === "single") {
+      setAllSelected(false);
+    }
+  }, [selectMode]);
 
   const { data: folderList, isFetching: isFetchingFolderList } = useQuery(
     ["folders"],
@@ -151,6 +158,22 @@ function App() {
         }
       ),
     },
+    files: {
+      move: useMutation(
+        async (postmodel: MoveFilesPostModel) => {
+          const url = baseUrl + "files/move";
+          await axios.post(url, postmodel);
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["files", activeFolder]);
+            queryClient.invalidateQueries(["folders"]);
+            showMoveDialog.set(false);
+            setSelectMode("single");
+          },
+        }
+      ),
+    },
   };
 
   const onCreateFolder = async (folderName: string) => {
@@ -162,6 +185,16 @@ function App() {
     return await mutations.folders.create.mutateAsync(postmodel);
   };
 
+  const handleMoveFiles = async (destination: string) => {
+    const postmodel: MoveFilesPostModel = {
+      location: activeFolder,
+      destination,
+      filenames: selectedFiles,
+    };
+
+    return await mutations.files.move.mutateAsync(postmodel);
+  };
+
   const breadcrumbs = (
     <div className={app.breadcrumbs}>
       <div>
@@ -171,9 +204,18 @@ function App() {
           isReadOnly={activeTab === Tabs.Upload}
         />
         {activeTab !== Tabs.Upload && (
-          <div className={app.button} onClick={createFolderDialog.toggle}>
-            <MdOutlineCreateNewFolder />
-          </div>
+          <>
+            <MdOutlineCreateNewFolder
+              className={app.button}
+              onClick={createFolderDialog.toggle}
+            />
+            <AiOutlineSelect
+              className={app.button}
+              onClick={() =>
+                setSelectMode(selectMode === "multiple" ? "single" : "multiple")
+              }
+            />
+          </>
         )}
       </div>
       {data && (
@@ -365,10 +407,17 @@ function App() {
       onClose={showMoveDialog.toggle}
       data={folderList}
       activeFolder={activeFolder}
-      files={Array.from(Array(100).keys()).map((x) => x.toString())}
-      onConfirm={(destination: string) => alert(destination)}
-      isMoving={false}
+      files={selectedFiles}
+      onConfirm={handleMoveFiles}
+      isMoving={mutations.files.move.isLoading}
     />
+  );
+
+  const multiFileActions = (
+    <div className={app.multiFileButtons}>
+      <AiOutlineSend onClick={showMoveDialog.toggle} />
+      <AiOutlineSelect onClick={() => setSelectMode("single")} />
+    </div>
   );
 
   return (
@@ -388,6 +437,7 @@ function App() {
           onSelectAll={() => {
             setAllSelected(true);
           }}
+          actions={multiFileActions}
         />
       )}
       <div className={tabStyles.container}>

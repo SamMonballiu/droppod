@@ -33,12 +33,9 @@ body {
   filter: saturate(0.5);
   transition: filter 0.4s;
 
-  svg {
-    height: 100%;
-    font-size: 1.2em;
-    cursor: pointer;
-    margin-top: 6px;
-  }
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-top: 6px;
 
   &:hover {
     opacity: 1;
@@ -123,5 +120,22 @@ body {
     position: absolute;
     bottom: 0.25em;
     left: 0;
+  }
+}
+
+.multiFileButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: 20px;
+
+  svg {
+    opacity: 0.5;
+    cursor: pointer;
+    border-radius: 40px;
+
+    &:hover {
+      opacity: 0.85;
+    }
   }
 }
