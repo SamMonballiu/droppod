@@ -98,6 +98,8 @@ export class CommandValidateResult {
   public static Success = () => new CommandValidateResult([]);
 
   public static Error = (error: string) => new CommandValidateResult([error]);
+  public static Errors = (errors: string[]) =>
+    new CommandValidateResult(errors);
 }
 
 export class CommandResponse<T> {
