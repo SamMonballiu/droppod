@@ -3,12 +3,35 @@ import { CommandHandleResultType } from "../base";
 import {
   SetFileRatingCommand,
   SetFileRatingCommandHandler,
+  SetFileRatingCommandValidator,
 } from "../setFileRatingCommand";
 import { mockRatings } from "../mocks";
+import fs from "fs";
 
 const command = new SetFileRatingCommand("path", "filename", 5);
-
+const validator = new SetFileRatingCommandValidator();
 const handler = new SetFileRatingCommandHandler(mockRatings, filesCache);
+
+describe("SetFileRatingCommandValidator", () => {
+  it("can validate a SetFileRatingCommand", () => {
+    expect(validator.canValidate(command)).toBe(true);
+  });
+
+  it("returns an error if the file does not exist", () => {
+    const existsSpy = jest
+      .spyOn(fs, "existsSync")
+      .mockImplementation(() => false);
+
+    const result = validator.validate(command);
+
+    expect(result.isSuccess).toBe(false);
+    expect(result.errors[0]).toBe(
+      "The specified file could not be found: filename"
+    );
+    existsSpy.mockRestore();
+  });
+});
+
 describe("SetFileRatingCommandHandler", () => {
   it("can handle a SetFileRatingCommand", () => {
     expect(handler.canHandle(command)).toBe(true);

@@ -87,7 +87,7 @@ export class CommandHandleResult<T> {
 export class CommandValidateResult {
   public errors: string[];
 
-  public constructor(errors: string[]) {
+  private constructor(errors: string[]) {
     this.errors = errors;
   }
 
