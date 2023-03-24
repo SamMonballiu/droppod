@@ -60,18 +60,14 @@ export class SetFileRatingCommandValidator
     command instanceof SetFileRatingCommand;
 
   public validate = (command: SetFileRatingCommand) => {
-    let errors = [];
     if (
       !fs.existsSync(path.join(config.basePath, command.path, command.filename))
     ) {
-      errors.push(
-        "The specified file could not be found: ",
-        config.basePath + command.filename
+      return CommandValidateResult.Error(
+        "The specified file could not be found: " + command.filename
       );
     }
 
-    return errors.length > 0
-      ? new CommandValidateResult(errors)
-      : CommandValidateResult.Success();
+    return CommandValidateResult.Success();
   };
 }
