@@ -1,0 +1,69 @@
+.dialog {
+  min-width: 50vw;
+  max-height: 80vh;
+}
+
+.from,
+.to {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  label {
+    width: 48px;
+    text-align: right;
+  }
+}
+
+.to {
+  align-items: flex-start;
+}
+
+.filesHeader {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 4px;
+
+  h4 {
+    margin: 0;
+    margin-left: 4px;
+    cursor: pointer;
+  }
+
+  svg {
+    cursor: pointer;
+  }
+}
+
+.files {
+  max-height: 33vh;
+  overflow: hidden;
+  overflow-y: auto;
+  p {
+    opacity: 0.75;
+    margin: 0;
+  }
+}
+
+.move {
+  color: white;
+  background: rgb(75, 150, 75);
+  font-size: 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+
+  &:hover {
+    filter: brightness(1.15);
+  }
+
+  &[disabled] {
+    opacity: 0.25;
+    cursor: default;
+
+    &:hover {
+      filter: none;
+    }
+  }
+}
