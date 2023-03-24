@@ -8,9 +8,15 @@ interface Props {
   path: string;
   onClick: (destination: string) => void;
   isReadOnly?: boolean;
+  includeHome?: boolean;
 }
 
-const Breadcrumbs: FC<Props> = ({ path, onClick, isReadOnly = false }) => {
+const Breadcrumbs: FC<Props> = ({
+  path,
+  onClick,
+  isReadOnly = false,
+  includeHome = true,
+}) => {
   const pathElements = path.split("/");
 
   const mapped = pathElements.map((el, idx) => {
@@ -29,7 +35,7 @@ const Breadcrumbs: FC<Props> = ({ path, onClick, isReadOnly = false }) => {
           >
             {el}
           </span>
-        ) : (
+        ) : includeHome ? (
           <AiOutlineHome
             className={cx({
               [styles.inactive]: pathElements.length === 1,
@@ -37,7 +43,7 @@ const Breadcrumbs: FC<Props> = ({ path, onClick, isReadOnly = false }) => {
             })}
             onClick={isReadOnly ? undefined : () => onClick(targetUrl)}
           />
-        )}
+        ) : null}
 
         {!isLastElement && <GoChevronRight className={styles.chevron} />}
       </div>
