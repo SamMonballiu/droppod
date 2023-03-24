@@ -19,9 +19,8 @@ const CreateFolderDialog: FC<Props> = ({ onClose, onSubmit }) => {
   };
 
   return (
-    <Dialog isOpen={true} onClose={onClose}>
+    <Dialog isOpen={true} onClose={onClose} title="New folder">
       <div className={styles.container}>
-        <h3>New folder</h3>
         <div className={styles.folderName}>
           <label htmlFor="foldername">Name:</label>
           <input
