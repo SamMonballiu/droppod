@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from "react";
 
-interface Props {
+interface Props extends React.PropsWithChildren {
   collapsed: boolean;
   collapseButton?: ReactNode;
   expandButton: ReactNode;
@@ -11,7 +11,6 @@ const Collapsible: FC<Props> = ({
   collapsed,
   collapseButton,
   expandButton,
-  //@ts-ignore
   children,
 }) => {
   return collapsed ? (
