@@ -30,8 +30,8 @@ import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import Collapsible from "./Collapsible/Collapsible";
 import Loading from "./Loading/Loading";
 import useSelectList from "./hooks/useSelectList";
-import SelectionInfo from "./SelectionInfo/SelectionInfo";
 import FileSelectionInfo from "./FileSelectionInfo/FileSelectionInfo";
+import MoveFilesDialog from "./MoveFilesDialog/MoveFilesDialog";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -56,6 +56,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<number>(0);
   const queryClient = useQueryClient();
   const createFolderDialog = useToggle(false);
+  const showMoveDialog = useToggle(false);
   const showFolderList = useToggle(true);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
 
@@ -83,7 +84,7 @@ function App() {
     }
   );
 
-  const [, isSelected, toggleSelected, , setAllSelected, events] =
+  const [selectedFiles, isSelected, toggleSelected, , setAllSelected, events] =
     useSelectList(
       (data?.contents.files?.map((f) => f.filename) ?? []).concat(
         data?.contents.folders.map((f) => f.name) ?? []
@@ -358,8 +359,21 @@ function App() {
     </>
   );
 
+  const folderPicker = !folderList ? null : (
+    <MoveFilesDialog
+      isOpen={showMoveDialog.value}
+      onClose={showMoveDialog.toggle}
+      data={folderList}
+      activeFolder={activeFolder}
+      files={Array.from(Array(100).keys()).map((x) => x.toString())}
+      onConfirm={(destination: string) => alert(destination)}
+      isMoving={false}
+    />
+  );
+
   return (
     <>
+      {folderPicker}
       {createFolderDialog.value && (
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}
