@@ -19,11 +19,7 @@ const FolderPicker: FC<Props> = ({
   onSelectFolder,
 }) => {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
-  const showFolderList = useToggle(false);
-
-  useEffect(() => {
-    showFolderList.set(false);
-  }, [selectedFolder]);
+  const showFolderList = useToggle(true);
 
   const handleToggleExpanded = (folderName: string) => {
     if (expandedFolders.includes(folderName)) {
@@ -48,7 +44,10 @@ const FolderPicker: FC<Props> = ({
         <FolderList
           className={styles.folderList}
           data={data}
-          onSelect={(folder) => onSelectFolder("/" + folder)}
+          onSelect={(folder) => {
+            onSelectFolder("/" + folder);
+            showFolderList.toggle();
+          }}
           isExpanded={(folder) =>
             expandedFolders.includes(folder.parent + folder.name)
           }
