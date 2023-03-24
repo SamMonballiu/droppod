@@ -7,6 +7,7 @@ interface Props {
   isSelected: (name: string) => boolean;
   onClearSelection: () => void;
   onSelectAll: () => void;
+  actions?: React.ReactNode;
 }
 
 const FileSelectionInfo: FC<Props> = ({ data, isSelected, ...props }) => {
