@@ -38,6 +38,17 @@
   max-height: 95vh;
 }
 
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px;
+
+  button {
+    cursor: pointer;
+  }
+}
+
 .closePanel {
   animation-name: fade-dialog;
   animation-direction: reverse;
