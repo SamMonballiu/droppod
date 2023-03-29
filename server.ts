@@ -1,6 +1,7 @@
 import {
   CreateFolderPostmodel,
   MoveFilesPostModel,
+  RenameFilesPostModel,
   SetFileRatingPostmodel,
 } from "./models/post/index";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
@@ -27,6 +28,7 @@ import { config } from "./config";
 import { SetFileRatingCommand } from "./commands/setFileRatingCommand";
 import { ratings } from "./ratings";
 import { MoveFilesCommand } from "./commands/moveFilesCommand";
+import { RenameFileCommand } from "./commands/renameFileCommand";
 
 const args = argv(process.argv);
 
@@ -104,6 +106,17 @@ app.post("/rate-file", async (req: Request, res: Response) => {
     postmodel.path,
     postmodel.filename,
     postmodel.rating
+  );
+  const result = await handler.handle(command);
+  handleResult(result, res);
+});
+
+app.post("/files/rename", async (req: Request, res: Response) => {
+  const postmodel = req.body as RenameFilesPostModel;
+  const command = new RenameFileCommand(
+    postmodel.path,
+    postmodel.currentName,
+    postmodel.newName
   );
   const result = await handler.handle(command);
   handleResult(result, res);
