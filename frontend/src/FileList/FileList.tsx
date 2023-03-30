@@ -7,12 +7,16 @@ import { FolderInfo } from "../../../models/folderInfo";
 import { GoFile, GoFileMedia } from "react-icons/go";
 import { FcFolder, FcOpenedFolder } from "react-icons/fc";
 import Rating from "../Rating/Rating";
+import FileContextMenu, {
+  FileContextHandler,
+} from "../FileContextMenu/FileContextMenu";
 
 interface Props {
   files: FileInfo[];
   folders: FolderInfo[];
   onSelectFile: (file: FileInfo) => void;
   onSelectFolder: (folder: string) => void;
+  fileContextHandlers: FileContextHandler[];
 }
 
 const FileList: FC<Props> = ({
@@ -20,6 +24,7 @@ const FileList: FC<Props> = ({
   folders,
   onSelectFile,
   onSelectFolder,
+  fileContextHandlers,
 }) => {
   return (
     <div className={styles.container}>
@@ -32,7 +37,12 @@ const FileList: FC<Props> = ({
           />
         ))}
         {files.map((f) => (
-          <File key={f.fullPath} file={f} onSelect={onSelectFile} />
+          <File
+            key={f.fullPath}
+            file={f}
+            onSelect={onSelectFile}
+            contextHandlers={fileContextHandlers}
+          />
         ))}
       </div>
     </div>
@@ -55,27 +65,32 @@ export const Folder: FC<{
   );
 };
 
-const File: FC<{ file: FileInfo; onSelect: (file: FileInfo) => void }> = ({
-  file,
-  onSelect,
-}) => {
+const File: FC<{
+  file: FileInfo;
+  onSelect: (file: FileInfo) => void;
+  contextHandlers: FileContextHandler[];
+}> = ({ file, onSelect, contextHandlers }) => {
   return (
-    <div className={styles.file} onClick={() => onSelect(file)}>
-      <a
-        target="_"
-        id={file.filename}
-        className={cx(styles.link, styles.filename)}
-      >
-        {isImage(file) ? <GoFileMedia /> : <GoFile />}
-        {file.filename}
-      </a>
-      <span className={styles.ext}>{file.extension}</span>
-      <span className={styles.date}>{file.dateAdded.toLocaleDateString()}</span>
-      <span className={styles.rating}>
-        {file.rating ? <Rating file={file} readonly /> : null}
-      </span>
-      <FileSize className={styles.size} file={file} />
-    </div>
+    <FileContextMenu file={file} handlers={contextHandlers}>
+      <div className={styles.file} onClick={() => onSelect(file)}>
+        <a
+          target="_"
+          id={file.filename}
+          className={cx(styles.link, styles.filename)}
+        >
+          {isImage(file) ? <GoFileMedia /> : <GoFile />}
+          {file.filename}
+        </a>
+        <span className={styles.ext}>{file.extension}</span>
+        <span className={styles.date}>
+          {file.dateAdded.toLocaleDateString()}
+        </span>
+        <span className={styles.rating}>
+          {file.rating ? <Rating file={file} readonly /> : null}
+        </span>
+        <FileSize className={styles.size} file={file} />
+      </div>
+    </FileContextMenu>
   );
 };
 

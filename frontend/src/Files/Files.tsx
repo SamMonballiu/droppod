@@ -1,16 +1,16 @@
 import cx from "classnames";
 import { FC, useEffect, useState } from "react";
+import { MdModeEdit, MdSearch } from "react-icons/md";
 import { SubscribableEvent } from "../../../models/event";
 import { FileInfo, isImage } from "../../../models/fileinfo";
 import { FolderInfo } from "../../../models/folderInfo";
 import { View } from "../App";
+import { FileContextHandler } from "../FileContextMenu/FileContextMenu";
 import FileDialog from "../FileDialog/FileDialog";
 import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
 import FileList from "../FileList/FileList";
 import { MemoizedGallery } from "../Gallery/Gallery";
-import useSelectList from "../hooks/useSelectList";
 import { useThumbnails } from "../hooks/useThumbnails";
-import SelectionInfo from "../SelectionInfo/SelectionInfo";
 import styles from "./Files.module.scss";
 
 interface Props {
@@ -98,6 +98,11 @@ const Files: FC<Props> = ({
     return <p>This folder is empty.</p>;
   }
 
+  const fileContextHandlers: FileContextHandler[] = [
+    { label: "Show details", onClick: handleFocusFile, icon: <MdSearch /> },
+    { label: "Rename", disabled: true, icon: <MdModeEdit /> },
+  ];
+
   return (
     <div className={styles.container}>
       {focusedFile && (
@@ -121,6 +126,7 @@ const Files: FC<Props> = ({
             folders={folders}
             onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
+            fileContextHandlers={fileContextHandlers}
           />
         ) : (
           <FileGrid
@@ -130,6 +136,7 @@ const Files: FC<Props> = ({
             onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
             thumbnails={thumbnails}
+            fileContextHandlers={fileContextHandlers}
           />
         )}
       </div>
