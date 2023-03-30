@@ -6,6 +6,9 @@ import cx from "classnames";
 import { FolderInfo } from "../../../models/folderInfo";
 import { FcFolder } from "react-icons/fc";
 import Rating from "../Rating/Rating";
+import FileContextMenu, {
+  FileContextHandler,
+} from "../FileContextMenu/FileContextMenu";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -18,6 +21,7 @@ interface Props {
     file: FileInfo;
     element: React.ReactNode;
   }[];
+  fileContextHandlers: FileContextHandler[];
 }
 
 const FileGrid: FC<Props> = ({
@@ -27,6 +31,7 @@ const FileGrid: FC<Props> = ({
   onSelectFolder,
   thumbnails,
   zoom = 2,
+  fileContextHandlers,
 }) => {
   const mapped = useMemo(() => {
     return files.map((file) => (
@@ -36,6 +41,7 @@ const FileGrid: FC<Props> = ({
         zoom={zoom}
         onSelect={onSelectFile}
         thumbnail={thumbnails.find((t) => t.file === file)}
+        contextHandlers={fileContextHandlers}
       />
     ));
   }, [files]);
@@ -103,10 +109,12 @@ const File: FC<{
     element: React.ReactNode;
   };
   isSelected?: boolean;
-}> = ({ file, zoom, onSelect, thumbnail, isSelected }) => {
+  contextHandlers: FileContextHandler[];
+}> = ({ file, zoom, onSelect, thumbnail, isSelected, contextHandlers }) => {
   const rating = file.rating ? (
     <Rating file={file} readonly noHollowStars className={styles.rating} />
   ) : null;
+
   return (
     <div
       className={cx(styles.file, zoomMap[zoom])}
@@ -115,23 +123,27 @@ const File: FC<{
         onSelect(file);
       }}
     >
-      {(isImage(file) || hasRawExtension(file.filename)) && thumbnail ? (
-        <div
-          className={cx(thumbZoomMap[zoom], { [styles.selected]: isSelected })}
-        >
-          {rating}
-          {thumbnail?.element}
-        </div>
-      ) : (
-        <div
-          className={cx(styles.square, styles.border, thumbZoomMap[zoom], {
-            [styles.selected]: isSelected,
-          })}
-        >
-          {rating}
-          <GoFile className={styles.folderIcon} id={file.filename} />
-        </div>
-      )}
+      <FileContextMenu file={file} handlers={contextHandlers}>
+        {(isImage(file) || hasRawExtension(file.filename)) && thumbnail ? (
+          <div
+            className={cx(thumbZoomMap[zoom], {
+              [styles.selected]: isSelected,
+            })}
+          >
+            {rating}
+            {thumbnail?.element}
+          </div>
+        ) : (
+          <div
+            className={cx(styles.square, styles.border, thumbZoomMap[zoom], {
+              [styles.selected]: isSelected,
+            })}
+          >
+            {rating}
+            <GoFile className={styles.folderIcon} id={file.filename} />
+          </div>
+        )}
+      </FileContextMenu>
 
       {zoom > 1 && (
         <span className={cx(styles.filename, zoomMap[zoom])}>
