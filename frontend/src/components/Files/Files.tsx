@@ -1,9 +1,9 @@
 import cx from "classnames";
 import { FC, useEffect, useState } from "react";
 import { MdModeEdit, MdSearch } from "react-icons/md";
-import { SubscribableEvent } from "../../../../models/event";
-import { FileInfo, isImage } from "../../../../models/fileinfo";
-import { FolderInfo } from "../../../../models/folderInfo";
+import { SubscribableEvent } from "@models/event";
+import { FileInfo, isImage } from "@models/fileinfo";
+import { FolderInfo } from "@models/folderInfo";
 import { View } from "../../App";
 import { useThumbnails } from "../../hooks/useThumbnails";
 import { FileContextHandler } from "../FileContextMenu/FileContextMenu";

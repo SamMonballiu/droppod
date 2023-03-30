@@ -1,11 +1,11 @@
-import { FileInfo, getOrientation } from "../../../models/fileinfo";
+import { FileInfo, getOrientation } from "../../../../models/fileinfo";
 import styles from "./ImagePreview.module.scss";
 import { FC, useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import cx from "classnames";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
-import Loading from "../components/Loading/Loading";
+import Loading from "../Loading/Loading";
 
 interface Props {
   file: FileInfo;

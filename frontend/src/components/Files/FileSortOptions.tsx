@@ -1,5 +1,5 @@
 import { FC, useMemo } from "react";
-import { FileInfo } from "../../../models/fileinfo";
+import { FileInfo } from "@models/fileinfo";
 import { RadioGroup } from "@headlessui/react";
 import cx from "classnames";
 import styles from "./FileSortOptions.module.scss";

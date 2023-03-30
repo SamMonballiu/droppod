@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { FileInfo } from "../../../../models/fileinfo";
-import ImagePreview from "../../ImagePreview.tsx/ImagePreview";
+import { FileInfo } from "@models/fileinfo";
+import ImagePreview from "../ImagePreview/ImagePreview";
 import styles from "./Gallery.module.scss";
 import cx from "classnames";
 import FileProperties from "../FileProperties/FileProperties";
@@ -10,9 +10,9 @@ import {
   BiChevronsDown,
   BiExit,
 } from "react-icons/bi";
-import { useListSelection } from "../../hooks/useListSelection";
+import { useListSelection } from "@hooks/useListSelection";
 import neutral from "./Gallery.neutral.module.scss";
-import { useThumbnails } from "../../hooks/useThumbnails";
+import { useThumbnails } from "@hooks/useThumbnails";
 
 interface Props {
   files: FileInfo[];
