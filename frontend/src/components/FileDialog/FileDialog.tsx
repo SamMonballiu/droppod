@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { FileInfo, isImage } from "../../../models/fileinfo";
+import { FileInfo, isImage } from "../../../../models/fileinfo";
+import ImagePreview from "../../ImagePreview.tsx/ImagePreview";
 import Dialog from "../Dialog/Dialog";
 import FileProperties from "../FileProperties/FileProperties";
-import ImagePreview from "../ImagePreview.tsx/ImagePreview";
 import styles from "./FileDialog.module.scss";
 
 interface Props {

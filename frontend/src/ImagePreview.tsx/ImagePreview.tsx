@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "react-query";
 import cx from "classnames";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
-import Loading from "../Loading/Loading";
+import Loading from "../components/Loading/Loading";
 
 interface Props {
   file: FileInfo;

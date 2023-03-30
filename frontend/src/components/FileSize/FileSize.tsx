@@ -1,4 +1,4 @@
-import { FileInfo, getSize } from "../../../models/fileinfo";
+import { FileInfo, getSize } from "../../../../models/fileinfo";
 import React, { FC } from "react";
 
 interface Props {

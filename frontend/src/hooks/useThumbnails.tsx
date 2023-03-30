@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { FileInfo } from "../../../models/fileinfo";
-import Thumbnail from "../Thumbnail/Thumbnail";
+import Thumbnail from "../components/Thumbnail/Thumbnail";
 
 export function useThumbnails(
   allFiles: FileInfo[],

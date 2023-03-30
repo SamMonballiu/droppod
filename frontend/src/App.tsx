@@ -1,24 +1,18 @@
 import app from "./App.module.scss";
 import tabStyles from "./Tabs.module.scss";
-import Upload from "./Upload/Upload";
 import React, { useEffect, useMemo, useState } from "react";
 import { FilesResponse } from "../../models/response";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import Files from "./Files/Files";
-import Breadcrumbs from "./Breadcrumbs/Breadcrumbs";
+import Breadcrumbs from "./components/Breadcrumbs/Breadcrumbs";
 import { CreateFolderPostmodel, MoveFilesPostModel } from "../../models/post";
 import useToggle from "./hooks/useToggle";
-import CreateFolderDialog from "./CreateFolderDialog/CreateFolderDialog";
 import axios from "axios";
 import { GoFileSubmodule, GoCloudUpload } from "react-icons/go";
 import cx from "classnames";
 import { FolderInfo } from "../../models/folderInfo";
-import FolderList from "./FolderList/FolderList";
 import { sortBy, useSortedList } from "./hooks/useSortedList";
-import FileSortOptions, { SortOption } from "./Files/FileSortOptions";
 import { FileInfo, isImage } from "../../models/fileinfo";
 import { TbTelescope } from "react-icons/tb";
-import { FileGridZoom } from "./FileGrid/FileGrid";
 import {
   MdOutlineListAlt,
   MdGridView,
@@ -28,11 +22,19 @@ import {
 
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import Collapsible from "./Collapsible/Collapsible";
-import Loading from "./Loading/Loading";
+import Loading from "./components/Loading/Loading";
 import useSelectList from "./hooks/useSelectList";
-import FileSelectionInfo from "./FileSelectionInfo/FileSelectionInfo";
-import MoveFilesDialog from "./MoveFilesDialog/MoveFilesDialog";
 import { AiOutlineSelect, AiOutlineSend } from "react-icons/ai";
+import CreateFolderDialog from "./components/CreateFolderDialog/CreateFolderDialog";
+import { FileGridZoom } from "./components/FileGrid/FileGrid";
+import Files from "./components/Files/Files";
+import FileSortOptions, {
+  SortOption,
+} from "./components/Files/FileSortOptions";
+import FileSelectionInfo from "./components/FileSelectionInfo/FileSelectionInfo";
+import FolderList from "./components/FolderList/FolderList";
+import MoveFilesDialog from "./components/MoveFilesDialog/MoveFilesDialog";
+import Upload from "./components/Upload/Upload";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {

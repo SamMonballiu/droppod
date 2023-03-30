@@ -1,9 +1,13 @@
 import React, { FC, useMemo } from "react";
-import { FileInfo, hasRawExtension, isImage } from "../../../models/fileinfo";
+import {
+  FileInfo,
+  hasRawExtension,
+  isImage,
+} from "../../../../models/fileinfo";
 import styles from "./FileGrid.module.scss";
 import { GoFile } from "react-icons/go";
 import cx from "classnames";
-import { FolderInfo } from "../../../models/folderInfo";
+import { FolderInfo } from "../../../../models/folderInfo";
 import { FcFolder } from "react-icons/fc";
 import Rating from "../Rating/Rating";
 import FileContextMenu, {
