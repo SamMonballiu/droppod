@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
-import { FileRating, SetFileRatingPostmodel } from "../../../models/post";
+import { FileRating, SetFileRatingPostmodel } from "@models/post";
 import styles from "./Rating.module.scss";
 import cx from "classnames";
 import axios from "axios";
 import { useMutation } from "react-query";
-import { FileInfo } from "../../../models/fileinfo";
+import { FileInfo } from "@models/fileinfo";
 
 interface Props {
   file: FileInfo;

@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { FileInfo } from "../../../../models/fileinfo";
-import ImagePreview from "../../ImagePreview.tsx/ImagePreview";
+import { FileInfo } from "@models/fileinfo";
+import ImagePreview from "../ImagePreview/ImagePreview";
 
 interface Props {
   file: FileInfo;

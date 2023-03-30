@@ -14,13 +14,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "downlevelIteration": true,
+    "types": ["vite/client"],
+    "baseUrl": "src",
+    "paths": {
+      "@models/*": ["../../models/*"],
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"]
+    }
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }],
-  "baseUrl": ".",
-        "paths": {
-            "@models/*": ["../models/*"],
-         
-        }
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

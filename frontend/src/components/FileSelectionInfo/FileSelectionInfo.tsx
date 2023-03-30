@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FilesResponse } from "../../../models/response";
+import { FilesResponse } from "@models/response";
 import SelectionInfo from "../SelectionInfo/SelectionInfo";
 
 interface Props {

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FileInfo, FileInfo as FileProperties } from "../../../models/fileinfo";
+import { FileInfo, FileInfo as FileProperties } from "@models/fileinfo";
 import FileSize from "../FileSize/FileSize";
 import styles from "./FileProperties.module.scss";
 import cx from "classnames";

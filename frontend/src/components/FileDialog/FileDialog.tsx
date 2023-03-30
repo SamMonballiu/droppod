@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { FileInfo, isImage } from "../../../../models/fileinfo";
-import ImagePreview from "../../ImagePreview.tsx/ImagePreview";
+import { FileInfo, isImage } from "@models/fileinfo";
+import ImagePreview from "../ImagePreview/ImagePreview";
 import Dialog from "../Dialog/Dialog";
 import FileProperties from "../FileProperties/FileProperties";
 import styles from "./FileDialog.module.scss";

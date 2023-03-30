@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FolderInfo } from "../../../models/folderInfo";
+import { FolderInfo } from "@models/folderInfo";
 import { Folder } from "../FileList/FileList";
 import styles from "./FolderList.module.scss";
 import cx from "classnames";
