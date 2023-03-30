@@ -33,7 +33,9 @@ const FileList: FC<Props> = ({
           <Folder
             folder={f}
             key={f.name}
-            onSelect={() => onSelectFolder(f.parent + "/" + f.name)}
+            onSelect={() =>
+              onSelectFolder(f.parent === "" ? f.name : f.parent + "/" + f.name)
+            }
           />
         ))}
         {files.map((f) => (

@@ -53,7 +53,9 @@ const FileGrid: FC<Props> = ({
           folder={f}
           key={f.name}
           zoom={zoom}
-          onSelect={() => onSelectFolder(f.parent + "/" + f.name)}
+          onSelect={() =>
+            onSelectFolder(f.parent === "" ? f.name : f.parent + "/" + f.name)
+          }
         />
       ))}
       {mapped}
