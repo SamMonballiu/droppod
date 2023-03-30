@@ -1,4 +1,4 @@
-import { FileInfo } from "../../../models/fileinfo";
+import { FileInfo } from "../../../../models/fileinfo";
 import { FC } from "react";
 import ContextMenu, { ContextHandler } from "../ContextMenu/ContextMenu";
 

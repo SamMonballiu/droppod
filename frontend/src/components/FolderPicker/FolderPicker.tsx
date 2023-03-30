@@ -1,8 +1,8 @@
 import { FC, useEffect, useState } from "react";
-import { FolderInfo } from "../../../models/folderInfo";
+import { FolderInfo } from "../../../../models/folderInfo";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import FolderList from "../FolderList/FolderList";
-import useToggle from "../hooks/useToggle";
+import useToggle from "../../hooks/useToggle";
 import styles from "./FolderPicker.module.scss";
 
 interface Props {

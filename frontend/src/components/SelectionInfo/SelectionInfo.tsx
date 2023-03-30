@@ -1,6 +1,6 @@
 import styles from "./SelectionInfo.module.scss";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
-import useToggle from "../hooks/useToggle";
+import useToggle from "../../hooks/useToggle";
 import { AiOutlineClear } from "react-icons/ai";
 import { BiSelectMultiple } from "react-icons/bi";
 

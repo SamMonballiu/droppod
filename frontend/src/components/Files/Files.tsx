@@ -1,16 +1,16 @@
 import cx from "classnames";
 import { FC, useEffect, useState } from "react";
 import { MdModeEdit, MdSearch } from "react-icons/md";
-import { SubscribableEvent } from "../../../models/event";
-import { FileInfo, isImage } from "../../../models/fileinfo";
-import { FolderInfo } from "../../../models/folderInfo";
-import { View } from "../App";
+import { SubscribableEvent } from "../../../../models/event";
+import { FileInfo, isImage } from "../../../../models/fileinfo";
+import { FolderInfo } from "../../../../models/folderInfo";
+import { View } from "../../App";
+import { useThumbnails } from "../../hooks/useThumbnails";
 import { FileContextHandler } from "../FileContextMenu/FileContextMenu";
 import FileDialog from "../FileDialog/FileDialog";
 import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
 import FileList from "../FileList/FileList";
 import { MemoizedGallery } from "../Gallery/Gallery";
-import { useThumbnails } from "../hooks/useThumbnails";
 import styles from "./Files.module.scss";
 
 interface Props {

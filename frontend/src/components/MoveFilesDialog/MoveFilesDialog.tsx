@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
-import { FolderInfo } from "../../../models/folderInfo";
+import { FolderInfo } from "../../../../models/folderInfo";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import Dialog, { DialogProps } from "../Dialog/Dialog";
 import FolderPicker from "../FolderPicker/FolderPicker";
-import useToggle from "../hooks/useToggle";
+import useToggle from "../../hooks/useToggle";
 import styles from "./MoveFilesDialog.module.scss";
 
 interface Props extends Omit<DialogProps, "title" | "children"> {
