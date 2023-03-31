@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .crumb {
   user-select: none;
   display: flex;
@@ -13,7 +15,7 @@
     opacity: 0.75;
   }
   .clickable:hover {
-    color: cornflowerblue;
+    color: variables.$accentColor;
     cursor: pointer;
   }
 }
@@ -24,5 +26,5 @@
 }
 
 .inactive {
-  opacity: .5;
+  opacity: 0.5;
 }

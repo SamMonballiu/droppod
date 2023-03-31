@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .renameDialog {
   min-width: 33vw;
 }
@@ -12,35 +14,13 @@
   }
 
   input {
-    font-family: "Atkinson Hyperlegible", sans-serif;
+    font-family: variables.$mainFont;
     flex-grow: 2;
   }
 }
 
 .validationMessage {
-  color: red;
+  color: variables.$validationError;
   opacity: 0.75;
   font-size: 0.9em;
-}
-
-.button {
-  color: white;
-  background: rgb(75, 150, 75);
-  font-size: 20px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-
-  &:hover {
-    filter: brightness(1.15);
-  }
-
-  &[disabled] {
-    opacity: 0.25;
-    cursor: default;
-
-    &:hover {
-      filter: none;
-    }
-  }
 }

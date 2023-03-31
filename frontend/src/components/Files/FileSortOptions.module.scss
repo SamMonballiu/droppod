@@ -1,5 +1,7 @@
+@use "../../variables";
+
 .active {
-  color: cornflowerblue;
+  color: variables.$accentColor;
 }
 
 .option {
