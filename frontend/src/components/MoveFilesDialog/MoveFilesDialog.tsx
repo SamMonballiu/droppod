@@ -4,6 +4,7 @@ import { FolderInfo } from "@models/folderInfo";
 import { Breadcrumbs, Dialog, DialogProps, FolderPicker } from "@components";
 import useToggle from "@hooks/useToggle";
 import styles from "./MoveFilesDialog.module.scss";
+import global from "../../global.module.scss";
 
 interface Props extends Omit<DialogProps, "title" | "children"> {
   data: FolderInfo;
@@ -32,7 +33,7 @@ export const MoveFilesDialog: FC<Props> = ({
       buttons={[
         {
           label: "Move",
-          className: styles.move,
+          className: global.primaryButton,
           onClick: () => onConfirm(destination),
           disabled: isMoving || destination === activeFolder,
         },
