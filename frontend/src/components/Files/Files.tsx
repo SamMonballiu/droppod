@@ -1,5 +1,5 @@
 import cx from "classnames";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { MdModeEdit, MdSearch } from "react-icons/md";
 import { SubscribableEvent } from "@models/event";
 import { FileInfo, isImage } from "@models/fileinfo";
@@ -7,7 +7,6 @@ import { FolderInfo } from "@models/folderInfo";
 import { View } from "../../App";
 import { useThumbnails } from "../../hooks/useThumbnails";
 import {
-  FileDialog,
   FileGrid,
   FileGridZoom,
   FileList,
@@ -27,6 +26,8 @@ interface Props {
   onToggleSelected: (name: string) => void;
   onSelectedChanged: SubscribableEvent<{ element: string; selected: boolean }>;
   onSetAllSelected: SubscribableEvent<boolean>;
+  onFocusFile: (file: FileInfo) => void;
+  onRename: (file: FileInfo) => void;
 }
 
 export const Files: FC<Props> = ({
@@ -40,9 +41,9 @@ export const Files: FC<Props> = ({
   onToggleSelected,
   onSelectedChanged,
   onSetAllSelected,
+  onFocusFile,
+  onRename,
 }) => {
-  const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
-
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
     thumbnail?.classList.toggle(
@@ -92,7 +93,7 @@ export const Files: FC<Props> = ({
       return;
     }
 
-    setFocusedFile(file);
+    onFocusFile(file);
   };
 
   const { thumbnails } = useThumbnails(data, handleFocusFile);
@@ -103,18 +104,11 @@ export const Files: FC<Props> = ({
 
   const fileContextHandlers: FileContextHandler[] = [
     { label: "Show details", onClick: handleFocusFile, icon: <MdSearch /> },
-    { label: "Rename", disabled: true, icon: <MdModeEdit /> },
+    { label: "Rename", onClick: onRename, icon: <MdModeEdit /> },
   ];
 
   return (
     <div className={styles.container}>
-      {focusedFile && (
-        <FileDialog
-          isOpen={focusedFile !== undefined}
-          onClose={() => setFocusedFile(null)}
-          file={focusedFile}
-        />
-      )}
       {view === "gallery" && (
         <MemoizedGallery
           files={data.filter(isImage)}
