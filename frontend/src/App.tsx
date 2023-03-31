@@ -4,13 +4,16 @@ import {
   CreateFolderDialog,
   FileGridZoom,
   Files,
+  FileSortOptions,
   FileSelectionInfo,
   FolderList,
   Loading,
   MoveFilesDialog,
+  SortOption,
   Upload,
+  FileDialog,
 } from "@components";
-import FileSortOptions, { SortOption } from "@components/Files/FileSortOptions";
+import { RenameDialog } from "@components/RenameDialog/RenameDialog";
 import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
 import { CreateFolderPostmodel, MoveFilesPostModel } from "@models/post";
@@ -29,6 +32,7 @@ import {
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { TbTelescope } from "react-icons/tb";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { getRenameValidator } from "validators/rename";
 import app from "./App.module.scss";
 import useSelectList from "./hooks/useSelectList";
 import { sortBy, useSortedList } from "./hooks/useSortedList";
@@ -60,7 +64,9 @@ function App() {
   const createFolderDialog = useToggle(false);
   const showMoveDialog = useToggle(false);
   const showFolderList = useToggle(true);
+  const showRenameDialog = useToggle(false);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
+  const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -315,6 +321,11 @@ function App() {
     }
   };
 
+  const handleRename = (file: FileInfo) => {
+    showRenameDialog.set(true);
+    setFocusedFile(file);
+  };
+
   const content =
     activeTab == 0 ? (
       <div className={tabStyles.contentX}>
@@ -375,6 +386,8 @@ function App() {
                 onToggleSelected={toggleSelected}
                 onSelectedChanged={events.onSelectedChanged}
                 onSetAllSelected={events.onSetAllSelected}
+                onFocusFile={setFocusedFile}
+                onRename={handleRename}
               />
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
@@ -402,7 +415,7 @@ function App() {
     </>
   );
 
-  const folderPicker = !folderList ? null : (
+  const moveFilesDialog = !folderList ? null : (
     <MoveFilesDialog
       isOpen={showMoveDialog.value}
       onClose={showMoveDialog.toggle}
@@ -414,6 +427,25 @@ function App() {
     />
   );
 
+  const renameFileDialog = focusedFile ? (
+    <RenameDialog
+      currentName={focusedFile!.filename}
+      validateName={getRenameValidator(
+        focusedFile,
+        data?.contents.files,
+        data?.contents.folders
+      )}
+      onConfirm={(currentName, newName) =>
+        alert(`${currentName} => ${newName}`)
+      }
+      isOpen={showRenameDialog.value}
+      onClose={() => {
+        showRenameDialog.toggle();
+        setFocusedFile(null);
+      }}
+    />
+  ) : null;
+
   const multiFileActions = (
     <div className={app.multiFileButtons}>
       <AiOutlineSend onClick={showMoveDialog.toggle} />
@@ -423,7 +455,16 @@ function App() {
 
   return (
     <>
-      {folderPicker}
+      {focusedFile && !showRenameDialog.value && (
+        <FileDialog
+          isOpen={focusedFile !== null}
+          onClose={() => setFocusedFile(null)}
+          file={focusedFile}
+        />
+      )}
+
+      {renameFileDialog}
+      {moveFilesDialog}
       {createFolderDialog.value && (
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}
