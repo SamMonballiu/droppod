@@ -16,7 +16,11 @@ import {
 import { RenameDialog } from "@components/RenameDialog/RenameDialog";
 import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
-import { CreateFolderPostmodel, MoveFilesPostModel } from "@models/post";
+import {
+  CreateFolderPostmodel,
+  MoveFilesPostModel,
+  RenameFilesPostModel,
+} from "@models/post";
 import { FilesResponse } from "@models/response";
 import axios from "axios";
 import cx from "classnames";
@@ -180,6 +184,19 @@ function App() {
           },
         }
       ),
+      rename: useMutation(
+        async (postmodel: RenameFilesPostModel) => {
+          const url = baseUrl + "files/rename";
+          await axios.post(url, postmodel);
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["files", activeFolder]);
+            showRenameDialog.set(false);
+            setFocusedFile(null);
+          },
+        }
+      ),
     },
   };
 
@@ -200,6 +217,16 @@ function App() {
     };
 
     return await mutations.files.move.mutateAsync(postmodel);
+  };
+
+  const handleRename = async (newName: string) => {
+    const postmodel: RenameFilesPostModel = {
+      path: activeFolder,
+      currentName: focusedFile!.filename,
+      newName,
+    };
+
+    return await mutations.files.rename.mutateAsync(postmodel);
   };
 
   const breadcrumbs = (
@@ -321,7 +348,7 @@ function App() {
     }
   };
 
-  const handleRename = (file: FileInfo) => {
+  const handleSelectForRename = (file: FileInfo) => {
     showRenameDialog.set(true);
     setFocusedFile(file);
   };
@@ -387,7 +414,7 @@ function App() {
                 onSelectedChanged={events.onSelectedChanged}
                 onSetAllSelected={events.onSetAllSelected}
                 onFocusFile={setFocusedFile}
-                onRename={handleRename}
+                onRename={handleSelectForRename}
               />
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
@@ -435,9 +462,7 @@ function App() {
         data?.contents.files,
         data?.contents.folders
       )}
-      onConfirm={(currentName, newName) =>
-        alert(`${currentName} => ${newName}`)
-      }
+      onConfirm={async (newName) => await handleRename(newName)}
       isOpen={showRenameDialog.value}
       onClose={() => {
         showRenameDialog.toggle();
