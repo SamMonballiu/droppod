@@ -6,7 +6,7 @@ import global from "../../global.module.scss";
 interface Props extends Omit<DialogProps, "title" | "children" | "buttons"> {
   currentName: string;
   validateName: (name: string) => { isValid: boolean; reason?: string };
-  onConfirm: (currentName: string, newName: string) => void;
+  onConfirm: (newName: string) => void;
 }
 
 export const RenameDialog: FC<Props> = ({
@@ -25,7 +25,7 @@ export const RenameDialog: FC<Props> = ({
     const validation = validateName(newName);
 
     if (validation.isValid) {
-      onConfirm(currentName, newName);
+      onConfirm(newName);
     } else {
       setValidationMessage(validation.reason);
     }
