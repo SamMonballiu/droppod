@@ -12,3 +12,52 @@
     filter: brightness(1.5) saturate(0.75);
   }
 }
+
+$buttonFontSize: 16px;
+$buttonPadding: 10px 20px;
+$buttonBorderRadius: 4px;
+
+.primaryButton {
+  color: white;
+  background: rgb(75, 150, 75);
+  font-size: $buttonFontSize;
+  padding: $buttonPadding;
+  border: none;
+  border-radius: $buttonBorderRadius;
+
+  &:hover {
+    filter: brightness(1.15);
+  }
+
+  &[disabled] {
+    opacity: 0.25;
+    cursor: default;
+
+    &:hover {
+      filter: none;
+    }
+  }
+}
+
+.secondaryButton {
+  color: white;
+  background: rgba(255, 166, 0, 0.658);
+  border: none;
+  border-radius: $buttonBorderRadius;
+  font-size: $buttonFontSize;
+  padding: $buttonPadding;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+
+  &[disabled] {
+    opacity: 0.25;
+    cursor: default;
+
+    &:hover {
+      filter: none;
+    }
+  }
+}
