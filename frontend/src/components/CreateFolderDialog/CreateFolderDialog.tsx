@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import Dialog from "../Dialog/Dialog";
+import { Dialog } from "@components";
 import styles from "./CreateFolderDialog.module.scss";
 import global from "../../global.module.scss";
 
@@ -8,7 +8,7 @@ interface Props {
   onSubmit?: (folderName: string) => Promise<Response>;
 }
 
-const CreateFolderDialog: FC<Props> = ({ onClose, onSubmit }) => {
+export const CreateFolderDialog: FC<Props> = ({ onClose, onSubmit }) => {
   const [name, setName] = useState<string>("");
 
   const handleSubmit = async () => {
@@ -37,5 +37,3 @@ const CreateFolderDialog: FC<Props> = ({ onClose, onSubmit }) => {
     </Dialog>
   );
 };
-
-export default CreateFolderDialog;

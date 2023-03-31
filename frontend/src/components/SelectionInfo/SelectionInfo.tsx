@@ -12,7 +12,7 @@ interface Props<T> {
   actions?: React.ReactNode;
 }
 
-const SelectionInfo = <T,>({
+export const SelectionInfo = <T,>({
   items,
   renderItem,
   onClearSelection,
@@ -43,5 +43,3 @@ const SelectionInfo = <T,>({
     </div>
   );
 };
-
-export default SelectionInfo;

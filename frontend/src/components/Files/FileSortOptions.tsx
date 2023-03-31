@@ -17,7 +17,7 @@ interface Props {
   isDescending: boolean;
 }
 
-const FileSortOptions: FC<Props> = ({
+export const FileSortOptions: FC<Props> = ({
   options,
   value,
   onChange,
@@ -54,5 +54,3 @@ const FileSortOptions: FC<Props> = ({
     </RadioGroup>
   );
 };
-
-export default FileSortOptions;

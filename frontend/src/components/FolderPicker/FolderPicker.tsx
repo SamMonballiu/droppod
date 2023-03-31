@@ -1,9 +1,9 @@
 import { FC, useState } from "react";
 import { FolderInfo } from "@models/folderInfo";
-import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
-import FolderList from "../FolderList/FolderList";
+import { FolderList } from "@components";
 import useToggle from "@hooks/useToggle";
 import styles from "./FolderPicker.module.scss";
+import { Breadcrumbs } from "@components";
 
 interface Props {
   data: FolderInfo;
@@ -12,7 +12,7 @@ interface Props {
   onSelectFolder: (folder: string) => void;
 }
 
-const FolderPicker: FC<Props> = ({
+export const FolderPicker: FC<Props> = ({
   data,
   activeFolder,
   selectedFolder,
@@ -60,5 +60,3 @@ const FolderPicker: FC<Props> = ({
     </>
   );
 };
-
-export default FolderPicker;

@@ -7,7 +7,7 @@ interface Props {
   animated?: boolean;
   className?: string;
 }
-const Loading: FC<Props> = ({ animated, className }) => {
+export const Loading: FC<Props> = ({ animated, className }) => {
   return (
     <div
       className={cx(className, styles.loading, { [styles.animated]: animated })}
@@ -16,5 +16,3 @@ const Loading: FC<Props> = ({ animated, className }) => {
     </div>
   );
 };
-
-export default Loading;

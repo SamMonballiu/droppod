@@ -14,7 +14,12 @@ interface Props {
   className?: string;
 }
 
-const Rating: FC<Props> = ({ file, readonly, noHollowStars, className }) => {
+export const Rating: FC<Props> = ({
+  file,
+  readonly,
+  noHollowStars,
+  className,
+}) => {
   const [tempValue, setTempValue] = useState<number>(0);
   const [ratingOverride, setRatingOverride] = useState<number | undefined>(
     undefined
@@ -75,5 +80,3 @@ const Rating: FC<Props> = ({ file, readonly, noHollowStars, className }) => {
 
   return <div className={cx(className, styles.rating)}>{getStars()}</div>;
 };
-
-export default Rating;

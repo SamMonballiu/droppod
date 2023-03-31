@@ -1,6 +1,6 @@
 import styles from "./upload.module.scss";
 import React, { FC, useRef, useState } from "react";
-import { QueryClient, useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import cx from "classnames";
 import axios from "axios";
 
@@ -10,7 +10,7 @@ interface Props {
   baseUrl: string;
 }
 
-const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
+export const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
   const [state, setState] = useState<"progress" | "success">("progress");
   const files = useRef<HTMLInputElement | null>(null);
 
@@ -81,5 +81,3 @@ const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
     </div>
   );
 };
-
-export default Upload;

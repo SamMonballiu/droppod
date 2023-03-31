@@ -1,8 +1,6 @@
 import { FC } from "react";
 import { FileInfo, isImage } from "@models/fileinfo";
-import ImagePreview from "../ImagePreview/ImagePreview";
-import Dialog from "../Dialog/Dialog";
-import FileProperties from "../FileProperties/FileProperties";
+import { FileProperties, ImagePreview, Dialog } from "@components";
 import styles from "./FileDialog.module.scss";
 
 interface Props {
@@ -11,7 +9,7 @@ interface Props {
   file: FileInfo;
 }
 
-const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
+export const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <div>
@@ -21,5 +19,3 @@ const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
     </Dialog>
   );
 };
-
-export default FileDialog;

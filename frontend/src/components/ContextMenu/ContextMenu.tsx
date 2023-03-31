@@ -20,7 +20,12 @@ interface Props<T> extends React.PropsWithChildren {
   handlers: ContextHandler<T>[];
 }
 
-const ContextMenu = <T,>({ context, handlers, children, getId }: Props<T>) => {
+export const ContextMenu = <T,>({
+  context,
+  handlers,
+  children,
+  getId,
+}: Props<T>) => {
   const items = useMemo(() => {
     return handlers.map((h) => (
       <ContextMenuItem
@@ -43,5 +48,3 @@ const ContextMenu = <T,>({ context, handlers, children, getId }: Props<T>) => {
     </>
   );
 };
-
-export default ContextMenu;

@@ -6,11 +6,14 @@ import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
 import { View } from "../../App";
 import { useThumbnails } from "../../hooks/useThumbnails";
-import { FileContextHandler } from "../FileContextMenu/FileContextMenu";
-import FileDialog from "../FileDialog/FileDialog";
-import FileGrid, { FileGridZoom } from "../FileGrid/FileGrid";
-import FileList from "../FileList/FileList";
-import { MemoizedGallery } from "../Gallery/Gallery";
+import {
+  FileDialog,
+  FileGrid,
+  FileGridZoom,
+  FileList,
+  FileContextHandler,
+  MemoizedGallery,
+} from "@components";
 import styles from "./Files.module.scss";
 
 interface Props {
@@ -26,7 +29,7 @@ interface Props {
   onSetAllSelected: SubscribableEvent<boolean>;
 }
 
-const Files: FC<Props> = ({
+export const Files: FC<Props> = ({
   data,
   folders,
   onSelectFolder,
@@ -143,5 +146,3 @@ const Files: FC<Props> = ({
     </div>
   );
 };
-
-export default Files;

@@ -11,7 +11,7 @@ interface Props {
   includeHome?: boolean;
 }
 
-const Breadcrumbs: FC<Props> = ({
+export const Breadcrumbs: FC<Props> = ({
   path,
   onClick,
   isReadOnly = false,
@@ -51,5 +51,3 @@ const Breadcrumbs: FC<Props> = ({
   });
   return <section className={styles.container}>{mapped}</section>;
 };
-
-export default Breadcrumbs;

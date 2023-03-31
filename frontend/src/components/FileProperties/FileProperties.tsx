@@ -1,16 +1,16 @@
 import { FC } from "react";
-import { FileInfo, FileInfo as FileProperties } from "@models/fileinfo";
-import FileSize from "../FileSize/FileSize";
+import { FileInfo } from "@models/fileinfo";
+import { FileSize, Rating } from "@components";
 import styles from "./FileProperties.module.scss";
 import cx from "classnames";
-import Rating from "../Rating/Rating";
 
 interface Props {
-  file: FileProperties;
+  file: FileInfo;
   className?: string;
   properties?: (keyof FileInfo)[];
 }
-const FileProperties: FC<Props> = ({
+
+export const FileProperties: FC<Props> = ({
   file,
   className,
   properties = [
@@ -48,5 +48,3 @@ const FileProperties: FC<Props> = ({
     </div>
   );
 };
-
-export default FileProperties;
