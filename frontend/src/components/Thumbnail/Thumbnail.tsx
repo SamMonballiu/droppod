@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { FileInfo } from "@models/fileinfo";
-import ImagePreview from "../ImagePreview/ImagePreview";
+import { ImagePreview } from "@components";
 
 interface Props {
   file: FileInfo;
@@ -9,12 +9,10 @@ interface Props {
   className?: string;
 }
 
-const Thumbnail: FC<Props> = ({ file, onClick, id, className }) => {
+export const Thumbnail: FC<Props> = ({ file, onClick, id, className }) => {
   return (
     <div onClick={onClick} id={id} style={{ minHeight: "inherit" }}>
       <ImagePreview file={file} square dimension={300} className={className} />
     </div>
   );
 };
-
-export default Thumbnail;

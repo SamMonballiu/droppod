@@ -20,6 +20,7 @@
     "baseUrl": "src",
     "paths": {
       "@models/*": ["../../models/*"],
+      "@components": ["components"],
       "@components/*": ["components/*"],
       "@hooks/*": ["hooks/*"]
     }

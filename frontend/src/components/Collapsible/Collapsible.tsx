@@ -7,7 +7,7 @@ interface Props extends React.PropsWithChildren {
 }
 
 //@ts-ignore
-const Collapsible: FC<Props> = ({
+export const Collapsible: FC<Props> = ({
   collapsed,
   collapseButton,
   expandButton,
@@ -22,5 +22,3 @@ const Collapsible: FC<Props> = ({
     </>
   );
 };
-
-export default Collapsible;

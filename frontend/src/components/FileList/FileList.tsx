@@ -2,14 +2,15 @@ import React, { FC } from "react";
 import { FileInfo, isImage } from "@models/fileinfo";
 import styles from "./filelist.module.scss";
 import cx from "classnames";
-import FileSize from "../FileSize/FileSize";
 import { FolderInfo } from "@models/folderInfo";
 import { GoFile, GoFileMedia } from "react-icons/go";
 import { FcFolder, FcOpenedFolder } from "react-icons/fc";
-import Rating from "../Rating/Rating";
-import FileContextMenu, {
+import {
+  FileContextMenu,
   FileContextHandler,
-} from "../FileContextMenu/FileContextMenu";
+  FileSize,
+  Rating,
+} from "@components";
 
 interface Props {
   files: FileInfo[];
@@ -19,7 +20,7 @@ interface Props {
   fileContextHandlers: FileContextHandler[];
 }
 
-const FileList: FC<Props> = ({
+export const FileList: FC<Props> = ({
   files,
   folders,
   onSelectFile,
@@ -95,5 +96,3 @@ const File: FC<{
     </FileContextMenu>
   );
 };
-
-export default FileList;

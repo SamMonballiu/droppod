@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "react-query";
 import cx from "classnames";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
-import Loading from "../Loading/Loading";
+import { Loading } from "@components";
 
 interface Props {
   file: FileInfo;
@@ -19,7 +19,7 @@ const url = import.meta.env.DEV
   ? window.location.href.replace("5173", "4004")
   : window.location.href;
 
-const ImagePreview: FC<Props> = ({
+export const ImagePreview: FC<Props> = ({
   file,
   className,
   quality = 60,
@@ -73,5 +73,3 @@ const ImagePreview: FC<Props> = ({
     </div>
   );
 };
-
-export default ImagePreview;

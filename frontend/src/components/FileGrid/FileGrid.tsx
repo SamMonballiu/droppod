@@ -5,10 +5,7 @@ import { GoFile } from "react-icons/go";
 import cx from "classnames";
 import { FolderInfo } from "@models/folderInfo";
 import { FcFolder } from "react-icons/fc";
-import Rating from "../Rating/Rating";
-import FileContextMenu, {
-  FileContextHandler,
-} from "../FileContextMenu/FileContextMenu";
+import { FileContextMenu, FileContextHandler, Rating } from "@components";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -24,7 +21,7 @@ interface Props {
   fileContextHandlers: FileContextHandler[];
 }
 
-const FileGrid: FC<Props> = ({
+export const FileGrid: FC<Props> = ({
   files,
   folders,
   onSelectFile,
@@ -62,8 +59,6 @@ const FileGrid: FC<Props> = ({
     </div>
   );
 };
-
-export default FileGrid;
 
 const zoomMap: Record<FileGridZoom, string> = {
   1: styles.zoom1,

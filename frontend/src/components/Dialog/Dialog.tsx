@@ -14,7 +14,7 @@ export interface DialogProps extends React.PropsWithChildren {
   }[];
 }
 
-const Dialog: FC<DialogProps> = ({
+export const Dialog: FC<DialogProps> = ({
   title,
   isOpen,
   onClose,
@@ -62,5 +62,3 @@ const Dialog: FC<DialogProps> = ({
     </HeadlessDialog>
   );
 };
-
-export default Dialog;

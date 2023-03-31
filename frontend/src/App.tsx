@@ -1,37 +1,39 @@
-import app from "./App.module.scss";
-import tabStyles from "./Tabs.module.scss";
-import React, { useEffect, useMemo, useState } from "react";
-import { FilesResponse } from "@models/response";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import Breadcrumbs from "@components/Breadcrumbs/Breadcrumbs";
-import { CreateFolderPostmodel, MoveFilesPostModel } from "@models/post";
-import useToggle from "./hooks/useToggle";
-import axios from "axios";
-import { GoFileSubmodule, GoCloudUpload } from "react-icons/go";
-import cx from "classnames";
-import { FolderInfo } from "@models/folderInfo";
-import { sortBy, useSortedList } from "./hooks/useSortedList";
-import { FileInfo, isImage } from "@models/fileinfo";
-import { TbTelescope } from "react-icons/tb";
 import {
-  MdOutlineListAlt,
-  MdGridView,
-  MdOutlinePhoto,
-  MdOutlineCreateNewFolder,
-} from "react-icons/md";
-
-import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
-import Collapsible from "./components/Collapsible/Collapsible";
-import Loading from "@components/Loading/Loading";
-import useSelectList from "./hooks/useSelectList";
-import { AiOutlineSelect, AiOutlineSend } from "react-icons/ai";
-import CreateFolderDialog from "@components/CreateFolderDialog/CreateFolderDialog";
-import { FileGridZoom } from "@components/FileGrid/FileGrid";
-import Files from "@components/Files/Files";
+  Breadcrumbs,
+  Collapsible,
+  CreateFolderDialog,
+  FileGridZoom,
+  Files,
+  FileSelectionInfo,
+  FolderList,
+  Loading,
+  MoveFilesDialog,
+  Upload,
+} from "@components";
 import FileSortOptions, { SortOption } from "@components/Files/FileSortOptions";
-import FileSelectionInfo from "@components/FileSelectionInfo/FileSelectionInfo";
-import FolderList from "@components/FolderList/FolderList";
-import MoveFilesDialog from "@components/MoveFilesDialog/MoveFilesDialog";
+import { FileInfo, isImage } from "@models/fileinfo";
+import { FolderInfo } from "@models/folderInfo";
+import { CreateFolderPostmodel, MoveFilesPostModel } from "@models/post";
+import { FilesResponse } from "@models/response";
+import axios from "axios";
+import cx from "classnames";
+import React, { useEffect, useMemo, useState } from "react";
+import { AiOutlineSelect, AiOutlineSend } from "react-icons/ai";
+import { GoCloudUpload, GoFileSubmodule } from "react-icons/go";
+import {
+  MdGridView,
+  MdOutlineCreateNewFolder,
+  MdOutlineListAlt,
+  MdOutlinePhoto,
+} from "react-icons/md";
+import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
+import { TbTelescope } from "react-icons/tb";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import app from "./App.module.scss";
+import useSelectList from "./hooks/useSelectList";
+import { sortBy, useSortedList } from "./hooks/useSortedList";
+import useToggle from "./hooks/useToggle";
+import tabStyles from "./Tabs.module.scss";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {

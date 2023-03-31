@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { FolderInfo } from "@models/folderInfo";
-import { Folder } from "../FileList/FileList";
+import { Folder } from "@components";
 import styles from "./FolderList.module.scss";
 import cx from "classnames";
 import { MdChevronRight, MdOutlineExpandMore } from "react-icons/md";
@@ -14,7 +14,7 @@ interface Props {
   className?: string;
 }
 
-const FolderList: FC<Props> = ({
+export const FolderList: FC<Props> = ({
   data,
   onSelect,
   isExpanded,
@@ -68,4 +68,3 @@ const FolderList: FC<Props> = ({
 
   return <div className={cx(className, styles.folderList)}>{folders}</div>;
 };
-export default FolderList;

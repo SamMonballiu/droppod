@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { FilesResponse } from "@models/response";
-import SelectionInfo from "../SelectionInfo/SelectionInfo";
+import { SelectionInfo } from "@components";
 
 interface Props {
   data: FilesResponse;
@@ -10,7 +10,11 @@ interface Props {
   actions?: React.ReactNode;
 }
 
-const FileSelectionInfo: FC<Props> = ({ data, isSelected, ...props }) => {
+export const FileSelectionInfo: FC<Props> = ({
+  data,
+  isSelected,
+  ...props
+}) => {
   const files = data.contents.files ?? [];
   const selectedFiles = files
     .filter((f) => isSelected(f.filename))
@@ -29,5 +33,3 @@ const FileSelectionInfo: FC<Props> = ({ data, isSelected, ...props }) => {
     />
   );
 };
-
-export default FileSelectionInfo;

@@ -1,9 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { FileInfo } from "@models/fileinfo";
-import ImagePreview from "../ImagePreview/ImagePreview";
 import styles from "./Gallery.module.scss";
 import cx from "classnames";
-import FileProperties from "../FileProperties/FileProperties";
+import { FileProperties, ImagePreview } from "@components";
 import {
   BiFullscreen,
   BiChevronsUp,
