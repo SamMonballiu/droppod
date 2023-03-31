@@ -1,12 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Open+Sans&family=Work+Sans:wght@300&display=swap&family=Atkinson+Hyperlegible");
+@use "variables";
 
 body {
   background-color: #ddd;
-  font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  font-family: variables.$mainFont;
   margin: 0;
 
   button {
-    font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+    font-family: variables.$mainFont;
   }
 }
 
@@ -73,7 +73,7 @@ body {
   }
 
   .active {
-    color: cornflowerblue;
+    color: variables.$accentColor;
     opacity: 1;
     cursor: default;
   }

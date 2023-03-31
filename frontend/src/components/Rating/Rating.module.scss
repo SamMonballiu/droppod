@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .rating {
   display: flex;
 
@@ -17,7 +19,7 @@
 }
 
 .blue {
-  color: cornflowerblue;
+  color: variables.$accentColor;
   opacity: 1;
 }
 

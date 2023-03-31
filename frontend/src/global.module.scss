@@ -1,3 +1,5 @@
+@use "variables";
+
 .btn {
   width: 100%;
   border: none;
@@ -13,17 +15,13 @@
   }
 }
 
-$buttonFontSize: 16px;
-$buttonPadding: 10px 20px;
-$buttonBorderRadius: 4px;
-
 .primaryButton {
   color: white;
-  background: rgb(75, 150, 75);
-  font-size: $buttonFontSize;
-  padding: $buttonPadding;
+  background: variables.$buttonPrimaryColor;
+  font-size: variables.$buttonFontSize;
+  padding: variables.$buttonPadding;
   border: none;
-  border-radius: $buttonBorderRadius;
+  border-radius: variables.$buttonBorderRadius;
 
   &:hover {
     filter: brightness(1.15);
@@ -41,11 +39,11 @@ $buttonBorderRadius: 4px;
 
 .secondaryButton {
   color: white;
-  background: rgba(255, 166, 0, 0.658);
+  background: variables.$buttonSecondaryColor;
   border: none;
-  border-radius: $buttonBorderRadius;
-  font-size: $buttonFontSize;
-  padding: $buttonPadding;
+  border-radius: variables.$buttonBorderRadius;
+  font-size: variables.$buttonFontSize;
+  padding: variables.$buttonPadding;
   cursor: pointer;
 
   &:hover {

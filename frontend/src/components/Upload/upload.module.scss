@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .container h1 {
   text-align: center;
   color: white;
@@ -61,7 +63,7 @@ form input {
     font-size: 1em;
 
     &:hover {
-      color: cornflowerblue;
+      color: variables.$accentColor;
       cursor: pointer;
     }
   }
