@@ -9,15 +9,10 @@ dotenv.config();
 import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
-import { FileInfo, hasRawExtension, isImageExtension } from "./models/fileinfo";
 import { FolderInfo } from "./models/folderInfo";
-import { FilesResponse } from "./models/response";
 import cors from "cors";
-import os from "os";
 import fs from "fs";
 import { generateThumbnail } from "./thumbnail";
-import checkDiskSpace from "check-disk-space";
-import sizeOf from "image-size";
 import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
 import { CommandHandlerFactory, handleResult } from "./commands/base";
@@ -26,9 +21,9 @@ import { fdir } from "fdir";
 import { filesCache } from "./files-cache";
 import { config } from "./config";
 import { SetFileRatingCommand } from "./commands/setFileRatingCommand";
-import { ratings } from "./ratings";
 import { MoveFilesCommand } from "./commands/moveFilesCommand";
 import { RenameCommand } from "./commands/renameCommand";
+import { mapFolder } from "./backend/folderMapper";
 
 const args = argv(process.argv);
 
@@ -139,76 +134,10 @@ app.get("/files", async (req: Request, res: Response) => {
     return;
   }
 
-  const fileCrawler = new fdir()
-    .withMaxDepth(0)
-    .withRelativePaths()
-    .crawl(fullFolder);
-
-  const directoryCrawler = new fdir()
-    .withMaxDepth(1)
-    .withRelativePaths()
-    .onlyDirs()
-    .crawl(fullFolder);
-
-  const files = fileCrawler.sync();
-  const directories = directoryCrawler.sync();
-
-  const result: FolderInfo = {
-    name: (req.query.folder as string) ?? "",
-    parent: path.dirname(fullFolder).replace(config.basePath, "").substring(1),
-    files: [],
-    folders: directories.slice(1).map((dir) => ({
-      name: dir.replace(fullFolder, "").replace("/", ""),
-      parent: (req.query.folder as string) ?? "",
-      files: [],
-      folders: [],
-      dateAdded: new Date(),
-    })),
-  };
-
-  for (const entry of files) {
-    const extension = path.extname(fullFolder + entry);
-    const stats = fs.statSync(fullFolder + entry);
-
-    let dimensions:
-      | { height: number; width: number; orientation: number }
-      | undefined = undefined;
-    if (isImageExtension(extension)) {
-      //TODO library does not support RAW files
-      const info = sizeOf(fullFolder + entry);
-      dimensions = {
-        height: info!.height!,
-        width: info!.width!,
-        orientation: info!.orientation!,
-      };
-    }
-
-    const fileInfo: FileInfo = {
-      filename: entry,
-      fullPath:
-        "http://" +
-        path.join(
-          `${os.hostname()}:${port}`,
-          (req.query.folder as string) ?? "",
-          entry
-        ),
-      relativePath: req.query.folder?.toString() ?? "",
-      extension: path.extname(fullFolder + entry),
-      size: stats.size,
-      dateAdded: stats.ctime,
-      rating: await ratings.get(
-        path.join((req.query.folder as string) ?? "", entry)
-      ),
-      dimensions,
-    };
-
-    result.files!.push(fileInfo);
-  }
-
-  const filesResponse: FilesResponse = {
-    freeSpace: (await checkDiskSpace(fullFolder)).free,
-    contents: result,
-  };
+  const filesResponse = await mapFolder(
+    fullFolder,
+    (req.query.folder as string) ?? ""
+  );
 
   if (!filesCache.has(req.query.folder as string)) {
     filesCache.add(req.query.folder as string, filesResponse);
