@@ -14,6 +14,7 @@ import {
   MemoizedGallery,
 } from "@components";
 import styles from "./Files.module.scss";
+import { AiOutlineSend } from "react-icons/ai";
 
 interface Props {
   data: FileInfo[];
@@ -28,6 +29,7 @@ interface Props {
   onSetAllSelected: SubscribableEvent<boolean>;
   onFocusFile: (file: FileInfo) => void;
   onRename: (file: FileInfo) => void;
+  onMove: (file: FileInfo) => void;
 }
 
 export const Files: FC<Props> = ({
@@ -43,6 +45,7 @@ export const Files: FC<Props> = ({
   onSetAllSelected,
   onFocusFile,
   onRename,
+  onMove,
 }) => {
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
@@ -105,6 +108,7 @@ export const Files: FC<Props> = ({
   const fileContextHandlers: FileContextHandler[] = [
     { label: "Show details", onClick: handleFocusFile, icon: <MdSearch /> },
     { label: "Rename", onClick: onRename, icon: <MdModeEdit /> },
+    { label: "Move", onClick: onMove, icon: <AiOutlineSend /> },
   ];
 
   return (

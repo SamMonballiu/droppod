@@ -181,6 +181,7 @@ function App() {
             queryClient.invalidateQueries(["folders"]);
             showMoveDialog.set(false);
             setSelectMode("single");
+            setFocusedFile(null);
           },
         }
       ),
@@ -213,7 +214,10 @@ function App() {
     const postmodel: MoveFilesPostModel = {
       location: activeFolder,
       destination,
-      filenames: selectedFiles,
+      filenames:
+        selectMode === "multiple"
+          ? selectedFiles
+          : [focusedFile?.filename ?? ""],
     };
 
     return await mutations.files.move.mutateAsync(postmodel);
@@ -353,6 +357,11 @@ function App() {
     setFocusedFile(file);
   };
 
+  const handleSelectForMove = (file: FileInfo) => {
+    showMoveDialog.set(true);
+    setFocusedFile(file);
+  };
+
   const content =
     activeTab == 0 ? (
       <div className={tabStyles.contentX}>
@@ -415,6 +424,7 @@ function App() {
                 onSetAllSelected={events.onSetAllSelected}
                 onFocusFile={setFocusedFile}
                 onRename={handleSelectForRename}
+                onMove={handleSelectForMove}
               />
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
@@ -445,10 +455,17 @@ function App() {
   const moveFilesDialog = !folderList ? null : (
     <MoveFilesDialog
       isOpen={showMoveDialog.value}
-      onClose={showMoveDialog.toggle}
+      onClose={() => {
+        showMoveDialog.toggle();
+        setFocusedFile(null);
+      }}
       data={folderList}
       activeFolder={activeFolder}
-      files={selectedFiles}
+      files={
+        selectMode === "multiple"
+          ? selectedFiles
+          : [focusedFile?.filename ?? ""]
+      }
       onConfirm={handleMoveFiles}
       isMoving={mutations.files.move.isLoading}
     />
@@ -480,7 +497,7 @@ function App() {
 
   return (
     <>
-      {focusedFile && !showRenameDialog.value && (
+      {focusedFile && !showRenameDialog.value && !showMoveDialog.value && (
         <FileDialog
           isOpen={focusedFile !== null}
           onClose={() => setFocusedFile(null)}
