@@ -26,8 +26,47 @@ export const hasRawExtension = (file: string) => {
   return extensions.some((ext) => file.toLowerCase().endsWith(ext));
 };
 
-export const isImage = (file: FileInfo) =>
-  isImageExtension(file.extension) || hasRawExtension(file.filename);
+export const isImage = (file: FileInfo) => getType(file) == FileType.Image;
+
+export enum FileType {
+  Unknown,
+  Image,
+  Video,
+  Audio,
+  Pdf,
+}
+
+export const is = (file: FileInfo, type: FileType) => getType(file) === type;
+
+export const getType = (file: FileInfo): FileType => {
+  const extensionMap = new Map<string[], FileType>();
+  extensionMap.set([".mp3", ".ogg", ".m4a"], FileType.Audio);
+  extensionMap.set([".mp4"], FileType.Video);
+  extensionMap.set(
+    [
+      ".webp",
+      ".jpeg",
+      ".jpg",
+      ".png",
+      ".bmp",
+      ".tif",
+      ".tiff",
+      ".gif",
+      ".cr2",
+      ".raf",
+      ".dng",
+    ],
+    FileType.Image
+  );
+
+  for (const entry of extensionMap.entries()) {
+    if (entry[0].includes(file.extension.toLowerCase())) {
+      return entry[1];
+    }
+  }
+
+  return FileType.Unknown;
+};
 
 export const getOrientation = (
   file: FileInfo
