@@ -1,17 +1,15 @@
 import {
-  RenameFileCommand,
-  RenameFileCommandHandler,
-  RenameFileCommandValidator,
-} from "../renameFileCommand";
+  RenameCommand,
+  RenameCommandHandler,
+  RenameCommandValidator,
+} from "../renameCommand";
 import fs from "fs-extra";
 import { CommandHandleResultType } from "../base";
-jest.mock("fdir");
-import { fdir } from "fdir";
 import { mockFilesCache } from "../mocks";
 
-const command = new RenameFileCommand("path", "currentName", "newName");
-const validator = new RenameFileCommandValidator();
-const handler = new RenameFileCommandHandler(mockFilesCache);
+const command = new RenameCommand("path", "currentName", "newName");
+const validator = new RenameCommandValidator();
+const handler = new RenameCommandHandler(mockFilesCache);
 
 describe("RenameFileCommandValidator", () => {
   it("can validate a RenameFileCommand", () => {
@@ -34,14 +32,6 @@ describe("RenameFileCommandValidator", () => {
   });
 
   it("returns an error if a file with the new name already exists", () => {
-    const syncMock = jest.fn().mockImplementation(() => ["newName"]);
-    const crawlerMock = jest.fn().mockImplementation(() => {
-      return {
-        sync: () => ["newName"],
-      };
-    });
-    jest.spyOn(fdir.prototype, "crawl").mockImplementation(crawlerMock);
-
     const existsSpy = jest
       .spyOn(fs, "existsSync")
       .mockImplementation(() => true);
@@ -50,7 +40,7 @@ describe("RenameFileCommandValidator", () => {
 
     expect(result.isSuccess).toBe(false);
     expect(result.errors[0]).toBe(
-      "A file with the name 'newName' already exists in the specified path."
+      "A file or folder with the name 'newName' already exists in the specified path."
     );
     existsSpy.mockRestore();
   });

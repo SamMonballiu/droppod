@@ -16,7 +16,7 @@ export interface MoveFilesPostModel {
   destination: string;
 }
 
-export interface RenameFilePostModel {
+export interface RenamePostModel {
   path: string;
   currentName: string;
   newName: string;

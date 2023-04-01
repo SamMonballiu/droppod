@@ -7,10 +7,9 @@ import {
 } from "./base";
 import fs from "fs-extra";
 import { qualify } from "../config";
-import { fdir } from "fdir";
 import { FilesCache } from "../files-cache";
 
-export class RenameFileCommand implements Command {
+export class RenameCommand implements Command {
   public path: string;
   public currentName: string;
   public newName: string;
@@ -22,26 +21,19 @@ export class RenameFileCommand implements Command {
   }
 }
 
-export class RenameFileCommandValidator
-  implements CommandValidator<RenameFileCommand>
-{
-  public canValidate = (command: Command) =>
-    command instanceof RenameFileCommand;
+export class RenameCommandValidator implements CommandValidator<RenameCommand> {
+  public canValidate = (command: Command) => command instanceof RenameCommand;
 
-  public validate(command: RenameFileCommand) {
+  public validate(command: RenameCommand) {
     if (!fs.existsSync(qualify(command.path, command.currentName))) {
       return CommandValidateResult.Error(
         `No file with the name '${command.currentName}' could be found in the specified path.`
       );
     }
 
-    const files = new fdir({ maxDepth: 0, relativePaths: true })
-      .crawl(qualify(command.path))
-      .sync();
-
-    if (files.some((f) => f === command.newName)) {
+    if (fs.existsSync(qualify(command.path, command.currentName))) {
       return CommandValidateResult.Error(
-        `A file with the name '${command.newName}' already exists in the specified path.`
+        `A file or folder with the name '${command.newName}' already exists in the specified path.`
       );
     }
 
@@ -49,18 +41,16 @@ export class RenameFileCommandValidator
   }
 }
 
-export class RenameFileCommandHandler
-  implements CommandHandler<RenameFileCommand>
-{
+export class RenameCommandHandler implements CommandHandler<RenameCommand> {
   private _filesCache: FilesCache;
 
   constructor(filesCache: FilesCache) {
     this._filesCache = filesCache;
   }
 
-  public canHandle = (command: Command) => command instanceof RenameFileCommand;
+  public canHandle = (command: Command) => command instanceof RenameCommand;
 
-  public handle(command: RenameFileCommand) {
+  public handle(command: RenameCommand) {
     try {
       fs.renameSync(
         qualify(command.path, command.currentName),

@@ -9,10 +9,7 @@ import {
   MoveFilesCommandHandler,
   MoveFilesCommandValidator,
 } from "./moveFilesCommand";
-import {
-  RenameFileCommandHandler,
-  RenameFileCommandValidator,
-} from "./renameFileCommand";
+import { RenameCommandHandler, RenameCommandValidator } from "./renameCommand";
 import {
   SetFileRatingCommandHandler,
   SetFileRatingCommandValidator,
@@ -129,13 +126,13 @@ export class CommandHandlerFactory {
       new CreateFolderCommandValidator(),
       new SetFileRatingCommandValidator(),
       new MoveFilesCommandValidator(),
-      new RenameFileCommandValidator(),
+      new RenameCommandValidator(),
     ];
     this.handlers = [
       new CreateFolderCommandHandler(),
       new SetFileRatingCommandHandler(ratings, filesCache),
       new MoveFilesCommandHandler(filesCache),
-      new RenameFileCommandHandler(filesCache),
+      new RenameCommandHandler(filesCache),
     ];
   }
 

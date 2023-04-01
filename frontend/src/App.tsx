@@ -19,7 +19,7 @@ import { FolderInfo } from "@models/folderInfo";
 import {
   CreateFolderPostmodel,
   MoveFilesPostModel,
-  RenameFilePostModel,
+  RenamePostModel,
 } from "@models/post";
 import { FilesResponse } from "@models/response";
 import axios from "axios";
@@ -186,7 +186,7 @@ function App() {
         }
       ),
       rename: useMutation(
-        async (postmodel: RenameFilePostModel) => {
+        async (postmodel: RenamePostModel) => {
           const url = baseUrl + "files/rename";
           await axios.post(url, postmodel);
         },
@@ -224,7 +224,7 @@ function App() {
   };
 
   const handleRename = async (newName: string) => {
-    const postmodel: RenameFilePostModel = {
+    const postmodel: RenamePostModel = {
       path: activeFolder,
       currentName: focusedFile!.filename,
       newName,
