@@ -6,6 +6,7 @@ import cx from "classnames";
 import { FolderInfo } from "@models/folderInfo";
 import { FcFolder } from "react-icons/fc";
 import { FileContextMenu, FileContextHandler, Rating } from "@components";
+import { FileIcon } from "@components/FileTypeIcon/FileTypeIcon";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -137,7 +138,12 @@ const File: FC<{
             })}
           >
             {rating}
-            <GoFile className={styles.folderIcon} id={file.filename} />
+            <FileIcon
+              file={file}
+              className={styles.folderIcon}
+              id={file.filename}
+            />
+            {/* <GoFile className={styles.folderIcon} id={file.filename} /> */}
           </div>
         )}
       </FileContextMenu>

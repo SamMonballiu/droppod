@@ -11,6 +11,7 @@ import {
   FileSize,
   Rating,
 } from "@components";
+import { FileIcon } from "@components/FileTypeIcon/FileTypeIcon";
 
 interface Props {
   files: FileInfo[];
@@ -81,7 +82,7 @@ const File: FC<{
           id={file.filename}
           className={cx(styles.link, styles.filename)}
         >
-          {isImage(file) ? <GoFileMedia /> : <GoFile />}
+          {<FileIcon file={file} />}
           {file.filename}
         </a>
         <span className={styles.ext}>{file.extension}</span>

@@ -33,7 +33,7 @@ export enum FileType {
   Image,
   Video,
   Audio,
-  Pdf,
+  Text,
 }
 
 export const is = (file: FileInfo, type: FileType) => getType(file) === type;
@@ -58,6 +58,7 @@ export const getType = (file: FileInfo): FileType => {
     ],
     FileType.Image
   );
+  extensionMap.set([".txt"], FileType.Text);
 
   for (const entry of extensionMap.entries()) {
     if (entry[0].includes(file.extension.toLowerCase())) {
