@@ -23,4 +23,4 @@ export * from "./Rating/Rating";
 export * from "./SelectionInfo/SelectionInfo";
 export * from "./Thumbnail/Thumbnail";
 export * from "./Upload/Upload";
-export * from "./VideoPreview/VideoPreview";
+export * from "./MediaPreview/MediaPreview";

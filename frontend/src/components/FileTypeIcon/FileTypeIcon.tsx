@@ -1,5 +1,5 @@
 import { FileInfo, FileType, getType } from "@models/fileinfo";
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import {
   FcAudioFile,
   FcDocument,
@@ -15,13 +15,15 @@ interface Props {
 }
 
 export const FileIcon: FC<Props> = ({ file, className, id }) => {
-  const typesMap = new Map<FileType, React.ReactNode>([
-    [FileType.Audio, <FcAudioFile className={className} id={id} />],
-    [FileType.Image, <FcImageFile className={className} id={id} />],
-    [FileType.Text, <FcDocument className={className} id={id} />],
-    [FileType.Video, <FcVideoFile className={className} id={id} />],
-    [FileType.Unknown, <FcFile className={className} id={id} />],
-  ]);
+  const typesMap = useMemo(() => {
+    return new Map<FileType, React.ReactNode>([
+      [FileType.Audio, <FcAudioFile className={className} id={id} />],
+      [FileType.Image, <FcImageFile className={className} id={id} />],
+      [FileType.Text, <FcDocument className={className} id={id} />],
+      [FileType.Video, <FcVideoFile className={className} id={id} />],
+      [FileType.Unknown, <FcFile className={className} id={id} />],
+    ]);
+  }, []);
 
   const type = getType(file);
 
