@@ -1,5 +1,6 @@
 import {
   CreateFolderPostmodel,
+  DeletePostmodel,
   MoveFilesPostModel,
   RenamePostModel,
   SetFileRatingPostmodel,
@@ -24,6 +25,7 @@ import { SetFileRatingCommand } from "./commands/setFileRatingCommand";
 import { MoveFilesCommand } from "./commands/moveFilesCommand";
 import { RenameCommand } from "./commands/renameCommand";
 import { mapFolder } from "./backend/folderMapper";
+import { DeleteCommand } from "./commands/deleteCommand";
 
 const args = argv(process.argv);
 
@@ -113,6 +115,13 @@ app.post("/files/rename", async (req: Request, res: Response) => {
     postmodel.currentName,
     postmodel.newName
   );
+  const result = await handler.handle(command);
+  handleResult(result, res);
+});
+
+app.post("/files/delete", async (req: Request, res: Response) => {
+  const postmodel = req.body as DeletePostmodel;
+  const command = new DeleteCommand(postmodel.path, postmodel.name);
   const result = await handler.handle(command);
   handleResult(result, res);
 });

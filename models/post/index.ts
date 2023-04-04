@@ -21,3 +21,8 @@ export interface RenamePostModel {
   currentName: string;
   newName: string;
 }
+
+export interface DeletePostmodel {
+  path: string;
+  name: string;
+}

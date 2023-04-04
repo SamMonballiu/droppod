@@ -5,6 +5,7 @@ import {
   CreateFolderCommandHandler,
   CreateFolderCommandValidator,
 } from "./createFolderCommand";
+import { DeleteCommandHandler, DeleteCommandValidator } from "./deleteCommand";
 import {
   MoveFilesCommandHandler,
   MoveFilesCommandValidator,
@@ -127,12 +128,14 @@ export class CommandHandlerFactory {
       new SetFileRatingCommandValidator(),
       new MoveFilesCommandValidator(),
       new RenameCommandValidator(),
+      new DeleteCommandValidator(),
     ];
     this.handlers = [
       new CreateFolderCommandHandler(),
       new SetFileRatingCommandHandler(ratings, filesCache),
       new MoveFilesCommandHandler(filesCache),
       new RenameCommandHandler(filesCache),
+      new DeleteCommandHandler(filesCache),
     ];
   }
 
