@@ -6,12 +6,14 @@ interface Props extends Omit<DialogProps, "title" | "children" | "buttons"> {
   mode: "folder" | "file";
   names: string[];
   onConfirm: (names: string[]) => void;
+  isDeleting: boolean;
 }
 
 export const DeleteDialog: FC<Props> = ({
   names,
   mode,
   onConfirm,
+  isDeleting,
   ...dialogProps
 }) => {
   const msg =
@@ -28,11 +30,13 @@ export const DeleteDialog: FC<Props> = ({
           label: "No",
           onClick: dialogProps.onClose,
           className: global.primaryButton,
+          disabled: isDeleting,
         },
         {
           label: "Yes",
           onClick: () => onConfirm(names),
           className: global.secondaryButton,
+          disabled: isDeleting,
         },
       ]}
     >

@@ -21,6 +21,7 @@ import {
   CreateFolderPostmodel,
   MoveFilesPostModel,
   RenamePostModel,
+  DeletePostmodel,
 } from "@models/post";
 import { FilesResponse } from "@models/response";
 import axios from "axios";
@@ -205,6 +206,20 @@ function App() {
           },
         }
       ),
+      delete: useMutation(
+        async (postmodel: DeletePostmodel) => {
+          const url = baseUrl + "files/delete";
+          await axios.post(url, postmodel);
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["files", activeFolder]);
+            showDeleteDialog.set(false);
+            setFocusedFile(null);
+            setAllSelected(false);
+          },
+        }
+      ),
     },
   };
 
@@ -238,6 +253,15 @@ function App() {
     };
 
     return await mutations.files.rename.mutateAsync(postmodel);
+  };
+
+  const handleDelete = async (names: string[]) => {
+    const postmodel: DeletePostmodel = {
+      path: activeFolder,
+      names,
+    };
+
+    return await mutations.files.delete.mutateAsync(postmodel);
   };
 
   const breadcrumbs = (
@@ -510,7 +534,8 @@ function App() {
       }}
       names={focusedFile ? [focusedFile.filename] : selectedFiles}
       mode="file"
-      onConfirm={(names) => console.log(names)}
+      onConfirm={handleDelete}
+      isDeleting={mutations.files.delete.isLoading}
     />
   );
 

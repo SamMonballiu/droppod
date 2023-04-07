@@ -24,5 +24,5 @@ export interface RenamePostModel {
 
 export interface DeletePostmodel {
   path: string;
-  name: string;
+  names: string[];
 }

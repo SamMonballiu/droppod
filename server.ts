@@ -121,7 +121,7 @@ app.post("/files/rename", async (req: Request, res: Response) => {
 
 app.post("/files/delete", async (req: Request, res: Response) => {
   const postmodel = req.body as DeletePostmodel;
-  const command = new DeleteCommand(postmodel.path, postmodel.name);
+  const command = new DeleteCommand(postmodel.path, postmodel.names);
   const result = await handler.handle(command);
   handleResult(result, res);
 });
