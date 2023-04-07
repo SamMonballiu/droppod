@@ -7,7 +7,7 @@ import { mockFilesCache } from "../mocks";
 import fs from "fs-extra";
 import { CommandHandleResultType } from "../base";
 
-const command = new DeleteCommand("path", "itemname");
+const command = new DeleteCommand("path", ["itemname", "itemname2"]);
 const validator = new DeleteCommandValidator();
 const handler = new DeleteCommandHandler(mockFilesCache);
 
@@ -34,13 +34,13 @@ describe("DeleteCommandValidator", () => {
 });
 
 describe("DeleteCommandHandler", () => {
-  it("deletes the file/folder", () => {
+  it("deletes the file(s)/folder(s)", () => {
     const deleteSpy = jest.spyOn(fs, "removeSync").mockImplementation(() => {});
 
     const result = handler.handle(command);
 
     expect(result.type).toBe(CommandHandleResultType.Success);
-    expect(deleteSpy).toHaveBeenCalled();
+    expect(deleteSpy).toHaveBeenCalledTimes(2);
     deleteSpy.mockRestore();
   });
 

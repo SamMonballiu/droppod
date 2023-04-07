@@ -11,11 +11,11 @@ import { FilesCache } from "../files-cache";
 
 export class DeleteCommand implements Command {
   public path: string;
-  public itemName: string;
+  public itemNames: string[];
 
-  constructor(path: string, itemName: string) {
+  constructor(path: string, itemNames: string[]) {
     this.path = path;
-    this.itemName = itemName;
+    this.itemNames = itemNames;
   }
 }
 
@@ -23,10 +23,12 @@ export class DeleteCommandValidator implements CommandValidator<DeleteCommand> {
   public canValidate = (command: Command) => command instanceof DeleteCommand;
 
   public validate(command: DeleteCommand) {
-    if (!fs.existsSync(qualify(command.path, command.itemName))) {
-      return CommandValidateResult.Error(
-        `No file or folder with the name '${command.itemName}' could be found in the specified path.`
-      );
+    for (const itemName of command.itemNames) {
+      if (!fs.existsSync(qualify(command.path, itemName))) {
+        return CommandValidateResult.Error(
+          `No file or folder with the name '${itemName}' could be found in the specified path.`
+        );
+      }
     }
 
     return CommandValidateResult.Success();
@@ -44,7 +46,9 @@ export class DeleteCommandHandler implements CommandHandler<DeleteCommand> {
 
   public handle(command: DeleteCommand) {
     try {
-      fs.removeSync(qualify(command.path, command.itemName));
+      for (const itemName of command.itemNames) {
+        fs.removeSync(qualify(command.path, itemName));
+      }
       this._filesCache.invalidate(command.path);
       return CommandHandleResult.Success.WithoutResult();
     } catch (err: any) {
