@@ -1,7 +1,7 @@
 import styles from "./SelectionInfo.module.scss";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 import useToggle from "@hooks/useToggle";
-import { AiOutlineClear } from "react-icons/ai";
+import { AiOutlineClear, AiOutlineClose } from "react-icons/ai";
 import { BiSelectMultiple } from "react-icons/bi";
 
 interface Props<T> {
@@ -9,6 +9,7 @@ interface Props<T> {
   renderItem: (item: T) => React.ReactNode;
   onClearSelection: () => void;
   onSelectAll: () => void;
+  onCancel: () => void;
   actions?: React.ReactNode;
 }
 
@@ -17,6 +18,7 @@ export const SelectionInfo = <T,>({
   renderItem,
   onClearSelection,
   onSelectAll,
+  onCancel,
   actions,
 }: Props<T>) => {
   const { value: isExpanded, toggle: toggleExpanded } = useToggle(false);
@@ -35,6 +37,7 @@ export const SelectionInfo = <T,>({
           onClick={onClearSelection}
         />
         <BiSelectMultiple className={styles.selectAll} onClick={onSelectAll} />
+        <AiOutlineClose className={styles.cancel} onClick={onCancel} />
       </div>
       {isExpanded && (
         <div className={styles.longInfo}>{items.map(renderItem)}</div>

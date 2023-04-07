@@ -14,7 +14,7 @@ import {
   MemoizedGallery,
 } from "@components";
 import styles from "./Files.module.scss";
-import { AiOutlineSend } from "react-icons/ai";
+import { AiOutlineClear, AiOutlineSend } from "react-icons/ai";
 
 interface Props {
   data: FileInfo[];
@@ -30,6 +30,7 @@ interface Props {
   onFocusFile: (file: FileInfo) => void;
   onRename: (file: FileInfo) => void;
   onMove: (file: FileInfo) => void;
+  onDelete: (file: FileInfo) => void;
 }
 
 export const Files: FC<Props> = ({
@@ -46,6 +47,7 @@ export const Files: FC<Props> = ({
   onFocusFile,
   onRename,
   onMove,
+  onDelete,
 }) => {
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
@@ -109,6 +111,7 @@ export const Files: FC<Props> = ({
     { label: "Show details", onClick: handleFocusFile, icon: <MdSearch /> },
     { label: "Rename", onClick: onRename, icon: <MdModeEdit /> },
     { label: "Move", onClick: onMove, icon: <AiOutlineSend /> },
+    { label: "Delete", onClick: onDelete, icon: <AiOutlineClear /> },
   ];
 
   return (

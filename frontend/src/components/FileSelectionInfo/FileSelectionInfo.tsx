@@ -8,6 +8,7 @@ interface Props {
   onClearSelection: () => void;
   onSelectAll: () => void;
   actions?: React.ReactNode;
+  onCancel: () => void;
 }
 
 export const FileSelectionInfo: FC<Props> = ({

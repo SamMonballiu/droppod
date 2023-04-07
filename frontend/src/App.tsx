@@ -12,8 +12,9 @@ import {
   SortOption,
   Upload,
   FileDialog,
+  RenameDialog,
+  DeleteDialog,
 } from "@components";
-import { RenameDialog } from "@components/RenameDialog/RenameDialog";
 import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
 import {
@@ -25,7 +26,12 @@ import { FilesResponse } from "@models/response";
 import axios from "axios";
 import cx from "classnames";
 import React, { useEffect, useMemo, useState } from "react";
-import { AiOutlineSelect, AiOutlineSend } from "react-icons/ai";
+import {
+  AiOutlineClose,
+  AiOutlineDelete,
+  AiOutlineSelect,
+  AiOutlineSend,
+} from "react-icons/ai";
 import { GoCloudUpload, GoFileSubmodule } from "react-icons/go";
 import {
   MdGridView,
@@ -69,6 +75,7 @@ function App() {
   const showMoveDialog = useToggle(false);
   const showFolderList = useToggle(true);
   const showRenameDialog = useToggle(false);
+  const showDeleteDialog = useToggle(false);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
 
@@ -362,6 +369,11 @@ function App() {
     setFocusedFile(file);
   };
 
+  const handleSelectForDelete = (file: FileInfo) => {
+    showDeleteDialog.set(true);
+    setFocusedFile(file);
+  };
+
   const content =
     activeTab == 0 ? (
       <div className={tabStyles.contentX}>
@@ -425,6 +437,7 @@ function App() {
                 onFocusFile={setFocusedFile}
                 onRename={handleSelectForRename}
                 onMove={handleSelectForMove}
+                onDelete={handleSelectForDelete}
               />
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
@@ -488,25 +501,42 @@ function App() {
     />
   ) : null;
 
+  const deleteDialog = (
+    <DeleteDialog
+      isOpen={showDeleteDialog.value}
+      onClose={() => {
+        setFocusedFile(null);
+        showDeleteDialog.toggle();
+      }}
+      names={focusedFile ? [focusedFile.filename] : selectedFiles}
+      mode="file"
+      onConfirm={(names) => console.log(names)}
+    />
+  );
+
   const multiFileActions = (
     <div className={app.multiFileButtons}>
       <AiOutlineSend onClick={showMoveDialog.toggle} />
-      <AiOutlineSelect onClick={() => setSelectMode("single")} />
+      <AiOutlineDelete onClick={showDeleteDialog.toggle} />
     </div>
   );
 
   return (
     <>
-      {focusedFile && !showRenameDialog.value && !showMoveDialog.value && (
-        <FileDialog
-          isOpen={focusedFile !== null}
-          onClose={() => setFocusedFile(null)}
-          file={focusedFile}
-        />
-      )}
+      {focusedFile &&
+        !showRenameDialog.value &&
+        !showMoveDialog.value &&
+        !showDeleteDialog.value && (
+          <FileDialog
+            isOpen={focusedFile !== null}
+            onClose={() => setFocusedFile(null)}
+            file={focusedFile}
+          />
+        )}
 
       {renameFileDialog}
       {moveFilesDialog}
+      {deleteDialog}
       {createFolderDialog.value && (
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}
@@ -521,6 +551,7 @@ function App() {
           onSelectAll={() => {
             setAllSelected(true);
           }}
+          onCancel={() => setSelectMode("single")}
           actions={multiFileActions}
         />
       )}

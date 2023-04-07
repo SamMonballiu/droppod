@@ -40,7 +40,16 @@ $maxWidth: clamp(400px, 50vw, 800px);
 }
 
 .clearAll {
-  color: red;
+  color: orange;
+  opacity: 0.5;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.cancel {
+  color: variables.$buttonDangerColor;
   opacity: 0.5;
   cursor: pointer;
   &:hover {
@@ -49,7 +58,7 @@ $maxWidth: clamp(400px, 50vw, 800px);
 }
 
 .selectAll {
-  color: green;
+  color: variables.$buttonPrimaryColor;
   opacity: 0.5;
   cursor: pointer;
   &:hover {
