@@ -1,9 +1,8 @@
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import fs from "fs";
-import { generateThumbnail } from "./thumbnail";
 import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
 import { CommandHandlerFactory } from "./commands/base";
@@ -15,6 +14,7 @@ import { addSetFileRatingRoute } from "./features/files/setRating/setFileRatingR
 import { addRenameFileRoute } from "./features/files/rename/renameFileRoute";
 import { addGetFilesRoute } from "./features/files/get/getFilesRoute";
 import { addGetFoldersRoute } from "./features/folders/get/getFoldersRoute";
+import { addGetThumbnailsRoute } from "./features/thumbnails/get/getThumbnailsRoute";
 
 const args = argv(process.argv);
 
@@ -55,52 +55,7 @@ addSetFileRatingRoute(app, handler);
 addRenameFileRoute(app, handler);
 addGetFilesRoute(app);
 addGetFoldersRoute(app);
-
-app.get("/thumbnail", async (req: Request, res: Response) => {
-  const file = req.query.file as string;
-  if (!req.query.size && !req.query.percentage) {
-    res.status(400).send("Must supply either a size or a percentage.");
-  }
-
-  let size = null;
-  if (req.query.size) {
-    const [height, width] = (req.query.size as string)
-      .split("x")
-      .map((d) => parseInt(d));
-
-    size = { height, width };
-  }
-
-  let percentage = 0;
-  if (req.query.percentage) {
-    percentage = parseInt(req.query.percentage as string);
-  }
-
-  const quality = req.query.quality
-    ? parseInt(req.query.quality as string)
-    : 60;
-
-  let thumbnail: Buffer;
-  if (thumbnailCache.has(file, req.query.size as string, quality)) {
-    thumbnail = thumbnailCache.get(file, req.query.size as string, quality)!;
-  } else {
-    try {
-      thumbnail = await generateThumbnail(
-        config.basePath,
-        file,
-        size ?? { percentage },
-        quality
-      );
-
-      thumbnailCache.add(file, req.query.size as string, quality, thumbnail);
-    } catch (err) {
-      console.log(err);
-      thumbnail = Buffer.from([]);
-    }
-  }
-
-  res.setHeader("content-type", "image/jpeg").status(200).send(thumbnail);
-});
+addGetThumbnailsRoute(app, thumbnailCache);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}.`);
