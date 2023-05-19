@@ -1,22 +1,20 @@
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
 import express, { Request, Response } from "express";
-import { FolderInfo } from "./models/folderInfo";
 import cors from "cors";
 import fs from "fs";
 import { generateThumbnail } from "./thumbnail";
 import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
 import { CommandHandlerFactory } from "./commands/base";
-import { fdir } from "fdir";
-import { filesCache } from "./features/files/files-cache";
 import { config } from "./config";
-import { mapFolder } from "./backend/folderMapper";
 import { addMoveFilesRoute } from "./features/files/move/moveFilesRoute";
 import { addCreateFolderRoute } from "./features/folders/create/createFolderRoute";
 import { addUploadFilesRoute } from "./features/files/upload/uploadFilesRoute";
 import { addSetFileRatingRoute } from "./features/files/setRating/setFileRatingRoute";
 import { addRenameFileRoute } from "./features/files/rename/renameFileRoute";
+import { addGetFilesRoute } from "./features/files/get/getFilesRoute";
+import { addGetFoldersRoute } from "./features/folders/get/getFoldersRoute";
 
 const args = argv(process.argv);
 
@@ -55,71 +53,8 @@ addCreateFolderRoute(app, handler);
 addMoveFilesRoute(app, handler);
 addSetFileRatingRoute(app, handler);
 addRenameFileRoute(app, handler);
-
-app.get("/files", async (req: Request, res: Response) => {
-  let fullFolder = config.basePath;
-
-  if (req.query.folder) {
-    fullFolder += req.query.folder + "/";
-  }
-
-  if (!fs.existsSync(fullFolder)) {
-    res.status(400).send("The specified folder doesn't exist.");
-    return;
-  }
-
-  if (filesCache.has(fullFolder) && !filesCache.isStale(fullFolder)) {
-    res.status(200).send(filesCache.get(fullFolder));
-    return;
-  }
-
-  const filesResponse = await mapFolder(
-    fullFolder,
-    (req.query.folder as string) ?? ""
-  );
-
-  if (!filesCache.has(req.query.folder as string)) {
-    filesCache.add(req.query.folder as string, filesResponse);
-  }
-
-  res.status(200).send(filesResponse);
-});
-
-app.get("/folders", async (req: Request, res: Response) => {
-  const directories = new fdir()
-    .withMaxDepth(1)
-    .onlyDirs()
-    .crawl(config.basePath)
-    .sync()
-    .filter((x) => x !== config.basePath);
-
-  const crawlDirectory = (pathName: string, parent: string): FolderInfo => {
-    const dirs = new fdir()
-      .withMaxDepth(1)
-      .onlyDirs()
-      .crawl(pathName)
-      .sync()
-      .filter((x) => x !== pathName);
-
-    const mapped: FolderInfo[] = dirs.map((x) => crawlDirectory(x, pathName));
-
-    return {
-      name: pathName.replace(parent, "").replace("/", ""),
-      parent: parent.replace(config.basePath, ""),
-      files: undefined,
-      folders: mapped,
-    };
-  };
-
-  const result: FolderInfo = {
-    name: "",
-    parent: "",
-    files: undefined,
-    folders: directories.map((x) => crawlDirectory(x, config.basePath)),
-  };
-
-  res.status(200).send(result);
-});
+addGetFilesRoute(app);
+addGetFoldersRoute(app);
 
 app.get("/thumbnail", async (req: Request, res: Response) => {
   const file = req.query.file as string;
