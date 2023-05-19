@@ -41,7 +41,7 @@ export const is = (file: FileInfo, type: FileType) => getType(file) === type;
 export const getType = (file: FileInfo): FileType => {
   const extensionMap = new Map<string[], FileType>();
   extensionMap.set([".mp3", ".ogg", ".m4a"], FileType.Audio);
-  extensionMap.set([".mp4"], FileType.Video);
+  extensionMap.set([".mp4", ".webm"], FileType.Video);
   extensionMap.set(
     [
       ".webp",
