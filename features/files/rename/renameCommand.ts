@@ -4,9 +4,9 @@ import {
   CommandHandleResult,
   CommandValidateResult,
   CommandValidator,
-} from "./base";
+} from "../../../commands/base";
 import fs from "fs-extra";
-import { qualify } from "../config";
+import { qualify } from "../../../config";
 import { FilesCache } from "../files-cache";
 
 export class RenameCommand implements Command {
@@ -31,7 +31,7 @@ export class RenameCommandValidator implements CommandValidator<RenameCommand> {
       );
     }
 
-    if (fs.existsSync(qualify(command.path, command.currentName))) {
+    if (fs.existsSync(qualify(command.path, command.newName))) {
       return CommandValidateResult.Error(
         `A file or folder with the name '${command.newName}' already exists in the specified path.`
       );

@@ -1,29 +1,22 @@
-import {
-  CreateFolderPostmodel,
-  MoveFilesPostModel,
-  RenamePostModel,
-  SetFileRatingPostmodel,
-} from "./models/post/index";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
 import express, { Request, Response } from "express";
-import multer from "multer";
-import path from "path";
 import { FolderInfo } from "./models/folderInfo";
 import cors from "cors";
 import fs from "fs";
 import { generateThumbnail } from "./thumbnail";
 import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
-import { CommandHandlerFactory, handleResult } from "./commands/base";
-import { CreateFolderCommand } from "./commands/createFolderCommand";
+import { CommandHandlerFactory } from "./commands/base";
 import { fdir } from "fdir";
-import { filesCache } from "./files-cache";
+import { filesCache } from "./features/files/files-cache";
 import { config } from "./config";
-import { SetFileRatingCommand } from "./commands/setFileRatingCommand";
-import { MoveFilesCommand } from "./commands/moveFilesCommand";
-import { RenameCommand } from "./commands/renameCommand";
 import { mapFolder } from "./backend/folderMapper";
+import { addMoveFilesRoute } from "./features/files/move/moveFilesRoute";
+import { addCreateFolderRoute } from "./features/folders/create/createFolderRoute";
+import { addUploadFilesRoute } from "./features/files/upload/uploadFilesRoute";
+import { addSetFileRatingRoute } from "./features/files/setRating/setFileRatingRoute";
+import { addRenameFileRoute } from "./features/files/rename/renameFileRoute";
 
 const args = argv(process.argv);
 
@@ -37,19 +30,6 @@ if (!fs.existsSync(config.basePath)) {
   );
   process.exit();
 }
-
-const storage = multer.diskStorage({
-  destination: function (req: Request, file, cb) {
-    const folder = req.query.folder as string;
-    filesCache.invalidate(folder);
-    cb(null, path.join(config.basePath, folder));
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage });
 
 const app = express();
 app.use(express.static(config.basePath));
@@ -70,52 +50,11 @@ app.use(
 const handler = new CommandHandlerFactory();
 const port = args.port ?? 4004;
 
-app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
-  res.status(200).send("ok");
-});
-
-app.post("/folders/create", async (req: Request, res: Response) => {
-  const postmodel = req.body as CreateFolderPostmodel;
-  const command = new CreateFolderCommand(
-    path.join(config.basePath, postmodel.location),
-    postmodel.folderName
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
-
-app.post("/files/move", async (req: Request, res: Response) => {
-  const postmodel = req.body as MoveFilesPostModel;
-  const command = new MoveFilesCommand(
-    postmodel.location,
-    postmodel.filenames,
-    postmodel.destination
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
-
-app.post("/rate-file", async (req: Request, res: Response) => {
-  const postmodel = req.body as SetFileRatingPostmodel;
-  const command = new SetFileRatingCommand(
-    postmodel.path,
-    postmodel.filename,
-    postmodel.rating
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
-
-app.post("/files/rename", async (req: Request, res: Response) => {
-  const postmodel = req.body as RenamePostModel;
-  const command = new RenameCommand(
-    postmodel.path,
-    postmodel.currentName,
-    postmodel.newName
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
+addUploadFilesRoute(app);
+addCreateFolderRoute(app, handler);
+addMoveFilesRoute(app, handler);
+addSetFileRatingRoute(app, handler);
+addRenameFileRoute(app, handler);
 
 app.get("/files", async (req: Request, res: Response) => {
   let fullFolder = config.basePath;

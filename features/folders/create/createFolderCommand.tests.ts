@@ -1,11 +1,11 @@
 import path from "path";
 import fs from "fs";
-import { CommandHandleResultType } from "../base";
 import {
   CreateFolderCommand,
   CreateFolderCommandHandler,
   CreateFolderCommandValidator,
-} from "../createFolderCommand";
+} from "./createFolderCommand";
+import { CommandHandleResultType } from "../../../commands/base";
 
 const command = new CreateFolderCommand("location", "folderName");
 const handler = new CreateFolderCommandHandler();

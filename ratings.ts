@@ -1,5 +1,5 @@
 import storage from "node-persist";
-import { FileRating } from "./models/post";
+import { FileRating } from "./models/fileinfo";
 
 storage.init({
   dir: "ratings",

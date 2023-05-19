@@ -2,10 +2,10 @@ import {
   RenameCommand,
   RenameCommandHandler,
   RenameCommandValidator,
-} from "../renameCommand";
+} from "./renameCommand";
 import fs from "fs-extra";
-import { CommandHandleResultType } from "../base";
-import { mockFilesCache } from "../mocks";
+import { CommandHandleResultType } from "../../../commands/base";
+import { mockFilesCache } from "../../../commands/mocks";
 
 const command = new RenameCommand("path", "currentName", "newName");
 const validator = new RenameCommandValidator();

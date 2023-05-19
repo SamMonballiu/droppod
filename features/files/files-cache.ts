@@ -1,4 +1,4 @@
-import { FilesResponse } from "./models/response";
+import { FilesResponse } from "../../models/response";
 import { fdir } from "fdir";
 
 const _cache: Record<string, FilesResponse | undefined> = {};

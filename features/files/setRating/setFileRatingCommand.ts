@@ -1,16 +1,16 @@
-import { config } from "../config";
-import { FileRating } from "../models/post";
+import { config } from "../../../config";
 import {
   Command,
   CommandHandler,
   CommandHandleResult,
   CommandValidateResult,
   CommandValidator,
-} from "./base";
+} from "../../../commands/base";
 import fs from "fs";
-import { RatingsService } from "../ratings";
+import { RatingsService } from "../../../ratings";
 import { FilesCache } from "../files-cache";
 import path from "path";
+import { FileRating } from "../../../models/fileinfo";
 
 export class SetFileRatingCommand implements Command {
   public path: string;
