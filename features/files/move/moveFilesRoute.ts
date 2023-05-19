@@ -3,7 +3,7 @@ import { MoveFilesCommand } from "./moveFilesCommand";
 import { MoveFilesPostModel } from "./moveFilesPostModel";
 import { Request, Response, Express } from "express";
 
-export const addMoveFilesRoute = (
+export const mapMoveFilesRoute = (
   app: Express,
   handler: CommandHandlerFactory
 ) => {

@@ -4,7 +4,7 @@ import { config } from "@config";
 import { mapFolder } from "../../../backend/folderMapper";
 import { filesCache } from "../files-cache";
 
-export const addGetFilesRoute = (app: Express) => {
+export const mapGetFilesRoute = (app: Express) => {
   app.get("/files", async (req: Request, res: Response) => {
     let fullFolder = config.basePath;
 

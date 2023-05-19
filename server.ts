@@ -7,15 +7,15 @@ import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
 import { CommandHandlerFactory } from "./commands/base";
 import { config } from "./config";
-import { addMoveFilesRoute } from "./features/files/move/moveFilesRoute";
-import { addCreateFolderRoute } from "./features/folders/create/createFolderRoute";
-import { addUploadFilesRoute } from "./features/files/upload/uploadFilesRoute";
-import { addSetFileRatingRoute } from "./features/files/setRating/setFileRatingRoute";
-import { addRenameFileRoute } from "./features/files/rename/renameFileRoute";
-import { addGetFilesRoute } from "./features/files/get/getFilesRoute";
-import { addGetFoldersRoute } from "./features/folders/get/getFoldersRoute";
-import { addGetThumbnailsRoute } from "./features/thumbnails/get/getThumbnailsRoute";
-import { addDeleteFilesRoute } from "./features/files/delete/deleteFileRoute";
+import { mapMoveFilesRoute } from "./features/files/move/moveFilesRoute";
+import { mapCreateFolderRoute } from "./features/folders/create/createFolderRoute";
+import { mapUploadFilesRoute } from "./features/files/upload/uploadFilesRoute";
+import { mapSetFileRatingRoute } from "./features/files/setRating/setFileRatingRoute";
+import { mapRenameFileRoute } from "./features/files/rename/renameFileRoute";
+import { mapGetFilesRoute } from "./features/files/get/getFilesRoute";
+import { mapGetFoldersRoute } from "./features/folders/get/getFoldersRoute";
+import { mapGetThumbnailsRoute } from "./features/thumbnails/get/getThumbnailsRoute";
+import { mapDeleteFilesRoute } from "./features/files/delete/deleteFileRoute";
 
 const args = argv(process.argv);
 
@@ -49,15 +49,16 @@ app.use(
 const handler = new CommandHandlerFactory();
 const port = args.port ?? 4004;
 
-addUploadFilesRoute(app);
-addCreateFolderRoute(app, handler);
-addMoveFilesRoute(app, handler);
-addSetFileRatingRoute(app, handler);
-addRenameFileRoute(app, handler);
-addGetFilesRoute(app);
-addGetFoldersRoute(app);
-addGetThumbnailsRoute(app, thumbnailCache);
-addDeleteFilesRoute(app, handler);
+mapGetFilesRoute(app);
+mapUploadFilesRoute(app);
+mapMoveFilesRoute(app, handler);
+mapRenameFileRoute(app, handler);
+mapDeleteFilesRoute(app, handler);
+mapSetFileRatingRoute(app, handler);
+mapGetThumbnailsRoute(app, thumbnailCache);
+
+mapCreateFolderRoute(app, handler);
+mapGetFoldersRoute(app);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}.`);

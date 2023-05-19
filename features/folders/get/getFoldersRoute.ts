@@ -3,7 +3,7 @@ import { fdir } from "fdir";
 import { config } from "@config";
 import { FolderInfo } from "../../../models/folderInfo";
 
-export const addGetFoldersRoute = (app: Express) => {
+export const mapGetFoldersRoute = (app: Express) => {
   app.get("/folders", async (req: Request, res: Response) => {
     const directories = new fdir()
       .withMaxDepth(1)

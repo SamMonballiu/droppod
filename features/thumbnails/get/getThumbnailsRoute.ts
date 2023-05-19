@@ -3,7 +3,7 @@ import { ThumbnailCache } from "../../../thumbnail-cache";
 import { config } from "@config";
 import { generateThumbnail } from "../../../thumbnail";
 
-export const addGetThumbnailsRoute = (app: Express, cache: ThumbnailCache) => {
+export const mapGetThumbnailsRoute = (app: Express, cache: ThumbnailCache) => {
   app.get("/thumbnail", async (req: Request, res: Response) => {
     const file = req.query.file as string;
     if (!req.query.size && !req.query.percentage) {

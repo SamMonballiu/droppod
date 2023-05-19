@@ -5,7 +5,7 @@ import { CreateFolderCommand } from "./createFolderCommand";
 import { CreateFolderPostmodel } from "./createFolderPostmodel";
 import path from "path";
 
-export const addCreateFolderRoute = (
+export const mapCreateFolderRoute = (
   app: Express,
   handler: CommandHandlerFactory
 ) => {

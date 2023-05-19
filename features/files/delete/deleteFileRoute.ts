@@ -3,7 +3,7 @@ import { Express, Request, Response } from "express";
 import { DeleteCommand } from "./deleteCommand";
 import { DeletePostmodel } from "./deleteFilePostmodel";
 
-export const addDeleteFilesRoute = (
+export const mapDeleteFilesRoute = (
   app: Express,
   handler: CommandHandlerFactory
 ) => {

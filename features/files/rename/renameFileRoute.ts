@@ -3,7 +3,7 @@ import { Express, Request, Response } from "express";
 import { RenameCommand } from "./renameCommand";
 import { RenamePostModel } from "./renameFilePostmodel";
 
-export const addRenameFileRoute = (
+export const mapRenameFileRoute = (
   app: Express,
   handler: CommandHandlerFactory
 ) => {

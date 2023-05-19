@@ -3,7 +3,7 @@ import { Express, Request, Response } from "express";
 import { SetFileRatingCommand } from "./setFileRatingCommand";
 import { SetFileRatingPostmodel } from "./setFileRatingPostModel";
 
-export const addSetFileRatingRoute = (
+export const mapSetFileRatingRoute = (
   app: Express,
   handler: CommandHandlerFactory
 ) => {

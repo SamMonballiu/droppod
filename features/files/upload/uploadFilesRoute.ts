@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-export const addUploadFilesRoute = (app: Express) => {
+export const mapUploadFilesRoute = (app: Express) => {
   app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
     res.status(200).send("ok");
   });
