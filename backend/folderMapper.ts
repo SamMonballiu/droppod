@@ -62,7 +62,11 @@ export const mapFolder = async (
       filename: entry,
       fullPath:
         "http://" +
-        path.join(`${os.hostname()}:${config.port}`, folderName, entry),
+        path.join(
+          `${os.hostname()}:${config.port}`,
+          encodeURIComponent(folderName),
+          encodeURIComponent(entry)
+        ),
       relativePath: folderName,
       extension: path.extname(fullFolder + entry),
       size: stats.size,
