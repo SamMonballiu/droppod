@@ -15,7 +15,7 @@ import { addRenameFileRoute } from "./features/files/rename/renameFileRoute";
 import { addGetFilesRoute } from "./features/files/get/getFilesRoute";
 import { addGetFoldersRoute } from "./features/folders/get/getFoldersRoute";
 import { addGetThumbnailsRoute } from "./features/thumbnails/get/getThumbnailsRoute";
-import { DeleteCommand } from "./commands/deleteCommand";
+import { addDeleteFilesRoute } from "./features/files/delete/deleteFileRoute";
 
 const args = argv(process.argv);
 
@@ -57,13 +57,7 @@ addRenameFileRoute(app, handler);
 addGetFilesRoute(app);
 addGetFoldersRoute(app);
 addGetThumbnailsRoute(app, thumbnailCache);
-
-// app.post("/files/delete", async (req: Request, res: Response) => {
-//   const postmodel = req.body as DeletePostmodel;
-//   const command = new DeleteCommand(postmodel.path, postmodel.names);
-//   const result = await handler.handle(command);
-//   handleResult(result, res);
-// });
+addDeleteFilesRoute(app, handler);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}.`);

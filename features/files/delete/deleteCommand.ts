@@ -4,9 +4,9 @@ import {
   CommandHandleResult,
   CommandValidateResult,
   CommandValidator,
-} from "./base";
+} from "@commands";
 import fs from "fs-extra";
-import { qualify } from "../config";
+import { qualify } from "@config";
 import { FilesCache } from "../files-cache";
 
 export class DeleteCommand implements Command {

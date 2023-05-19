@@ -5,7 +5,10 @@ import {
   CreateFolderCommandHandler,
   CreateFolderCommandValidator,
 } from "../features/folders/create/createFolderCommand";
-import { DeleteCommandHandler, DeleteCommandValidator } from "./deleteCommand";
+import {
+  DeleteCommandHandler,
+  DeleteCommandValidator,
+} from "../features/files/delete/deleteCommand";
 import {
   MoveFilesCommandHandler,
   MoveFilesCommandValidator,

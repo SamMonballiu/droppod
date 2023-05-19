@@ -2,10 +2,10 @@ import {
   DeleteCommand,
   DeleteCommandHandler,
   DeleteCommandValidator,
-} from "../deleteCommand";
-import { mockFilesCache } from "../mocks";
+} from "./deleteCommand";
+import { mockFilesCache } from "../../../commands/mocks";
 import fs from "fs-extra";
-import { CommandHandleResultType } from "../base";
+import { CommandHandleResultType } from "../../../commands/base";
 
 const command = new DeleteCommand("path", ["itemname", "itemname2"]);
 const validator = new DeleteCommandValidator();
