@@ -1,11 +1,11 @@
 import fs from "fs-extra";
-import { CommandHandleResultType } from "../base";
+import { CommandHandleResultType } from "../../../commands/base";
 import {
   MoveFilesCommand,
   MoveFilesCommandHandler,
   MoveFilesCommandValidator,
-} from "../moveFilesCommand";
-import { mockFilesCache } from "../mocks";
+} from "./moveFilesCommand";
+import { mockFilesCache } from "../../../commands/mocks";
 
 const command = new MoveFilesCommand(
   "location",

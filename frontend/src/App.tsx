@@ -89,7 +89,7 @@ function App() {
     async ({ signal }) => {
       let url = baseUrl + "files";
       if (activeFolder !== "") {
-        url += `?folder=${activeFolder}`;
+        url += `?folder=${encodeURIComponent(activeFolder)}`;
       }
 
       return (

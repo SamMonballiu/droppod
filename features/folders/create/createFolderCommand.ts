@@ -4,7 +4,7 @@ import {
   CommandHandleResult,
   CommandValidateResult,
   CommandValidator,
-} from "./base";
+} from "@commands";
 import fs from "fs";
 import path from "path";
 

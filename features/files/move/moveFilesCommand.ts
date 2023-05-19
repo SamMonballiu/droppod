@@ -4,9 +4,9 @@ import {
   CommandHandleResult,
   CommandValidateResult,
   CommandValidator,
-} from "./base";
+} from "../../../commands/base";
 import fs from "fs-extra";
-import { qualify } from "../config";
+import { qualify } from "../../../config";
 import { FilesCache } from "../files-cache";
 
 export class MoveFilesCommand implements Command {

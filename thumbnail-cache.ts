@@ -4,6 +4,17 @@ interface CachedThumbnail {
   thumbnail: Buffer;
 }
 
+export type ThumbnailCache = {
+  add: (
+    filename: string,
+    size: string,
+    quality: number,
+    thumbnail: Buffer
+  ) => void;
+  has: (filename: string, size: string, quality: number) => boolean;
+  get: (filename: string, size: string, quality: number) => Buffer | undefined;
+};
+
 const _cache: Record<string, CachedThumbnail[]> = {};
 
 const addToCache = (

@@ -1,20 +1,23 @@
 import { Response } from "express";
-import { filesCache } from "../files-cache";
+import { filesCache } from "../features/files/files-cache";
 import { ratings } from "../ratings";
 import {
   CreateFolderCommandHandler,
   CreateFolderCommandValidator,
-} from "./createFolderCommand";
+} from "../features/folders/create/createFolderCommand";
 import { DeleteCommandHandler, DeleteCommandValidator } from "./deleteCommand";
 import {
   MoveFilesCommandHandler,
   MoveFilesCommandValidator,
-} from "./moveFilesCommand";
-import { RenameCommandHandler, RenameCommandValidator } from "./renameCommand";
+} from "../features/files/move/moveFilesCommand";
+import {
+  RenameCommandHandler,
+  RenameCommandValidator,
+} from "../features/files/rename/renameCommand";
 import {
   SetFileRatingCommandHandler,
   SetFileRatingCommandValidator,
-} from "./setFileRatingCommand";
+} from "../features/files/setRating/setFileRatingCommand";
 
 export interface Command {}
 
@@ -175,8 +178,10 @@ export const handleResult = (
       res.status(200).send(response);
       break;
     case NotFound:
-    case ValidationError:
       res.status(404).send(response);
+      break;
+    case ValidationError:
+      res.status(400).send(response);
       break;
     case Error:
       res.status(500).send(response);

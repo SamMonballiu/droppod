@@ -1,11 +1,11 @@
-import { filesCache } from "../../files-cache";
-import { CommandHandleResultType } from "../base";
+import { filesCache } from "../files-cache";
+import { CommandHandleResultType } from "../../../commands/base";
 import {
   SetFileRatingCommand,
   SetFileRatingCommandHandler,
   SetFileRatingCommandValidator,
-} from "../setFileRatingCommand";
-import { mockRatings } from "../mocks";
+} from "./setFileRatingCommand";
+import { mockRatings } from "../../../commands/mocks";
 import fs from "fs";
 
 const command = new SetFileRatingCommand("path", "filename", 5);

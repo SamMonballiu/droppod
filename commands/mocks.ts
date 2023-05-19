@@ -1,4 +1,4 @@
-import { FilesCache } from "../files-cache";
+import { FilesCache } from "../features/files/files-cache";
 import { RatingsService } from "../ratings";
 
 export const mockRatings: RatingsService = {
