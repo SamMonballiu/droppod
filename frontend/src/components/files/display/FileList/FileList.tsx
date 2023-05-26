@@ -11,7 +11,7 @@ import {
   FileSize,
   Rating,
 } from "@components";
-import { FileIcon } from "@components/FileTypeIcon/FileTypeIcon";
+import { FileIcon } from "@components/files/display/FileTypeIcon/FileTypeIcon";
 
 interface Props {
   files: FileInfo[];

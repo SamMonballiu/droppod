@@ -4,8 +4,8 @@ import { MdModeEdit, MdSearch } from "react-icons/md";
 import { SubscribableEvent } from "@models/event";
 import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
-import { View } from "../../App";
-import { useThumbnails } from "../../hooks/useThumbnails";
+import { View } from "../../../../App";
+import { useThumbnails } from "../../../../hooks/useThumbnails";
 import {
   FileGrid,
   FileGridZoom,

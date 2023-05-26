@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Dialog } from "@components";
 import styles from "./CreateFolderDialog.module.scss";
-import global from "../../global.module.scss";
+import global from "@root/global.module.scss";
 
 interface Props {
   onClose: () => void;

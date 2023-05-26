@@ -1,7 +1,7 @@
 import { Dialog, DialogProps } from "@components";
 import { FC, useState } from "react";
 import styles from "./RenameDialog.module.scss";
-import global from "../../global.module.scss";
+import global from "@root/global.module.scss";
 
 interface Props extends Omit<DialogProps, "title" | "children" | "buttons"> {
   currentName: string;

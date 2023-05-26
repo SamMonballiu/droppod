@@ -4,7 +4,7 @@ import { FolderInfo } from "@models/folderInfo";
 import { Breadcrumbs, Dialog, DialogProps, FolderPicker } from "@components";
 import useToggle from "@hooks/useToggle";
 import styles from "./MoveFilesDialog.module.scss";
-import global from "../../global.module.scss";
+import global from "@root/global.module.scss";
 
 interface Props extends Omit<DialogProps, "title" | "children"> {
   data: FolderInfo;

@@ -6,7 +6,7 @@ import cx from "classnames";
 import { FolderInfo } from "@models/folderInfo";
 import { FcFolder } from "react-icons/fc";
 import { FileContextMenu, FileContextHandler, Rating } from "@components";
-import { FileIcon } from "@components/FileTypeIcon/FileTypeIcon";
+import { FileIcon } from "@components/files/display/FileTypeIcon/FileTypeIcon";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {

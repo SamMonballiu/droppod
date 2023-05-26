@@ -1,4 +1,4 @@
-import { FileInfo, getOrientation } from "../../../../models/fileinfo";
+import { FileInfo, getOrientation } from "../../../../../../models/fileinfo";
 import styles from "./ImagePreview.module.scss";
 import { FC, useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
