@@ -12,6 +12,10 @@ import {
   Rating,
 } from "@components";
 import { FileIcon } from "@components/files/display/FileTypeIcon/FileTypeIcon";
+import {
+  FolderContextHandler,
+  FolderContextMenu,
+} from "@components/folders/modify/FolderContextMenu";
 
 interface Props {
   files: FileInfo[];
@@ -19,6 +23,7 @@ interface Props {
   onSelectFile: (file: FileInfo) => void;
   onSelectFolder: (folder: string) => void;
   fileContextHandlers: FileContextHandler[];
+  folderContextHandlers: FolderContextHandler[];
 }
 
 export const FileList: FC<Props> = ({
@@ -27,12 +32,14 @@ export const FileList: FC<Props> = ({
   onSelectFile,
   onSelectFolder,
   fileContextHandlers,
+  folderContextHandlers = [],
 }) => {
   return (
     <div className={styles.container}>
       <div className={styles.files}>
         {folders.map((f) => (
           <Folder
+            contextHandlers={folderContextHandlers}
             folder={f}
             key={f.name}
             onSelect={() =>
@@ -58,14 +65,17 @@ export const Folder: FC<{
   folder: FolderInfo;
   onSelect: () => void;
   variant?: "open" | "closed";
-}> = ({ folder, onSelect, variant = "closed", className }) => {
+  contextHandlers: FolderContextHandler[];
+}> = ({ folder, onSelect, variant = "closed", className, contextHandlers }) => {
   return (
-    <div className={cx(styles.file, styles.folder)} onClick={onSelect}>
-      <a target="_" className={cx(styles.link, styles.filename, className)}>
-        {variant === "closed" ? <FcFolder /> : <FcOpenedFolder />}
-        <span>{folder.name}</span>
-      </a>
-    </div>
+    <FolderContextMenu folder={folder} handlers={contextHandlers}>
+      <div className={cx(styles.file, styles.folder)} onClick={onSelect}>
+        <a target="_" className={cx(styles.link, styles.filename, className)}>
+          {variant === "closed" ? <FcFolder /> : <FcOpenedFolder />}
+          <span>{folder.name}</span>
+        </a>
+      </div>
+    </FolderContextMenu>
   );
 };
 

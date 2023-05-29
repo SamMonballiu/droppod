@@ -7,6 +7,10 @@ import { FolderInfo } from "@models/folderInfo";
 import { FcFolder } from "react-icons/fc";
 import { FileContextMenu, FileContextHandler, Rating } from "@components";
 import { FileIcon } from "@components/files/display/FileTypeIcon/FileTypeIcon";
+import {
+  FolderContextHandler,
+  FolderContextMenu,
+} from "@components/folders/modify/FolderContextMenu";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -20,6 +24,7 @@ interface Props {
     element: React.ReactNode;
   }[];
   fileContextHandlers: FileContextHandler[];
+  folderContextHandlers: FolderContextHandler[];
 }
 
 export const FileGrid: FC<Props> = ({
@@ -30,6 +35,7 @@ export const FileGrid: FC<Props> = ({
   thumbnails,
   zoom = 2,
   fileContextHandlers,
+  folderContextHandlers,
 }) => {
   const mapped = useMemo(() => {
     return files.map((file) => (
@@ -48,6 +54,7 @@ export const FileGrid: FC<Props> = ({
     <div className={styles.container}>
       {folders.map((f) => (
         <Folder
+          contextHandlers={folderContextHandlers}
           folder={f}
           key={f.name}
           zoom={zoom}
@@ -79,22 +86,25 @@ const Folder: FC<{
   folder: FolderInfo;
   zoom: FileGridZoom;
   onSelect: () => void;
-}> = ({ folder, zoom, onSelect }) => {
+  contextHandlers: FolderContextHandler[];
+}> = ({ folder, zoom, onSelect, contextHandlers }) => {
   return (
-    <div className={cx(styles.file, zoomMap[zoom])} onClick={onSelect}>
-      <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
-        <FcFolder
-          className={styles.folderIcon}
-          id={folder.parent + "/" + folder.name}
-        />
-      </div>
+    <FolderContextMenu folder={folder} handlers={contextHandlers}>
+      <div className={cx(styles.file, zoomMap[zoom])} onClick={onSelect}>
+        <div className={cx(styles.square, styles.border, thumbZoomMap[zoom])}>
+          <FcFolder
+            className={styles.folderIcon}
+            id={folder.parent + "/" + folder.name}
+          />
+        </div>
 
-      {zoom > 1 && (
-        <span className={cx(styles.filename, zoomMap[zoom])}>
-          {folder.name}
-        </span>
-      )}
-    </div>
+        {zoom > 1 && (
+          <span className={cx(styles.filename, zoomMap[zoom])}>
+            {folder.name}
+          </span>
+        )}
+      </div>
+    </FolderContextMenu>
   );
 };
 

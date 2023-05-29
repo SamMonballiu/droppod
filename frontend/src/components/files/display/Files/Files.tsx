@@ -15,6 +15,7 @@ import {
 } from "@components";
 import styles from "./Files.module.scss";
 import { AiOutlineClear, AiOutlineSend } from "react-icons/ai";
+import { FolderContextHandler } from "@components/folders/modify/FolderContextMenu";
 
 interface Props {
   data: FileInfo[];
@@ -114,6 +115,15 @@ export const Files: FC<Props> = ({
     { label: "Delete", onClick: onDelete, icon: <AiOutlineClear /> },
   ];
 
+  const folderContextHandlers: FolderContextHandler[] = [
+    { label: "Rename", icon: <MdModeEdit />, disabled: true },
+    {
+      label: "Delete",
+      onClick: () => alert("click"),
+      icon: <AiOutlineClear />,
+    },
+  ];
+
   return (
     <div className={styles.container}>
       {view === "gallery" && (
@@ -131,6 +141,7 @@ export const Files: FC<Props> = ({
             onSelectFile={handleFocusFile}
             onSelectFolder={onSelectFolder}
             fileContextHandlers={fileContextHandlers}
+            folderContextHandlers={folderContextHandlers}
           />
         ) : (
           <FileGrid
@@ -141,6 +152,7 @@ export const Files: FC<Props> = ({
             onSelectFolder={onSelectFolder}
             thumbnails={thumbnails}
             fileContextHandlers={fileContextHandlers}
+            folderContextHandlers={folderContextHandlers}
           />
         )}
       </div>

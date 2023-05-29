@@ -22,7 +22,7 @@ interface Props<T> extends React.PropsWithChildren {
 
 export const ContextMenu = <T,>({
   context,
-  handlers,
+  handlers = [],
   children,
   getId,
 }: Props<T>) => {
@@ -39,6 +39,10 @@ export const ContextMenu = <T,>({
       </ContextMenuItem>
     ));
   }, [context, handlers]);
+
+  if (items.length === 0) {
+    return children;
+  }
 
   return (
     <>
