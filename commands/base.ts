@@ -21,6 +21,10 @@ import {
   SetFileRatingCommandHandler,
   SetFileRatingCommandValidator,
 } from "../features/files/setRating/setFileRatingCommand";
+import {
+  DeleteFolderCommandHandler,
+  DeleteFolderCommandValidator,
+} from "../features/folders/delete/deleteFolderCommand";
 
 export interface Command {}
 
@@ -135,6 +139,7 @@ export class CommandHandlerFactory {
       new MoveFilesCommandValidator(),
       new RenameCommandValidator(),
       new DeleteCommandValidator(),
+      new DeleteFolderCommandValidator(),
     ];
     this.handlers = [
       new CreateFolderCommandHandler(),
@@ -142,6 +147,7 @@ export class CommandHandlerFactory {
       new MoveFilesCommandHandler(filesCache),
       new RenameCommandHandler(filesCache),
       new DeleteCommandHandler(filesCache),
+      new DeleteFolderCommandHandler(filesCache),
     ];
   }
 

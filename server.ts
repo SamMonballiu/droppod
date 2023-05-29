@@ -16,6 +16,7 @@ import { mapGetFilesRoute } from "./features/files/get/getFilesRoute";
 import { mapGetFoldersRoute } from "./features/folders/get/getFoldersRoute";
 import { mapGetThumbnailsRoute } from "./features/thumbnails/get/getThumbnailsRoute";
 import { mapDeleteFilesRoute } from "./features/files/delete/deleteFileRoute";
+import { mapDeleteFolderRoute } from "./features/folders/delete/deleteFolderRoute";
 
 const args = argv(process.argv);
 
@@ -59,6 +60,7 @@ mapGetThumbnailsRoute(app, thumbnailCache);
 
 mapCreateFolderRoute(app, handler);
 mapGetFoldersRoute(app);
+mapDeleteFolderRoute(app, handler);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}.`);
