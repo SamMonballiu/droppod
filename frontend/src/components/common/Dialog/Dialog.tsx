@@ -48,6 +48,7 @@ export const Dialog: FC<DialogProps> = ({
             <div className={styles.buttons}>
               {buttons.map((btn) => (
                 <button
+                  key={btn.label}
                   disabled={btn.disabled ?? false}
                   className={btn.className}
                   onClick={btn.onClick}
