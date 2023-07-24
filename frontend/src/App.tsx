@@ -12,20 +12,26 @@ import {
   SortOption,
   Upload,
   FileDialog,
+  RenameDialog,
+  DeleteDialog,
 } from "@components";
-import { RenameDialog } from "@components/RenameDialog/RenameDialog";
+import { CreateFolderPostmodel } from "@backend/features/folders/create/createFolderPostmodel";
+import { DeleteFolderPostmodel } from "@backend/features/folders/delete/deleteFolderPostmodel";
+import { MoveFilesPostModel } from "@backend/features/files/move/moveFilesPostModel";
+import { RenamePostModel } from "@backend/features/files/rename/renameFilePostmodel";
+import { DeletePostmodel } from "@backend/features/files/delete/deleteFilePostmodel";
 import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
-import {
-  CreateFolderPostmodel,
-  MoveFilesPostModel,
-  RenamePostModel,
-} from "@models/post";
 import { FilesResponse } from "@models/response";
 import axios from "axios";
 import cx from "classnames";
 import React, { useEffect, useMemo, useState } from "react";
-import { AiOutlineSelect, AiOutlineSend } from "react-icons/ai";
+import {
+  AiOutlineClose,
+  AiOutlineDelete,
+  AiOutlineSelect,
+  AiOutlineSend,
+} from "react-icons/ai";
 import { GoCloudUpload, GoFileSubmodule } from "react-icons/go";
 import {
   MdGridView,
@@ -69,8 +75,10 @@ function App() {
   const showMoveDialog = useToggle(false);
   const showFolderList = useToggle(true);
   const showRenameDialog = useToggle(false);
+  const showDeleteDialog = useToggle(false);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
+  const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -168,6 +176,19 @@ function App() {
           },
         }
       ),
+      delete: useMutation(
+        async (postmodel: DeleteFolderPostmodel) => {
+          const url = baseUrl + "folders/delete";
+          return await axios.post(url, postmodel);
+        },
+        {
+          onSuccess: () => {
+            setFocusedFolder(null);
+            queryClient.invalidateQueries(["files", activeFolder]);
+            queryClient.invalidateQueries(["folders"]);
+          },
+        }
+      ),
     },
     files: {
       move: useMutation(
@@ -195,6 +216,20 @@ function App() {
             queryClient.invalidateQueries(["files", activeFolder]);
             showRenameDialog.set(false);
             setFocusedFile(null);
+          },
+        }
+      ),
+      delete: useMutation(
+        async (postmodel: DeletePostmodel) => {
+          const url = baseUrl + "files/delete";
+          await axios.post(url, postmodel);
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["files", activeFolder]);
+            showDeleteDialog.set(false);
+            setFocusedFile(null);
+            setAllSelected(false);
           },
         }
       ),
@@ -231,6 +266,24 @@ function App() {
     };
 
     return await mutations.files.rename.mutateAsync(postmodel);
+  };
+
+  const handleDelete = async (names: string[]) => {
+    const postmodel: DeletePostmodel = {
+      path: activeFolder,
+      names,
+    };
+
+    return await mutations.files.delete.mutateAsync(postmodel);
+  };
+
+  const handleDeleteFolder = async (folderName: string) => {
+    const postmodel: DeleteFolderPostmodel = {
+      parentPath: activeFolder,
+      folderName,
+    };
+
+    return await mutations.folders.delete.mutateAsync(postmodel);
   };
 
   const breadcrumbs = (
@@ -362,6 +415,16 @@ function App() {
     setFocusedFile(file);
   };
 
+  const handleSelectForDelete = (file: FileInfo) => {
+    showDeleteDialog.set(true);
+    setFocusedFile(file);
+  };
+
+  const handleSelectFolderForDelete = (folder: FolderInfo) => {
+    showDeleteDialog.set(true);
+    setFocusedFolder(folder);
+  };
+
   const content =
     activeTab == 0 ? (
       <div className={tabStyles.contentX}>
@@ -425,6 +488,8 @@ function App() {
                 onFocusFile={setFocusedFile}
                 onRename={handleSelectForRename}
                 onMove={handleSelectForMove}
+                onDelete={handleSelectForDelete}
+                onDeleteFolder={handleSelectFolderForDelete}
               />
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
@@ -488,25 +553,63 @@ function App() {
     />
   ) : null;
 
+  const deleteDialog = (
+    <DeleteDialog
+      isOpen={
+        showDeleteDialog.value &&
+        (focusedFile !== null || selectedFiles.length > 0)
+      }
+      onClose={() => {
+        setFocusedFile(null);
+        showDeleteDialog.toggle();
+      }}
+      names={focusedFile ? [focusedFile.filename] : selectedFiles}
+      mode="file"
+      onConfirm={handleDelete}
+      isDeleting={mutations.files.delete.isLoading}
+    />
+  );
+
+  const deleteFolderDialog = React.useMemo(() => {
+    return focusedFolder === null ? null : (
+      <DeleteDialog
+        isOpen={showDeleteDialog.value && focusedFolder !== null}
+        onClose={() => {
+          setFocusedFolder(null);
+          showDeleteDialog.toggle();
+        }}
+        names={[focusedFolder!.name]}
+        mode="folder"
+        onConfirm={(names) => handleDeleteFolder(names[0])}
+        isDeleting={mutations.folders.delete.isLoading}
+      />
+    );
+  }, [focusedFolder]);
+
   const multiFileActions = (
     <div className={app.multiFileButtons}>
       <AiOutlineSend onClick={showMoveDialog.toggle} />
-      <AiOutlineSelect onClick={() => setSelectMode("single")} />
+      <AiOutlineDelete onClick={showDeleteDialog.toggle} />
     </div>
   );
 
   return (
     <>
-      {focusedFile && !showRenameDialog.value && !showMoveDialog.value && (
-        <FileDialog
-          isOpen={focusedFile !== null}
-          onClose={() => setFocusedFile(null)}
-          file={focusedFile}
-        />
-      )}
+      {focusedFile &&
+        !showRenameDialog.value &&
+        !showMoveDialog.value &&
+        !showDeleteDialog.value && (
+          <FileDialog
+            isOpen={focusedFile !== null}
+            onClose={() => setFocusedFile(null)}
+            file={focusedFile}
+          />
+        )}
 
       {renameFileDialog}
       {moveFilesDialog}
+      {deleteDialog}
+      {deleteFolderDialog}
       {createFolderDialog.value && (
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}
@@ -521,6 +624,7 @@ function App() {
           onSelectAll={() => {
             setAllSelected(true);
           }}
+          onCancel={() => setSelectMode("single")}
           actions={multiFileActions}
         />
       )}

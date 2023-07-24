@@ -1,0 +1,30 @@
+@use "@../../../../../variables";
+
+.crumb {
+  user-select: none;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  .chevron {
+    opacity: 0.25;
+  }
+
+  span {
+    font-size: 0.9em;
+    opacity: 0.75;
+  }
+  .clickable:hover {
+    color: variables.$accentColor;
+    cursor: pointer;
+  }
+}
+
+.container {
+  display: flex;
+  gap: 9px;
+}
+
+.inactive {
+  opacity: 0.5;
+}

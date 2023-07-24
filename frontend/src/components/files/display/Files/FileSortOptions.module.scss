@@ -1,0 +1,29 @@
+@use "@../../../../../../variables";
+
+.active {
+  color: variables.$accentColor;
+}
+
+.option {
+  padding-bottom: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  svg {
+    margin-top: 4px;
+  }
+
+  user-select: none;
+}
+
+.options {
+  display: flex;
+  font-size: 0.8em;
+  gap: 12px;
+}
+
+.placeholder {
+  opacity: 0;
+}

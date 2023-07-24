@@ -1,4 +1,4 @@
-import { FileRating } from "./post";
+export type FileRating = 0 | 1 | 2 | 3 | 4 | 5;
 
 export interface FileInfo {
   filename: string;

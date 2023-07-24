@@ -22,7 +22,9 @@
       "@models/*": ["../../models/*"],
       "@components": ["components"],
       "@components/*": ["components/*"],
-      "@hooks/*": ["hooks/*"]
+      "@hooks/*": ["hooks/*"],
+      "@root/*": ["./*"],
+      "@backend/*": ["../../*"]
     }
   },
   "include": ["src"],

@@ -1,0 +1,26 @@
+@use "@../../../../../variables";
+
+.renameDialog {
+  min-width: 33vw;
+}
+
+.input {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  label {
+    opacity: 0.85;
+  }
+
+  input {
+    font-family: variables.$mainFont;
+    flex-grow: 2;
+  }
+}
+
+.validationMessage {
+  color: variables.$validationError;
+  opacity: 0.75;
+  font-size: 0.9em;
+}

@@ -1,0 +1,11 @@
+@use "@../../../../../variables";
+
+.menuItem {
+  display: flex !important;
+  gap: 8px;
+  align-items: center;
+  svg {
+    font-size: 20px;
+    opacity: 0.75;
+  }
+}

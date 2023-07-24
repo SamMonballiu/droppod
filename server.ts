@@ -1,29 +1,22 @@
-import {
-  CreateFolderPostmodel,
-  MoveFilesPostModel,
-  RenamePostModel,
-  SetFileRatingPostmodel,
-} from "./models/post/index";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
-import express, { Request, Response } from "express";
-import multer from "multer";
-import path from "path";
-import { FolderInfo } from "./models/folderInfo";
+import express from "express";
 import cors from "cors";
 import fs from "fs";
-import { generateThumbnail } from "./thumbnail";
 import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
-import { CommandHandlerFactory, handleResult } from "./commands/base";
-import { CreateFolderCommand } from "./commands/createFolderCommand";
-import { fdir } from "fdir";
-import { filesCache } from "./files-cache";
+import { CommandHandlerFactory } from "./commands/base";
 import { config } from "./config";
-import { SetFileRatingCommand } from "./commands/setFileRatingCommand";
-import { MoveFilesCommand } from "./commands/moveFilesCommand";
-import { RenameCommand } from "./commands/renameCommand";
-import { mapFolder } from "./backend/folderMapper";
+import { mapMoveFilesRoute } from "./features/files/move/moveFilesRoute";
+import { mapCreateFolderRoute } from "./features/folders/create/createFolderRoute";
+import { mapUploadFilesRoute } from "./features/files/upload/uploadFilesRoute";
+import { mapSetFileRatingRoute } from "./features/files/setRating/setFileRatingRoute";
+import { mapRenameFileRoute } from "./features/files/rename/renameFileRoute";
+import { mapGetFilesRoute } from "./features/files/get/getFilesRoute";
+import { mapGetFoldersRoute } from "./features/folders/get/getFoldersRoute";
+import { mapGetThumbnailsRoute } from "./features/thumbnails/get/getThumbnailsRoute";
+import { mapDeleteFilesRoute } from "./features/files/delete/deleteFileRoute";
+import { mapDeleteFolderRoute } from "./features/folders/delete/deleteFolderRoute";
 
 const args = argv(process.argv);
 
@@ -37,19 +30,6 @@ if (!fs.existsSync(config.basePath)) {
   );
   process.exit();
 }
-
-const storage = multer.diskStorage({
-  destination: function (req: Request, file, cb) {
-    const folder = req.query.folder as string;
-    filesCache.invalidate(folder);
-    cb(null, path.join(config.basePath, folder));
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage });
 
 const app = express();
 app.use(express.static(config.basePath));
@@ -70,163 +50,17 @@ app.use(
 const handler = new CommandHandlerFactory();
 const port = args.port ?? 4004;
 
-app.post("/upload_files", upload.array("files"), async (_, res: Response) => {
-  res.status(200).send("ok");
-});
+mapGetFilesRoute(app);
+mapUploadFilesRoute(app);
+mapMoveFilesRoute(app, handler);
+mapRenameFileRoute(app, handler);
+mapDeleteFilesRoute(app, handler);
+mapSetFileRatingRoute(app, handler);
+mapGetThumbnailsRoute(app, thumbnailCache);
 
-app.post("/folders/create", async (req: Request, res: Response) => {
-  const postmodel = req.body as CreateFolderPostmodel;
-  const command = new CreateFolderCommand(
-    path.join(config.basePath, postmodel.location),
-    postmodel.folderName
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
-
-app.post("/files/move", async (req: Request, res: Response) => {
-  const postmodel = req.body as MoveFilesPostModel;
-  const command = new MoveFilesCommand(
-    postmodel.location,
-    postmodel.filenames,
-    postmodel.destination
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
-
-app.post("/rate-file", async (req: Request, res: Response) => {
-  const postmodel = req.body as SetFileRatingPostmodel;
-  const command = new SetFileRatingCommand(
-    postmodel.path,
-    postmodel.filename,
-    postmodel.rating
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
-
-app.post("/files/rename", async (req: Request, res: Response) => {
-  const postmodel = req.body as RenamePostModel;
-  const command = new RenameCommand(
-    postmodel.path,
-    postmodel.currentName,
-    postmodel.newName
-  );
-  const result = await handler.handle(command);
-  handleResult(result, res);
-});
-
-app.get("/files", async (req: Request, res: Response) => {
-  let fullFolder = config.basePath;
-
-  if (req.query.folder) {
-    fullFolder += req.query.folder + "/";
-  }
-
-  if (!fs.existsSync(fullFolder)) {
-    res.status(400).send("The specified folder doesn't exist.");
-    return;
-  }
-
-  if (filesCache.has(fullFolder) && !filesCache.isStale(fullFolder)) {
-    res.status(200).send(filesCache.get(fullFolder));
-    return;
-  }
-
-  const filesResponse = await mapFolder(
-    fullFolder,
-    (req.query.folder as string) ?? ""
-  );
-
-  if (!filesCache.has(req.query.folder as string)) {
-    filesCache.add(req.query.folder as string, filesResponse);
-  }
-
-  res.status(200).send(filesResponse);
-});
-
-app.get("/folders", async (req: Request, res: Response) => {
-  const directories = new fdir()
-    .withMaxDepth(1)
-    .onlyDirs()
-    .crawl(config.basePath)
-    .sync()
-    .filter((x) => x !== config.basePath);
-
-  const crawlDirectory = (pathName: string, parent: string): FolderInfo => {
-    const dirs = new fdir()
-      .withMaxDepth(1)
-      .onlyDirs()
-      .crawl(pathName)
-      .sync()
-      .filter((x) => x !== pathName);
-
-    const mapped: FolderInfo[] = dirs.map((x) => crawlDirectory(x, pathName));
-
-    return {
-      name: pathName.replace(parent, "").replace("/", ""),
-      parent: parent.replace(config.basePath, ""),
-      files: undefined,
-      folders: mapped,
-    };
-  };
-
-  const result: FolderInfo = {
-    name: "",
-    parent: "",
-    files: undefined,
-    folders: directories.map((x) => crawlDirectory(x, config.basePath)),
-  };
-
-  res.status(200).send(result);
-});
-
-app.get("/thumbnail", async (req: Request, res: Response) => {
-  const file = req.query.file as string;
-  if (!req.query.size && !req.query.percentage) {
-    res.status(400).send("Must supply either a size or a percentage.");
-  }
-
-  let size = null;
-  if (req.query.size) {
-    const [height, width] = (req.query.size as string)
-      .split("x")
-      .map((d) => parseInt(d));
-
-    size = { height, width };
-  }
-
-  let percentage = 0;
-  if (req.query.percentage) {
-    percentage = parseInt(req.query.percentage as string);
-  }
-
-  const quality = req.query.quality
-    ? parseInt(req.query.quality as string)
-    : 60;
-
-  let thumbnail: Buffer;
-  if (thumbnailCache.has(file, req.query.size as string, quality)) {
-    thumbnail = thumbnailCache.get(file, req.query.size as string, quality)!;
-  } else {
-    try {
-      thumbnail = await generateThumbnail(
-        config.basePath,
-        file,
-        size ?? { percentage },
-        quality
-      );
-
-      thumbnailCache.add(file, req.query.size as string, quality, thumbnail);
-    } catch (err) {
-      console.log(err);
-      thumbnail = Buffer.from([]);
-    }
-  }
-
-  res.setHeader("content-type", "image/jpeg").status(200).send(thumbnail);
-});
+mapCreateFolderRoute(app, handler);
+mapGetFoldersRoute(app);
+mapDeleteFolderRoute(app, handler);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}.`);
