@@ -8,6 +8,7 @@ import {
 import fs from "fs-extra";
 import { qualify } from "../../../config";
 import { FilesCache } from "../files-cache";
+import { RatingsService } from "../../../ratings";
 
 export class RenameCommand implements Command {
   public path: string;
@@ -43,9 +44,11 @@ export class RenameCommandValidator implements CommandValidator<RenameCommand> {
 
 export class RenameCommandHandler implements CommandHandler<RenameCommand> {
   private _filesCache: FilesCache;
+  private _ratings: RatingsService;
 
-  constructor(filesCache: FilesCache) {
+  constructor(filesCache: FilesCache, ratings: RatingsService) {
     this._filesCache = filesCache;
+    this._ratings = ratings;
   }
 
   public canHandle = (command: Command) => command instanceof RenameCommand;
@@ -58,6 +61,7 @@ export class RenameCommandHandler implements CommandHandler<RenameCommand> {
       );
 
       this._filesCache.invalidate(command.path);
+      this._ratings.transfer(command.currentName, command.newName);
 
       return CommandHandleResult.Success.WithoutResult();
     } catch (err: any) {

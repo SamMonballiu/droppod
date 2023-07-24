@@ -145,7 +145,7 @@ export class CommandHandlerFactory {
       new CreateFolderCommandHandler(),
       new SetFileRatingCommandHandler(ratings, filesCache),
       new MoveFilesCommandHandler(filesCache),
-      new RenameCommandHandler(filesCache),
+      new RenameCommandHandler(filesCache, ratings),
       new DeleteCommandHandler(filesCache),
       new DeleteFolderCommandHandler(filesCache),
     ];

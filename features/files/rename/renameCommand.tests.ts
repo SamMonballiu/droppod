@@ -4,12 +4,12 @@ import {
   RenameCommandValidator,
 } from "./renameCommand";
 import fs from "fs-extra";
-import { CommandHandleResultType } from "../../../commands/base";
-import { mockFilesCache } from "../../../commands/mocks";
+import { mockFilesCache, mockRatings } from "@mocks";
+import { CommandHandleResultType } from "@commands";
 
 const command = new RenameCommand("path", "currentName", "newName");
 const validator = new RenameCommandValidator();
-const handler = new RenameCommandHandler(mockFilesCache);
+const handler = new RenameCommandHandler(mockFilesCache, mockRatings);
 
 describe("RenameFileCommandValidator", () => {
   it("can validate a RenameFileCommand", () => {
@@ -65,5 +65,15 @@ describe("RenameFileCommandHandler", () => {
 
     expect(renameSpy).toHaveBeenCalled();
     expect(invalidateSpy).toHaveBeenCalledWith("path");
+  });
+
+  it("transfers the file's rating to the new name", () => {
+    const renameSpy = jest.spyOn(fs, "renameSync").mockImplementation(() => {});
+    const transferRatingSpy = jest.spyOn(mockRatings, "transfer");
+
+    handler.handle(command);
+
+    expect(renameSpy).toHaveBeenCalled();
+    expect(transferRatingSpy).toHaveBeenCalledWith("currentName", "newName");
   });
 });
