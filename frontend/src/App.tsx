@@ -15,14 +15,13 @@ import {
   RenameDialog,
   DeleteDialog,
 } from "@components";
+import { CreateFolderPostmodel } from "@backend/features/folders/create/createFolderPostmodel";
+import { DeleteFolderPostmodel } from "@backend/features/folders/delete/deleteFolderPostmodel";
+import { MoveFilesPostModel } from "@backend/features/files/move/moveFilesPostModel";
+import { RenamePostModel } from "@backend/features/files/rename/renameFilePostmodel";
+import { DeletePostmodel } from "@backend/features/files/delete/deleteFilePostmodel";
 import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
-import {
-  CreateFolderPostmodel,
-  MoveFilesPostModel,
-  RenamePostModel,
-  DeletePostmodel,
-} from "@models/post";
 import { FilesResponse } from "@models/response";
 import axios from "axios";
 import cx from "classnames";
@@ -79,6 +78,7 @@ function App() {
   const showDeleteDialog = useToggle(false);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
+  const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -176,6 +176,19 @@ function App() {
           },
         }
       ),
+      delete: useMutation(
+        async (postmodel: DeleteFolderPostmodel) => {
+          const url = baseUrl + "folders/delete";
+          return await axios.post(url, postmodel);
+        },
+        {
+          onSuccess: () => {
+            setFocusedFolder(null);
+            queryClient.invalidateQueries(["files", activeFolder]);
+            queryClient.invalidateQueries(["folders"]);
+          },
+        }
+      ),
     },
     files: {
       move: useMutation(
@@ -262,6 +275,15 @@ function App() {
     };
 
     return await mutations.files.delete.mutateAsync(postmodel);
+  };
+
+  const handleDeleteFolder = async (folderName: string) => {
+    const postmodel: DeleteFolderPostmodel = {
+      parentPath: activeFolder,
+      folderName,
+    };
+
+    return await mutations.folders.delete.mutateAsync(postmodel);
   };
 
   const breadcrumbs = (
@@ -398,6 +420,11 @@ function App() {
     setFocusedFile(file);
   };
 
+  const handleSelectFolderForDelete = (folder: FolderInfo) => {
+    showDeleteDialog.set(true);
+    setFocusedFolder(folder);
+  };
+
   const content =
     activeTab == 0 ? (
       <div className={tabStyles.contentX}>
@@ -462,6 +489,7 @@ function App() {
                 onRename={handleSelectForRename}
                 onMove={handleSelectForMove}
                 onDelete={handleSelectForDelete}
+                onDeleteFolder={handleSelectFolderForDelete}
               />
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
@@ -527,7 +555,10 @@ function App() {
 
   const deleteDialog = (
     <DeleteDialog
-      isOpen={showDeleteDialog.value}
+      isOpen={
+        showDeleteDialog.value &&
+        (focusedFile !== null || selectedFiles.length > 0)
+      }
       onClose={() => {
         setFocusedFile(null);
         showDeleteDialog.toggle();
@@ -538,6 +569,22 @@ function App() {
       isDeleting={mutations.files.delete.isLoading}
     />
   );
+
+  const deleteFolderDialog = React.useMemo(() => {
+    return focusedFolder === null ? null : (
+      <DeleteDialog
+        isOpen={showDeleteDialog.value && focusedFolder !== null}
+        onClose={() => {
+          setFocusedFolder(null);
+          showDeleteDialog.toggle();
+        }}
+        names={[focusedFolder!.name]}
+        mode="folder"
+        onConfirm={(names) => handleDeleteFolder(names[0])}
+        isDeleting={mutations.folders.delete.isLoading}
+      />
+    );
+  }, [focusedFolder]);
 
   const multiFileActions = (
     <div className={app.multiFileButtons}>
@@ -562,6 +609,7 @@ function App() {
       {renameFileDialog}
       {moveFilesDialog}
       {deleteDialog}
+      {deleteFolderDialog}
       {createFolderDialog.value && (
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}

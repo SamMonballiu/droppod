@@ -32,6 +32,7 @@ interface Props {
   onRename: (file: FileInfo) => void;
   onMove: (file: FileInfo) => void;
   onDelete: (file: FileInfo) => void;
+  onDeleteFolder: (folder: FolderInfo) => void;
 }
 
 export const Files: FC<Props> = ({
@@ -49,6 +50,7 @@ export const Files: FC<Props> = ({
   onRename,
   onMove,
   onDelete,
+  onDeleteFolder,
 }) => {
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
@@ -119,7 +121,7 @@ export const Files: FC<Props> = ({
     { label: "Rename", icon: <MdModeEdit />, disabled: true },
     {
       label: "Delete",
-      onClick: () => alert("click"),
+      onClick: onDeleteFolder,
       icon: <AiOutlineClear />,
     },
   ];

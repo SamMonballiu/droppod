@@ -23,7 +23,8 @@
       "@components": ["components"],
       "@components/*": ["components/*"],
       "@hooks/*": ["hooks/*"],
-      "@root/*": ["./*"]
+      "@root/*": ["./*"],
+      "@backend/*": ["../../*"]
     }
   },
   "include": ["src"],
