@@ -30,7 +30,7 @@ export const FileProperties: FC<Props> = ({
   >([
     ["filename", <h3>{file.filename}</h3>],
     ["dateAdded", <p>{file.dateAdded.toLocaleDateString()}</p>],
-    ["size", <FileSize file={file} />],
+    ["size", <FileSize files={[file]} />],
     ["dimensions", file.dimensions ? <p>{dimensionsInfo}</p> : <></>],
     [
       "fullPath",

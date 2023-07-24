@@ -75,3 +75,9 @@ $maxWidth: clamp(400px, 50vw, 800px);
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.summary {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}

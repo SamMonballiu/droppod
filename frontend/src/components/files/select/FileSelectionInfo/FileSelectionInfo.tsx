@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { FilesResponse } from "@models/response";
-import { SelectionInfo } from "@components";
+import { FileSize, SelectionInfo } from "@components";
 
 interface Props {
   data: FilesResponse;
@@ -19,17 +19,22 @@ export const FileSelectionInfo: FC<Props> = ({
   const files = data.contents.files ?? [];
   const selectedFiles = files
     .filter((f) => isSelected(f.filename))
-    .map((f) => f.filename);
+    .map((f) => ({ name: f.filename, size: f.size }));
 
   const folders = data.contents.folders;
   const selectedFolders = folders
     .filter((f) => isSelected(f.parent + "/" + f.name))
-    .map((f) => f.name);
+    .map((f) => ({ name: f.name, size: 0 }));
+
+  const items = selectedFolders.concat(selectedFiles);
 
   return (
     <SelectionInfo
-      items={selectedFolders.concat(selectedFiles)}
-      renderItem={(name: string) => <p key={name}>{name}</p>}
+      items={items}
+      renderItem={(item: { name: string }) => (
+        <p key={item.name}>{item.name}</p>
+      )}
+      summary={items.length ? <FileSize files={items} /> : null}
       {...props}
     />
   );

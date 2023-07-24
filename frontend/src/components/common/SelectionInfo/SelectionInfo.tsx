@@ -6,6 +6,7 @@ import { BiSelectMultiple } from "react-icons/bi";
 
 interface Props<T> {
   items: T[];
+  summary?: React.ReactNode;
   renderItem: (item: T) => React.ReactNode;
   onClearSelection: () => void;
   onSelectAll: () => void;
@@ -15,6 +16,7 @@ interface Props<T> {
 
 export const SelectionInfo = <T,>({
   items,
+  summary,
   renderItem,
   onClearSelection,
   onSelectAll,
@@ -26,7 +28,16 @@ export const SelectionInfo = <T,>({
   return (
     <div className={styles.container}>
       <div className={styles.shortInfo}>
-        <p onClick={toggleExpanded}>{items?.length ?? 0}</p>
+        <div className={styles.summary} onClick={toggleExpanded}>
+          <p>{items.length}</p>
+          {summary && (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span>(</span>
+              {summary}
+              <span>)</span>
+            </div>
+          )}
+        </div>
         {isExpanded ? (
           <GoChevronUp onClick={toggleExpanded} className={styles.expand} />
         ) : (

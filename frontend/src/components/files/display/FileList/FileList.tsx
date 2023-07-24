@@ -102,7 +102,7 @@ const File: FC<{
         <span className={styles.rating}>
           {file.rating ? <Rating file={file} readonly /> : null}
         </span>
-        <FileSize className={styles.size} file={file} />
+        <FileSize className={styles.size} files={[file]} />
       </div>
     </FileContextMenu>
   );
