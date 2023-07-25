@@ -28,6 +28,19 @@ const transfer = async (
   await remove(sourceFilename);
 };
 
+const transferFolder = async (
+  sourceFolderName: string,
+  destinationFolderName: string
+) => {
+  const keys = (await storage.keys()).filter((x) =>
+    x.startsWith(sourceFolderName)
+  );
+
+  for (const key of keys) {
+    await transfer(key, key.replace(sourceFolderName, destinationFolderName));
+  }
+};
+
 const remove = async (filename: string) => await storage.removeItem(filename);
 
 export interface RatingsService {
@@ -38,6 +51,10 @@ export interface RatingsService {
     sourceFilename: string,
     destinationFilename: string
   ) => Promise<void>;
+  transferFolder: (
+    sourceFolderName: string,
+    destinationFolderName: string
+  ) => Promise<void>;
 }
 
 export const ratings: RatingsService = {
@@ -45,4 +62,5 @@ export const ratings: RatingsService = {
   set,
   remove,
   transfer,
+  transferFolder,
 };

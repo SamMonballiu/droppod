@@ -6,6 +6,7 @@ export const mockRatings: RatingsService = {
   set: () => Promise.resolve(),
   remove: () => Promise.resolve(),
   transfer: () => Promise.resolve(),
+  transferFolder: () => Promise.resolve(),
 };
 
 export const mockFilesCache: FilesCache = {
