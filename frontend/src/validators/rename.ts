@@ -2,7 +2,7 @@ import { FileInfo } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
 
 export const getRenameValidator = (
-  file: FileInfo,
+  currentName: string,
   files?: FileInfo[],
   folders?: FolderInfo[]
 ) => {
@@ -19,7 +19,7 @@ export const getRenameValidator = (
       };
     }
 
-    if (file.filename === name) {
+    if (currentName === name) {
       return {
         isValid: false,
         reason: "Please enter a different name.",

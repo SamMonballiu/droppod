@@ -30,6 +30,7 @@ interface Props {
   onSetAllSelected: SubscribableEvent<boolean>;
   onFocusFile: (file: FileInfo) => void;
   onRename: (file: FileInfo) => void;
+  onRenameFolder: (folder: FolderInfo) => void;
   onMove: (file: FileInfo) => void;
   onDelete: (file: FileInfo) => void;
   onDeleteFolder: (folder: FolderInfo) => void;
@@ -48,6 +49,7 @@ export const Files: FC<Props> = ({
   onSetAllSelected,
   onFocusFile,
   onRename,
+  onRenameFolder,
   onMove,
   onDelete,
   onDeleteFolder,
@@ -118,7 +120,7 @@ export const Files: FC<Props> = ({
   ];
 
   const folderContextHandlers: FolderContextHandler[] = [
-    { label: "Rename", icon: <MdModeEdit />, disabled: true },
+    { label: "Rename", icon: <MdModeEdit />, onClick: onRenameFolder },
     {
       label: "Delete",
       onClick: onDeleteFolder,

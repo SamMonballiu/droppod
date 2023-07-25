@@ -189,6 +189,19 @@ function App() {
           },
         }
       ),
+      rename: useMutation(
+        async (postmodel: RenamePostModel) => {
+          const url = baseUrl + "folders/rename";
+          return await axios.post(url, postmodel);
+        },
+        {
+          onSuccess: () => {
+            setFocusedFolder(null);
+            queryClient.invalidateQueries(["files", activeFolder]);
+            queryClient.invalidateQueries(["folders"]);
+          },
+        }
+      ),
     },
     files: {
       move: useMutation(
@@ -266,6 +279,16 @@ function App() {
     };
 
     return await mutations.files.rename.mutateAsync(postmodel);
+  };
+
+  const handleRenameFolder = async (newName: string) => {
+    const postmodel: RenamePostModel = {
+      path: activeFolder,
+      currentName: focusedFolder!.name,
+      newName,
+    };
+
+    return await mutations.folders.rename.mutateAsync(postmodel);
   };
 
   const handleDelete = async (names: string[]) => {
@@ -410,6 +433,11 @@ function App() {
     setFocusedFile(file);
   };
 
+  const handleSelectFolderForRename = (folder: FolderInfo) => {
+    showRenameDialog.set(true);
+    setFocusedFolder(folder);
+  };
+
   const handleSelectForMove = (file: FileInfo) => {
     showMoveDialog.set(true);
     setFocusedFile(file);
@@ -487,6 +515,7 @@ function App() {
                 onSetAllSelected={events.onSetAllSelected}
                 onFocusFile={setFocusedFile}
                 onRename={handleSelectForRename}
+                onRenameFolder={handleSelectFolderForRename}
                 onMove={handleSelectForMove}
                 onDelete={handleSelectForDelete}
                 onDeleteFolder={handleSelectFolderForDelete}
@@ -540,7 +569,7 @@ function App() {
     <RenameDialog
       currentName={focusedFile!.filename}
       validateName={getRenameValidator(
-        focusedFile,
+        focusedFile!.filename,
         data?.contents.files,
         data?.contents.folders
       )}
@@ -549,6 +578,23 @@ function App() {
       onClose={() => {
         showRenameDialog.toggle();
         setFocusedFile(null);
+      }}
+    />
+  ) : null;
+
+  const renameFolderDialog = focusedFolder ? (
+    <RenameDialog
+      currentName={focusedFolder!.name}
+      validateName={getRenameValidator(
+        focusedFolder!.name,
+        data?.contents.files,
+        data?.contents.folders
+      )}
+      onConfirm={async (newName) => await handleRenameFolder(newName)}
+      isOpen={showRenameDialog.value}
+      onClose={() => {
+        showRenameDialog.set(false);
+        setFocusedFolder(null);
       }}
     />
   ) : null;
@@ -607,6 +653,7 @@ function App() {
         )}
 
       {renameFileDialog}
+      {renameFolderDialog}
       {moveFilesDialog}
       {deleteDialog}
       {deleteFolderDialog}
