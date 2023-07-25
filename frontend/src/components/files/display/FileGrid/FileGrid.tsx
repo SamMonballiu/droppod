@@ -98,11 +98,7 @@ const Folder: FC<{
           />
         </div>
 
-        {zoom > 1 && (
-          <span className={cx(styles.filename, zoomMap[zoom])}>
-            {folder.name}
-          </span>
-        )}
+        {zoom > 1 && <Name name={folder.name} className={zoomMap[zoom]} />}
       </div>
     </FolderContextMenu>
   );
@@ -158,11 +154,15 @@ const File: FC<{
         )}
       </FileContextMenu>
 
-      {zoom > 1 && (
-        <span className={cx(styles.filename, zoomMap[zoom])}>
-          {file.filename}
-        </span>
-      )}
+      {zoom > 1 && <Name name={file.filename} className={zoomMap[zoom]} />}
     </div>
+  );
+};
+
+const Name: FC<{ name: string; className: string }> = ({ name, className }) => {
+  return (
+    <span title={name} className={cx(styles.filename, className)}>
+      {name}
+    </span>
   );
 };
