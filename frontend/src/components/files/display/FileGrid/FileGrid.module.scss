@@ -40,7 +40,7 @@ $accent: rgba(100, 149, 237, 0.25);
 .zoom {
   &1 {
     width: $dimension-1;
-    height: $dimension-1;
+    height: calc($dimension-1 * 1.1); // Allow space for name tag
   }
 
   &2 {

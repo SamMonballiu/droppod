@@ -98,7 +98,7 @@ const Folder: FC<{
           />
         </div>
 
-        {zoom > 1 && <Name name={folder.name} className={zoomMap[zoom]} />}
+        <Name name={folder.name} className={zoomMap[zoom]} />
       </div>
     </FolderContextMenu>
   );
@@ -154,7 +154,7 @@ const File: FC<{
         )}
       </FileContextMenu>
 
-      {zoom > 1 && <Name name={file.filename} className={zoomMap[zoom]} />}
+      <Name name={file.filename} className={zoomMap[zoom]} />
     </div>
   );
 };
