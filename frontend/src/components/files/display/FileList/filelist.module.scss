@@ -71,29 +71,30 @@ $hoverColor: rgba(0, 0, 0, 0.075);
 
 .filename {
   overflow: hidden;
-  flex-basis: 25vw;
+  flex-basis: 70%;
+  flex-grow: 1;
 }
 
 .ext {
-  flex-basis: 10vw;
+  flex-basis: 5%;
 }
 
 .rating {
-  min-width: 10vw;
+  min-width: 5%;
   svg {
     font-size: 20px !important;
   }
 }
 
 .date {
-  flex-basis: 10vw;
+  flex-basis: 5%;
 }
 
 .size {
   display: flex;
   justify-content: flex-end;
   font-family: "Fira Code", monospace;
-  flex-basis: 10vw;
+  flex-basis: 5%;
   margin: 0;
 }
 

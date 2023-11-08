@@ -25,6 +25,10 @@ import {
   DeleteFolderCommandHandler,
   DeleteFolderCommandValidator,
 } from "../features/folders/delete/deleteFolderCommand";
+import {
+  RenameFolderCommandHandler,
+  RenameFolderCommandValidator,
+} from "../features/folders/rename/renameFolderCommand";
 
 export interface Command {}
 
@@ -138,6 +142,7 @@ export class CommandHandlerFactory {
       new SetFileRatingCommandValidator(),
       new MoveFilesCommandValidator(),
       new RenameCommandValidator(),
+      new RenameFolderCommandValidator(),
       new DeleteCommandValidator(),
       new DeleteFolderCommandValidator(),
     ];
@@ -146,6 +151,7 @@ export class CommandHandlerFactory {
       new SetFileRatingCommandHandler(ratings, filesCache),
       new MoveFilesCommandHandler(filesCache),
       new RenameCommandHandler(filesCache, ratings),
+      new RenameFolderCommandHandler(filesCache, ratings),
       new DeleteCommandHandler(filesCache),
       new DeleteFolderCommandHandler(filesCache),
     ];
