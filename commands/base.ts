@@ -29,6 +29,7 @@ import {
   RenameFolderCommandHandler,
   RenameFolderCommandValidator,
 } from "../features/folders/rename/renameFolderCommand";
+import { UploadFromUrlCommandHandler } from "../features/files/upload/uploadFromUrlCommand";
 
 export interface Command {}
 
@@ -154,6 +155,7 @@ export class CommandHandlerFactory {
       new RenameFolderCommandHandler(filesCache, ratings),
       new DeleteCommandHandler(filesCache),
       new DeleteFolderCommandHandler(filesCache),
+      new UploadFromUrlCommandHandler(filesCache),
     ];
   }
 
