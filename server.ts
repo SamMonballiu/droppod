@@ -9,7 +9,10 @@ import { CommandHandlerFactory } from "./commands/base";
 import { config } from "./config";
 import { mapMoveFilesRoute } from "./features/files/move/moveFilesRoute";
 import { mapCreateFolderRoute } from "./features/folders/create/createFolderRoute";
-import { mapUploadFilesRoute } from "./features/files/upload/uploadFilesRoute";
+import {
+  mapUploadFilesRoute,
+  mapUploadFromUrlRoute,
+} from "./features/files/upload/uploadFilesRoute";
 import { mapSetFileRatingRoute } from "./features/files/setRating/setFileRatingRoute";
 import { mapRenameFileRoute } from "./features/files/rename/renameFileRoute";
 import { mapGetFilesRoute } from "./features/files/get/getFilesRoute";
@@ -53,6 +56,7 @@ const port = args.port ?? 4004;
 
 mapGetFilesRoute(app);
 mapUploadFilesRoute(app);
+mapUploadFromUrlRoute(app, handler);
 mapMoveFilesRoute(app, handler);
 mapRenameFileRoute(app, handler);
 mapDeleteFilesRoute(app, handler);
