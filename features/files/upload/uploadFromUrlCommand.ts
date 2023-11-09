@@ -59,6 +59,8 @@ export class UploadFromUrlCommandHandler
         return CommandHandleResult.Success.WithoutResult();
       }
 
+      this._filesCache.invalidate(command.folder);
+
       return CommandHandleResult.Error("Not yet implemented");
     } catch (err) {
       return CommandHandleResult.Error("Not yet implemented");
