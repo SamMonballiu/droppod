@@ -3,7 +3,7 @@ import { FilesCache } from "../files-cache";
 import fs from "fs-extra";
 import { Readable } from "stream";
 import { finished } from "stream/promises";
-import path from "path";
+import { qualify } from "@config";
 
 const extractFilenameFromURL = (url: string): string | undefined => {
   const urlParts = url.split("/");
@@ -41,13 +41,13 @@ export class UploadFromUrlCommandHandler
       let writePath: string = "";
 
       if (command.newName) {
-        writePath = path.join(command.folder, command.newName);
+        writePath = qualify(command.folder, command.newName);
       } else {
         const filename = extractFilenameFromURL(command.url);
         if (!filename) {
           return CommandHandleResult.Error("Couldn't determine a filename");
         }
-        writePath = path.join(command.folder, filename);
+        writePath = qualify(command.folder, filename);
       }
 
       const stream = fs.createWriteStream(writePath);

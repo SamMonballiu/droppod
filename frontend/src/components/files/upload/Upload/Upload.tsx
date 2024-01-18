@@ -3,6 +3,7 @@ import React, { FC, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import cx from "classnames";
 import axios from "axios";
+import { UploadFromUrl } from "./UploadFromUrl";
 
 interface Props {
   folder: string;
@@ -78,6 +79,8 @@ export const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
           </div>
         )}
       </form>
+
+      <UploadFromUrl folder={folder} onError={onError} baseUrl={baseUrl} />
     </div>
   );
 };
