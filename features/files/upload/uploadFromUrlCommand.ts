@@ -1,4 +1,10 @@
-import { Command, CommandHandler, CommandHandleResult } from "@commands";
+import {
+  Command,
+  CommandHandler,
+  CommandHandleResult,
+  CommandValidateResult,
+  CommandValidator,
+} from "@commands";
 import { FilesCache } from "../files-cache";
 import fs from "fs-extra";
 import { Readable } from "stream";
@@ -21,6 +27,23 @@ export class UploadFromUrlCommand implements Command {
     this.url = url;
     this.folder = folder;
     this.newName = newName;
+  }
+}
+
+export class UploadFromUrlCommandValidator
+  implements CommandValidator<UploadFromUrlCommand>
+{
+  public canValidate = (command: Command) =>
+    command instanceof UploadFromUrlCommand;
+
+  public validate(command: UploadFromUrlCommand) {
+    if (!fs.existsSync(qualify(command.folder))) {
+      return CommandValidateResult.Error(
+        `Path does not exist: '${command.folder}'.`
+      );
+    }
+
+    return CommandValidateResult.Success();
   }
 }
 
