@@ -14,6 +14,7 @@ import {
   FileDialog,
   RenameDialog,
   DeleteDialog,
+  formatBytes,
 } from "@components";
 import { CreateFolderPostmodel } from "@backend/features/folders/create/createFolderPostmodel";
 import { DeleteFolderPostmodel } from "@backend/features/folders/delete/deleteFolderPostmodel";
@@ -22,7 +23,7 @@ import { RenamePostModel } from "@backend/features/files/rename/renameFilePostmo
 import { DeletePostmodel } from "@backend/features/files/delete/deleteFilePostmodel";
 import { FileInfo, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
-import { FilesResponse } from "@models/response";
+import { FilesResponse, DiskSpaceResponse } from "@models/response";
 import axios from "axios";
 import cx from "classnames";
 import React, { useEffect, useMemo, useState } from "react";
@@ -103,6 +104,10 @@ function App() {
       staleTime: Infinity,
     }
   );
+
+  const { data: diskData } = useQuery(["data"], async () => {
+    return axios.get<DiskSpaceResponse>(`${baseUrl}freespace`);
+  });
 
   const [selectedFiles, isSelected, toggleSelected, , setAllSelected, events] =
     useSelectList(
@@ -332,9 +337,9 @@ function App() {
           </>
         )}
       </div>
-      {data && (
+      {diskData && (
         <div className={app.info}>
-          Free space: {(data!.freeSpace / 1024 / 1024).toFixed(2)} mb
+          Free space: {formatBytes(diskData!.data.freeSpace)}
         </div>
       )}
     </div>
