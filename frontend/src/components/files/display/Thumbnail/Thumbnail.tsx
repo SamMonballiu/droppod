@@ -12,7 +12,7 @@ interface Props {
 export const Thumbnail: FC<Props> = ({ file, onClick, id, className }) => {
   return (
     <div onClick={onClick} id={id} style={{ minHeight: "inherit" }}>
-      <ImagePreview file={file} square dimension={300} className={className} />
+      <ImagePreview file={file} square dimension={200} className={className} />
     </div>
   );
 };

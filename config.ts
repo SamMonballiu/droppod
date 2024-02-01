@@ -3,6 +3,7 @@ import argv from "minimist";
 
 export const config = {
   basePath: process.env.BASE_PATH ?? "",
+  goBaseUrl: process.env.GO_BASE_URL ?? "",
   port: argv(process.argv).port ?? 4004,
 };
 
