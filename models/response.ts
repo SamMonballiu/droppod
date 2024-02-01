@@ -13,3 +13,8 @@ export interface ImageInfoResponse {
   };
   orientation: Orientation;
 }
+
+export interface DiskSpaceResponse {
+  freeSpace: number;
+  size: number;
+}
