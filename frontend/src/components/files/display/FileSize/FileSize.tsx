@@ -6,23 +6,20 @@ interface Props {
   format?: "kb" | "mb" | "auto";
 }
 
-const formatSize = (size: number, format: "kb" | "mb" | "auto" | "bytes") => {
-  if (format === "auto") {
-    format = size >= 1024 * 1024 ? "mb" : size >= 1024 ? "kb" : "bytes";
-  }
+export function formatBytes(bytes: number, decimals = 2) {
+  if (!+bytes) return "0 Bytes";
 
-  switch (format) {
-    case "kb":
-      return (size / 1024).toFixed(2) + "kb";
-    case "mb":
-      return (size / 1024 / 1024).toFixed(2) + "mb";
-    case "bytes":
-      return size + " bytes";
-  }
-};
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
 
 export const FileSize: FC<Props> = ({ className, files, format = "auto" }) => {
   const totalSize = files.reduce((acc, val) => acc + val.size, 0);
 
-  return <p className={className}>{formatSize(totalSize, format)}</p>;
+  return <p className={className}>{formatBytes(totalSize)}</p>;
 };
