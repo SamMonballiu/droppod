@@ -72,7 +72,7 @@ export const getType = (file: FileInfo): FileType => {
 export const getOrientation = (
   file: FileInfo
 ): "landscape" | "portrait" | "square" | undefined => {
-  if (file.dimensions === undefined) {
+  if (file.dimensions === undefined || file.dimensions === null) {
     return undefined;
   }
 
@@ -90,7 +90,7 @@ export const getOrientation = (
 };
 
 // https://exiftool.org/TagNames/EXIF.html#:~:text=0x0112,8%20=%20Rotate%20270%20CW
-enum Orientation {
+export enum Orientation {
   None,
   Horizontal,
   MirrorHorizontal,

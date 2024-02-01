@@ -6,6 +6,7 @@ import cx from "classnames";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
 import { Loading } from "@components";
+import { ImageInfoResponse } from "@models/response";
 
 interface Props {
   file: FileInfo;
@@ -33,24 +34,33 @@ export const ImagePreview: FC<Props> = ({
     queryClient.cancelQueries(["thumbnail", file, dimension, square]);
   }, []);
 
-  const orientation = getOrientation(file);
-  const size = square
-    ? `${dimension}x${dimension}`
-    : orientation === "landscape"
-    ? `${dimension}x0`
-    : `0x${dimension}`;
-
   const path =
     file.relativePath === ""
       ? file.filename
       : `${file.relativePath}/${file.filename}`;
 
+  const { data: imageInfo, isFetching: isFetchingInfo } = useQuery(
+    ["info", file],
+    async () =>
+      await axios.get<ImageInfoResponse>(
+        `${url}image/info?path=${file.fullPath}`
+      ),
+    {
+      enabled: inView,
+    }
+  );
+
   const { data: imageData, isFetching: isFetchingImage } = useQuery(
     ["thumbnail", file, dimension, square],
     async ({ signal }) => {
-      const fetchUrl = file.dimensions
-        ? `${url}thumbnail?file=${path}&size=${size}&quality=${quality}`
-        : `${url}thumbnail?file=${path}&percentage=30&quality=${quality}`;
+      const orientation = imageInfo?.data.orientation;
+      const size = square
+        ? `${dimension}x${dimension}`
+        : orientation === 1
+        ? `${dimension}x0`
+        : `0x${dimension}`;
+
+      const fetchUrl = `${url}thumbnail?file=${path}&size=${size}&quality=${quality}`;
       const response = (
         await axios.get(fetchUrl, { responseType: "blob", signal })
       ).data;
@@ -59,13 +69,13 @@ export const ImagePreview: FC<Props> = ({
     },
     {
       staleTime: Infinity,
-      enabled: inView,
+      enabled: inView && !isFetchingInfo,
     }
   );
 
   return (
     <div className={cx(styles.container, className)} ref={ref}>
-      {isFetchingImage ? (
+      {isFetchingImage || isFetchingInfo ? (
         <Loading className={styles.preview} />
       ) : (
         <img src={imageData} className={styles.image} />
