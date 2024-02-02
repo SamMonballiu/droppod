@@ -351,57 +351,59 @@ function App() {
 
   const topbar = (
     <div className={tabStyles.topBar}>
-      <div
-        className={cx(app.settings, {
-          [app.hidden]: view === "gallery",
-        })}
-      >
-        <>
-          <FileSortOptions
-            options={sortOptions}
-            value={sortProperty!}
-            onChange={(opt) => {
-              //@ts-ignore
-              handleSort(opt);
-            }}
-            isDescending={isDescending}
-          />
-          {view === "grid" && selectMode === "single" && (
-            <div className={app.zoomSlider}>
-              <TbTelescope />
-              <input
-                type="range"
-                min="1"
-                max="4"
-                value={zoom}
-                onChange={(e) =>
-                  setZoom(parseInt(e.target.value) as FileGridZoom)
-                }
+      {activeTab !== Tabs.Upload ? (
+        <div
+          className={cx(app.settings, {
+            [app.hidden]: view === "gallery",
+          })}
+        >
+          <>
+            <FileSortOptions
+              options={sortOptions}
+              value={sortProperty!}
+              onChange={(opt) => {
+                //@ts-ignore
+                handleSort(opt);
+              }}
+              isDescending={isDescending}
+            />
+            {view === "grid" && selectMode === "single" && (
+              <div className={app.zoomSlider}>
+                <TbTelescope />
+                <input
+                  type="range"
+                  min="1"
+                  max="4"
+                  value={zoom}
+                  onChange={(e) =>
+                    setZoom(parseInt(e.target.value) as FileGridZoom)
+                  }
+                />
+              </div>
+            )}
+          </>
+
+          {selectMode === "single" && (
+            <div className={app.icons}>
+              <MdOutlineListAlt
+                className={cx({ [app.active]: view === "list" })}
+                onClick={() => setView("list")}
               />
+              <MdGridView
+                className={cx({ [app.active]: view === "grid" })}
+                onClick={() => setView("grid")}
+              />
+              {data?.contents.files?.some(isImage) && (
+                <MdOutlinePhoto
+                  // @ts-ignore
+                  className={cx({ [app.active]: view === "gallery" })}
+                  onClick={() => setView("gallery")}
+                />
+              )}
             </div>
           )}
-        </>
-
-        {selectMode === "single" && (
-          <div className={app.icons}>
-            <MdOutlineListAlt
-              className={cx({ [app.active]: view === "list" })}
-              onClick={() => setView("list")}
-            />
-            <MdGridView
-              className={cx({ [app.active]: view === "grid" })}
-              onClick={() => setView("grid")}
-            />
-            {data?.contents.files?.some(isImage) && (
-              <MdOutlinePhoto
-                // @ts-ignore
-                className={cx({ [app.active]: view === "gallery" })}
-                onClick={() => setView("gallery")}
-              />
-            )}
-          </div>
-        )}
-      </div>
+        </div>
+      ) : null}
       {breadcrumbs}
     </div>
   );
