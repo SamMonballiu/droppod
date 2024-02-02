@@ -323,7 +323,7 @@ function App() {
           isReadOnly={activeTab === Tabs.Upload}
         />
         {activeTab !== Tabs.Upload && (
-          <>
+          <div className={app.topBarIcons}>
             <MdOutlineCreateNewFolder
               className={app.button}
               onClick={createFolderDialog.toggle}
@@ -334,7 +334,7 @@ function App() {
                 setSelectMode(selectMode === "multiple" ? "single" : "multiple")
               }
             />
-          </>
+          </div>
         )}
       </div>
       {diskData && (

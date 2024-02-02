@@ -19,10 +19,25 @@ body {
   align-items: center;
   justify-content: space-between;
 
+  svg {
+    font-size: 24px;
+  }
+
   div:nth-child(1) {
     display: flex;
     align-items: center;
     gap: 12px;
+    font-size: 1.8em;
+    font-family: "Work Sans";
+    font-weight: 900;
+  }
+}
+
+.topBarIcons {
+  display: flex;
+  gap: 8px;
+  svg {
+    font-size: 20px !important;
   }
 }
 

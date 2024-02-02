@@ -9,6 +9,7 @@ interface Props {
   onClick: (destination: string) => void;
   isReadOnly?: boolean;
   includeHome?: boolean;
+  className?: string;
 }
 
 export const Breadcrumbs: FC<Props> = ({
@@ -16,6 +17,7 @@ export const Breadcrumbs: FC<Props> = ({
   onClick,
   isReadOnly = false,
   includeHome = true,
+  className,
 }) => {
   const pathElements = path.split("/");
 
@@ -49,5 +51,7 @@ export const Breadcrumbs: FC<Props> = ({
       </div>
     );
   });
-  return <section className={styles.container}>{mapped}</section>;
+  return (
+    <section className={cx(className, styles.container)}>{mapped}</section>
+  );
 };
