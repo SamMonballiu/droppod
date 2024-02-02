@@ -1,4 +1,4 @@
-import { FileInfo, getOrientation } from "../../../../../../models/fileinfo";
+import { FileInfo, hasRawExtension } from "@models/fileinfo";
 import styles from "./ImagePreview.module.scss";
 import { FC, useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
@@ -46,7 +46,8 @@ export const ImagePreview: FC<Props> = ({
         `${url}image/info?path=${file.fullPath}`
       ),
     {
-      enabled: inView,
+      enabled: inView && !hasRawExtension(file.filename),
+      staleTime: Infinity,
     }
   );
 
