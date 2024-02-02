@@ -7,11 +7,6 @@ export interface FileInfo {
   extension: string;
   size: number;
   dateAdded: Date;
-  dimensions?: {
-    width: number;
-    height: number;
-    orientation: Orientation;
-  };
   isFolder?: boolean;
   rating?: FileRating;
 }
@@ -67,26 +62,6 @@ export const getType = (file: FileInfo): FileType => {
   }
 
   return FileType.Unknown;
-};
-
-export const getOrientation = (
-  file: FileInfo
-): "landscape" | "portrait" | "square" | undefined => {
-  if (file.dimensions === undefined || file.dimensions === null) {
-    return undefined;
-  }
-
-  if (file.dimensions.width === file.dimensions.height) {
-    return "square";
-  }
-
-  switch (file.dimensions.orientation) {
-    case Orientation.Horizontal:
-    case Orientation.MirrorHorizontal:
-      return "landscape";
-    default:
-      return "portrait";
-  }
 };
 
 // https://exiftool.org/TagNames/EXIF.html#:~:text=0x0112,8%20=%20Rotate%20270%20CW
