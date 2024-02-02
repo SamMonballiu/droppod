@@ -72,7 +72,6 @@ export const mapFolder = async (
       size: stats.size,
       dateAdded: stats.ctime,
       rating: await ratings.get(path.join(folderName, entry)),
-      dimensions,
     };
 
     result.files!.push(fileInfo);
