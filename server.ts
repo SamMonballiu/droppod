@@ -22,6 +22,7 @@ import { mapDeleteFilesRoute } from "./features/files/delete/deleteFileRoute";
 import { mapDeleteFolderRoute } from "./features/folders/delete/deleteFolderRoute";
 import { mapRenameFolderRoute } from "./features/folders/rename/renameFolderRoute";
 import { mapGetDiskspaceRoute } from "./features/freespace/get/getFreeSpaceRoute";
+import { mapGetImageInfoRoute } from "./features/files/images/info/getImageInfoRoute";
 
 const args = argv(process.argv);
 
@@ -56,6 +57,7 @@ const handler = new CommandHandlerFactory();
 const port = args.port ?? 4004;
 
 mapGetDiskspaceRoute(app);
+mapGetImageInfoRoute(app);
 
 mapGetFilesRoute(app);
 mapUploadFilesRoute(app);
