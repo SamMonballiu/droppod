@@ -5,7 +5,7 @@ import { filesCache } from "../files-cache";
 import { ImageInfoResponse } from "../../../models/response";
 import sizeOf from "image-size";
 import path from "path";
-import { folderMapper } from "../../../backend/goFolderMapper";
+import { mapFolder } from "../../../backend/goFolderMapper";
 
 export const mapGetFilesRoute = (app: Express) => {
   app.get("/files", async (req: Request, res: Response) => {
@@ -25,14 +25,16 @@ export const mapGetFilesRoute = (app: Express) => {
       return;
     }
 
-    await folderMapper((req.query.folder as string) ?? "/")
-      .onComplete((response) => {
+    await mapFolder({
+      path: (req.query.folder as string) ?? "/",
+      onSuccess: (response) => {
         if (!filesCache.has(req.query.folder as string)) {
           filesCache.add(req.query.folder as string, response);
         }
         res.status(200).send(response);
-      })
-      .start();
+      },
+      onError: (msg) => res.status(500).send(msg),
+    });
   });
 
   app.get("/image/info", async (req: Request, res: Response) => {

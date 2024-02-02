@@ -20,6 +20,12 @@ import (
 )
 
 type FilesResponse struct {
+	IsSuccess bool                   `json:"isSuccess"`
+	Error     string                 `json:"error"`
+	Response  *FilesResponseContents `json:"response"`
+}
+
+type FilesResponseContents struct {
 	Freespace int64      `json:"freeSpace"`
 	Contents  FolderInfo `json:"contents"`
 }
@@ -67,13 +73,17 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//fmt.Println(filepath.Dir(path))
-	//fmt.Println(strings.Replace(filepath.Dir(fullPath), basePath, "", 1))
-
 	files, err := os.ReadDir(fullPath)
 	if err != nil {
 		fmt.Println(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response := FilesResponse{
+			IsSuccess: false,
+			Error:     err.Error(),
+		}
+		//http.Error(w, err.Error(), http.StatusInternalServerError)
+		jsonBytes, _ := json.MarshalIndent(response, "", "")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonBytes)
 		return
 	}
 
@@ -116,8 +126,12 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	folderInfo.Files = subFiles
 	folderInfo.Folders = subFolders
 	response := FilesResponse{
-		Freespace: 0,
-		Contents:  folderInfo,
+		IsSuccess: true,
+		Error:     "",
+		Response: &FilesResponseContents{
+			Freespace: 0,
+			Contents:  folderInfo,
+		},
 	}
 	jsonBytes, _ := json.MarshalIndent(response, "", "")
 	w.Header().Set("Content-Type", "application/json")

@@ -12,7 +12,7 @@ export const MediaPreview: FC<Props> = ({ file, className, ...mediaProps }) => {
   const path = `${window.location.protocol}//${window.location.host.replace(
     "5173",
     "4004"
-  )}${file.fullPath}`;
+  )}/${encodeURIComponent(file.fullPath.substring(1))}`;
   if (is(file, FileType.Audio)) {
     return <audio src={path} className={className} {...mediaProps} />;
   }

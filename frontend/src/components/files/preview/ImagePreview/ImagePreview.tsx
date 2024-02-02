@@ -43,7 +43,7 @@ export const ImagePreview: FC<Props> = ({
     ["info", file],
     async () =>
       await axios.get<ImageInfoResponse>(
-        `${url}image/info?path=${file.fullPath}`
+        `${url}image/info?path=${encodeURIComponent(file.fullPath)}`
       ),
     {
       enabled: inView && !hasRawExtension(file.filename),
@@ -61,7 +61,9 @@ export const ImagePreview: FC<Props> = ({
         ? `${dimension}x0`
         : `0x${dimension}`;
 
-      const fetchUrl = `${url}thumbnail?file=${path}&size=${size}&quality=${quality}`;
+      const fetchUrl = `${url}thumbnail?file=${encodeURIComponent(
+        path
+      )}&size=${size}&quality=${quality}`;
       const response = (
         await axios.get(fetchUrl, { responseType: "blob", signal })
       ).data;

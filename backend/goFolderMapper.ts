@@ -1,14 +1,17 @@
 import { config } from "@config";
 import { ratings } from "../ratings";
 import http from "http";
-import { FilesResponse } from "../models/response";
+import { FilesResponse, GoFilesResponse } from "../models/response";
 
 const crawl = async (
   folderName: string,
-  onComplete: (response: FilesResponse) => void
+  onSuccess: (response: FilesResponse) => void,
+  onError: (message: string) => void
 ) => {
   http.get(
-    `${config.goBaseUrl}/list?path=${folderName}&basePath=${config.basePath}`,
+    `${config.goBaseUrl}/list?path=${encodeURIComponent(
+      folderName
+    )}&basePath=${encodeURIComponent(config.basePath)}`,
     (result) => {
       let data = "";
       result.on("data", (chunk) => {
@@ -16,35 +19,39 @@ const crawl = async (
       });
 
       result.on("end", () => {
-        let parsed: FilesResponse;
-        parsed = JSON.parse(data);
+        try {
+          let parsed: GoFilesResponse;
+          parsed = JSON.parse(data);
 
-        // checkDiskSpace(fullFolder).then((result) => {
-        // parsed.freeSpace = result.free;
+          if (!parsed.isSuccess) {
+            onError(parsed.error);
+            return;
+          }
 
-        const files = parsed.contents.files ?? [];
-        const rated = [];
-        for (const file of files) {
-          ratings.get(file.fullPath).then((result) => {
-            file.rating = result;
-            rated.push(file);
-            if (rated.length === files.length) {
-              onComplete(parsed);
-            }
-          });
+          const files = parsed.response!.contents.files ?? [];
+          const rated = [];
+          for (const file of files) {
+            ratings.get(file.fullPath).then((result) => {
+              file.rating = result;
+              rated.push(file);
+              if (rated.length === files.length) {
+                onSuccess(parsed.response!);
+              }
+            });
+          }
+        } catch (err) {
+          throw err;
         }
-        // });
       });
     }
   );
 };
 
-export const folderMapper = (folderName: string) => {
-  return {
-    onComplete: (callback: (response: FilesResponse) => void) => ({
-      start: async () => {
-        await crawl(folderName, callback);
-      },
-    }),
-  };
+interface Args {
+  path: string;
+  onSuccess: (response: FilesResponse) => void;
+  onError: (message: string) => void;
+}
+export const mapFolder = async ({ path, onSuccess, onError }: Args) => {
+  return await crawl(path, onSuccess, onError);
 };
