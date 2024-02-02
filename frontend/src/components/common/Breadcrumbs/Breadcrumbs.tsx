@@ -40,7 +40,7 @@ export const Breadcrumbs: FC<Props> = ({
         ) : includeHome ? (
           <AiOutlineHome
             className={cx({
-              [styles.inactive]: pathElements.length === 1,
+              [styles.inactive]: pathElements.length === 1 || isReadOnly,
               [styles.clickable]: pathElements.length > 1 && !isReadOnly,
             })}
             onClick={isReadOnly ? undefined : () => onClick(targetUrl)}

@@ -1,10 +1,19 @@
 $tabWidth: 40px;
 $topBarHeight: 72px;
+$topBarPadding: 12px;
 $padding: 0.5em;
 $folderListWidth: clamp(12vw, 220px, 16vw);
 
 .selected {
   border-bottom: 3px solid white !important;
+}
+
+.topBar {
+  height: $topBarHeight;
+  padding-bottom: $topBarPadding;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .container {
