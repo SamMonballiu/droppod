@@ -29,15 +29,20 @@ const crawl = async (
           }
 
           const files = parsed.response!.contents.files ?? [];
-          const rated = [];
-          for (const file of files) {
-            ratings.get(file.fullPath).then((result) => {
-              file.rating = result;
-              rated.push(file);
-              if (rated.length === files.length) {
-                onSuccess(parsed.response!);
-              }
-            });
+          if (files.length > 0) {
+            const rated = [];
+
+            for (const file of files) {
+              ratings.get(file.fullPath).then((result) => {
+                file.rating = result;
+                rated.push(file);
+                if (rated.length === files.length) {
+                  onSuccess(parsed.response!);
+                }
+              });
+            }
+          } else {
+            onSuccess(parsed.response!);
           }
         } catch (err) {
           throw err;
