@@ -75,17 +75,17 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var folderInfo FolderInfo
-	subFolders := make([]FolderInfo, 0)
-	subFiles := make([]FileInfo, 0)
-	folderInfo = FolderInfo{Name: path, Parent: filepath.Dir(path)[1:]}
+	subFolders := []FolderInfo{}
+	subFiles := []FileInfo{}
+	folderInfo = FolderInfo{Name: path, Parent: filepath.Dir(path)[1:], Files: subFiles, Folders: subFolders}
 
 	for _, file := range files {
 		if file.IsDir() {
 			folderInfo := FolderInfo{
 				Name:      file.Name(),
 				Parent:    path[1:],
-				Files:     make([]FileInfo, 0),
-				Folders:   make([]FolderInfo, 0),
+				Files:     []FileInfo{},
+				Folders:   []FolderInfo{},
 				DateAdded: time.Now(),
 			}
 			subFolders = append(subFolders, folderInfo)
@@ -108,6 +108,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	folderInfo.Files = subFiles
 	folderInfo.Folders = subFolders
+
 	response := FilesResponse{
 		IsSuccess: true,
 		Error:     "",
