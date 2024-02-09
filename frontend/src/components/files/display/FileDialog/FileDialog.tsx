@@ -3,6 +3,7 @@ import { FileInfo, FileType, is } from "@models/fileinfo";
 import { FileProperties, ImagePreview, Dialog } from "@components";
 import styles from "./FileDialog.module.scss";
 import { MediaPreview } from "@components";
+import { TextPreview } from "@components/files/preview/TextPreview/TextPreview";
 
 interface Props {
   isOpen: boolean;
@@ -10,7 +11,7 @@ interface Props {
   file: FileInfo;
 }
 
-const { Image, Video, Audio } = FileType;
+const { Image, Video, Audio, Text } = FileType;
 
 export const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
   return (
@@ -29,6 +30,7 @@ export const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
             />
           )}
           {is(file, Audio) && <MediaPreview file={file} controls />}
+          {is(file, Text) && <TextPreview file={file} />}
         </div>
         <FileProperties file={file} />
       </div>

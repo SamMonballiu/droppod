@@ -1,0 +1,22 @@
+.contents textarea,
+.contents p {
+  font-family: "Fira Code", monospace;
+  background: rgb(245, 245, 245);
+  font-size: 0.8em;
+  padding: 8px 12px;
+  width: 60vw;
+  height: 60vh;
+  overflow: auto;
+  white-space: pre;
+  resize: none;
+  border: none;
+
+  &:focused {
+    border: none;
+  }
+}
+
+iframe {
+  width: 50vw;
+  height: 50vh;
+}
