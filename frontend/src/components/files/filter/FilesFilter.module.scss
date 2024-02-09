@@ -1,0 +1,14 @@
+.filters {
+  display: flex;
+  gap: 24px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.option {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
