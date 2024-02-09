@@ -1,7 +1,16 @@
 import { useState, useCallback } from "react";
 
 export const sortBy = <T,>(a: T, b: T, property: keyof T) => {
-  return (a[property] ?? 0) < (b[property] ?? 0) ? -1 : 0;
+  const aValue = a[property];
+  const bValue = b[property];
+
+  if (typeof aValue === "string" && typeof bValue === "string") {
+    const lowerA = aValue.toLowerCase();
+    const lowerB = bValue.toLowerCase();
+    return lowerA.localeCompare(lowerB);
+  }
+
+  return aValue < bValue ? -1 : 0;
 };
 
 export interface SortFunction<T> {
