@@ -53,7 +53,11 @@ import {
   LocationContextHandler,
   LocationContextMenu,
 } from "@components/location/LocationContextMenu";
-import { FilesFilter } from "@components/files/filter/FilesFilter";
+import {
+  FilesFilter,
+  filterCollection,
+  FilterValues,
+} from "@components/files/filter/FilesFilter";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -82,6 +86,7 @@ function App() {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
+  const [filesFilter, setFilesFilter] = useState<FilterValues>({});
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -133,7 +138,12 @@ function App() {
   );
 
   const { getSorted, sortProperty, isDescending, sort } = useSortedList(
-    data?.contents.files ?? [],
+    !data
+      ? []
+      : filterCollection(filesFilter, data!.contents.files ?? [], {
+          rating: (x) => x.rating,
+          name: (x) => x.filename,
+        }),
     "filename",
     false
   );
@@ -143,22 +153,23 @@ function App() {
       return [];
     }
 
-    let sorted = data?.contents.folders;
+    let filtered = data?.contents.folders;
+    filtered = filterCollection(filesFilter, filtered, {
+      name: (x) => x.name,
+    });
 
     if (sortProperty === "dateAdded") {
-      sorted = [...data?.contents.folders].sort((a, b) =>
-        sortBy(a, b, "dateAdded")
-      );
+      filtered = filtered.sort((a, b) => sortBy(a, b, "dateAdded"));
     }
 
     if (sortProperty === "filename") {
-      sorted = [...data?.contents.folders].sort((a, b) => sortBy(a, b, "name"));
+      filtered = filtered.sort((a, b) => sortBy(a, b, "name"));
     }
 
     return isDescending && ["dateAdded", "filename"].includes(sortProperty!)
-      ? sorted.reverse()
-      : sorted;
-  }, [data, sortProperty, isDescending, sortBy]);
+      ? filtered.reverse()
+      : filtered;
+  }, [data, sortProperty, isDescending, sortBy, filesFilter]);
 
   const sortOptions: SortOption<FileInfo>[] = [
     { property: "filename", name: "Filename" },
@@ -339,7 +350,7 @@ function App() {
 
   const topbar = (
     <div className={tabStyles.topBar}>
-      <FilesFilter />
+      <FilesFilter onChange={(filter) => setFilesFilter(filter)} />
       {activeTab !== "upload" ? (
         <div
           className={cx(app.settings, {
