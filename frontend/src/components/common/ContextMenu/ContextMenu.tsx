@@ -18,6 +18,7 @@ interface Props<T> extends React.PropsWithChildren {
   context: T;
   getId: (context: T) => string;
   handlers: ContextHandler<T>[];
+  triggerClassName?: string;
 }
 
 export const ContextMenu = <T,>({
@@ -25,6 +26,7 @@ export const ContextMenu = <T,>({
   handlers = [],
   children,
   getId,
+  triggerClassName,
 }: Props<T>) => {
   const items = useMemo(() => {
     return handlers.map((h) => (
@@ -46,7 +48,9 @@ export const ContextMenu = <T,>({
 
   return (
     <>
-      <ContextMenuTrigger id={getId(context)}>{children}</ContextMenuTrigger>
+      <ContextMenuTrigger className={triggerClassName} id={getId(context)}>
+        {children}
+      </ContextMenuTrigger>
 
       <RctxContextMenu id={getId(context)}>{items}</RctxContextMenu>
     </>
