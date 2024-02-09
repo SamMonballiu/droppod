@@ -1,7 +1,7 @@
-import { FileRating } from "../../../models/fileinfo";
+import { FileRatingValue } from "../../../models/fileinfo";
 
 export interface SetFileRatingPostmodel {
   path: string;
   filename: string;
-  rating: FileRating;
+  rating: FileRatingValue;
 }

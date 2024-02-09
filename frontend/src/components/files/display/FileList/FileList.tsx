@@ -9,7 +9,7 @@ import {
   FileContextMenu,
   FileContextHandler,
   FileSize,
-  Rating,
+  FileRating,
 } from "@components";
 import { FileIcon } from "@components/files/display/FileTypeIcon/FileTypeIcon";
 import {
@@ -100,7 +100,7 @@ const File: FC<{
           {file.dateAdded.toLocaleDateString()}
         </span>
         <span className={styles.rating}>
-          {file.rating ? <Rating file={file} readonly /> : null}
+          {file.rating ? <FileRating file={file} readonly /> : null}
         </span>
         <FileSize className={styles.size} files={[file]} />
       </div>

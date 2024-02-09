@@ -10,14 +10,14 @@ import fs from "fs";
 import { RatingsService } from "../../../ratings";
 import { FilesCache } from "../files-cache";
 import path from "path";
-import { FileRating } from "../../../models/fileinfo";
+import { FileRatingValue } from "../../../models/fileinfo";
 
 export class SetFileRatingCommand implements Command {
   public path: string;
   public filename: string;
-  public rating: FileRating;
+  public rating: FileRatingValue;
 
-  constructor(path: string, filename: string, rating: FileRating) {
+  constructor(path: string, filename: string, rating: FileRatingValue) {
     this.path = path;
     this.filename = filename;
     this.rating = rating;

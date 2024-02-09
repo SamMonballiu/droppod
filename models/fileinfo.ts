@@ -1,4 +1,4 @@
-export type FileRating = 0 | 1 | 2 | 3 | 4 | 5;
+export type FileRatingValue = 0 | 1 | 2 | 3 | 4 | 5;
 
 export interface FileInfo {
   filename: string;
@@ -8,7 +8,7 @@ export interface FileInfo {
   size: number;
   dateAdded: Date;
   isFolder?: boolean;
-  rating?: FileRating;
+  rating?: FileRatingValue;
 }
 
 export const isImageExtension = (ext: string) =>
