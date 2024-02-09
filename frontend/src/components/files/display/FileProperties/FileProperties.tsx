@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { FileInfo, FileType, hasRawExtension, is } from "@models/fileinfo";
-import { FileSize, Rating } from "@components";
+import { FileSize, FileRating } from "@components";
 import styles from "./FileProperties.module.scss";
 import cx from "classnames";
 import { ImageInfoResponse } from "@models/response";
@@ -62,7 +62,7 @@ export const FileProperties: FC<Props> = ({
         link
       </a>,
     ],
-    ["rating", <Rating file={file} />],
+    ["rating", <FileRating file={file} />],
   ]);
 
   return (

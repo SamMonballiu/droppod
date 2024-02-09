@@ -53,6 +53,7 @@ import {
   LocationContextHandler,
   LocationContextMenu,
 } from "@components/location/LocationContextMenu";
+import { FilesFilter } from "@components/files/filter/FilesFilter";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -338,10 +339,11 @@ function App() {
 
   const topbar = (
     <div className={tabStyles.topBar}>
+      <FilesFilter />
       {activeTab !== "upload" ? (
         <div
           className={cx(app.settings, {
-            [app.hidden]: view === "gallery",
+            [app.hidden]: view === "gallery" || true,
           })}
         >
           <>

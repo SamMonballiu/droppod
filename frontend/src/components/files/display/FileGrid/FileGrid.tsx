@@ -5,7 +5,7 @@ import { GoFile } from "react-icons/go";
 import cx from "classnames";
 import { FolderInfo } from "@models/folderInfo";
 import { FcFolder } from "react-icons/fc";
-import { FileContextMenu, FileContextHandler, Rating } from "@components";
+import { FileContextMenu, FileContextHandler, FileRating } from "@components";
 import { FileIcon } from "@components/files/display/FileTypeIcon/FileTypeIcon";
 import {
   FolderContextHandler,
@@ -116,7 +116,7 @@ const File: FC<{
   contextHandlers: FileContextHandler[];
 }> = ({ file, zoom, onSelect, thumbnail, isSelected, contextHandlers }) => {
   const rating = file.rating ? (
-    <Rating file={file} readonly noHollowStars className={styles.rating} />
+    <FileRating file={file} readonly noHollowStars className={styles.rating} />
   ) : null;
 
   return (

@@ -1,16 +1,16 @@
 import storage from "node-persist";
-import { FileRating } from "./models/fileinfo";
+import { FileRatingValue } from "./models/fileinfo";
 
 storage.init({
   dir: "ratings",
   encoding: "utf8",
 });
 
-const get = async (filename: string): Promise<FileRating | undefined> => {
+const get = async (filename: string): Promise<FileRatingValue | undefined> => {
   return await storage.getItem(filename);
 };
 
-const set = async (filename: string, rating: FileRating) => {
+const set = async (filename: string, rating: FileRatingValue) => {
   await storage.setItem(filename, rating);
 };
 
@@ -44,8 +44,8 @@ const transferFolder = async (
 const remove = async (filename: string) => await storage.removeItem(filename);
 
 export interface RatingsService {
-  get: (filename: string) => Promise<FileRating | undefined>;
-  set: (filename: string, rating: FileRating) => Promise<void>;
+  get: (filename: string) => Promise<FileRatingValue | undefined>;
+  set: (filename: string, rating: FileRatingValue) => Promise<void>;
   remove: (filename: string) => Promise<unknown>;
   transfer: (
     sourceFilename: string,
