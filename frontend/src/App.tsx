@@ -461,12 +461,21 @@ function App() {
     setFocusedFolder(folder);
   };
 
-  const currentFolderContextHandlers: LocationContextHandler[] = [
-    {
-      label: "Say your name",
-      onClick: (folder: FolderInfo) => alert(folder.name),
-    },
-  ];
+  const currentFolderContextHandlers: LocationContextHandler[] =
+    selectMode === "multiple"
+      ? []
+      : [
+          {
+            label: "New folder",
+            onClick: createFolderDialog.toggle,
+            icon: <MdOutlineCreateNewFolder />,
+          },
+          {
+            label: "Select files",
+            onClick: () => setSelectMode("multiple"),
+            icon: <AiOutlineSelect />,
+          },
+        ];
 
   const content =
     activeTab === "files" ? (
