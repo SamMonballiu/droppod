@@ -34,7 +34,7 @@ export const ContextMenu = <T,>({
         disabled={h.disabled}
         className={styles.menuItem}
       >
-        {h.icon}
+        {h.icon ?? <div className={styles.placeholder}></div>}
         <span>{h.label}</span>
       </ContextMenuItem>
     ));
