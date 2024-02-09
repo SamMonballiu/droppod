@@ -58,10 +58,7 @@ const dateReviver = (key: string, value: any) => {
   return value;
 };
 
-enum Tabs {
-  Files = 0,
-  Upload = 1,
-}
+type Tabs = "files" | "upload";
 
 export type View = "list" | "grid" | "gallery";
 
@@ -70,7 +67,7 @@ function App() {
   const [view, setView] = useState<View>("grid");
   const [selectMode, setSelectMode] = useState<"single" | "multiple">("single");
   const [zoom, setZoom] = useState<FileGridZoom>(2);
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<Tabs>("files");
   const queryClient = useQueryClient();
   const createFolderDialog = useToggle(false);
   const showMoveDialog = useToggle(false);
@@ -320,9 +317,9 @@ function App() {
         <Breadcrumbs
           path={activeFolder}
           onClick={setActiveFolder}
-          isReadOnly={activeTab === Tabs.Upload}
+          isReadOnly={activeTab === "upload"}
         />
-        {activeTab !== Tabs.Upload && (
+        {activeTab !== "upload" && (
           <div className={app.topBarIcons}>
             <MdOutlineCreateNewFolder
               className={app.button}
@@ -351,7 +348,7 @@ function App() {
 
   const topbar = (
     <div className={tabStyles.topBar}>
-      {activeTab !== Tabs.Upload ? (
+      {activeTab !== "upload" ? (
         <div
           className={cx(app.settings, {
             [app.hidden]: view === "gallery",
@@ -461,7 +458,7 @@ function App() {
   };
 
   const content =
-    activeTab == 0 ? (
+    activeTab === "files" ? (
       <div className={tabStyles.contentX}>
         {topbar}
         <div className={tabStyles.foldersFiles}>
@@ -543,12 +540,12 @@ function App() {
   const tabs = (
     <>
       <GoFileSubmodule
-        className={cx({ [tabStyles.active]: activeTab === 0 })}
-        onClick={() => setActiveTab(0)}
+        className={cx({ [tabStyles.active]: activeTab === "files" })}
+        onClick={() => setActiveTab("files")}
       />
       <GoCloudUpload
-        className={cx({ [tabStyles.active]: activeTab === 1 })}
-        onClick={() => setActiveTab(1)}
+        className={cx({ [tabStyles.active]: activeTab === "upload" })}
+        onClick={() => setActiveTab("upload")}
       />
     </>
   );
