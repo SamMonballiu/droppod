@@ -9,6 +9,7 @@ import { qualify } from "@config";
 import fs from "fs-extra";
 import { RatingsService } from "../../../ratings";
 import { FilesCache } from "../../files/files-cache";
+import path from "path";
 
 export class RenameFolderCommand implements Command {
   public parentPath: string;
@@ -70,7 +71,10 @@ export class RenameFolderCommandHandler
 
       this._filesCache.invalidate(command.parentPath);
 
-      this._ratings.transferFolder(currentPath, newPath);
+      this._ratings.transferFolder(
+        path.join("/", command.parentPath, command.currentName),
+        path.join("/", command.parentPath, command.newName)
+      );
 
       return CommandHandleResult.Success.WithoutResult();
     } catch (err: any) {
