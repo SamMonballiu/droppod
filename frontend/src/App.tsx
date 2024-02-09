@@ -323,20 +323,6 @@ function App() {
           onClick={setActiveFolder}
           isReadOnly={activeTab === "upload"}
         />
-        {activeTab !== "upload" && (
-          <div className={app.topBarIcons}>
-            <MdOutlineCreateNewFolder
-              className={app.button}
-              onClick={createFolderDialog.toggle}
-            />
-            <AiOutlineSelect
-              className={app.button}
-              onClick={() =>
-                setSelectMode(selectMode === "multiple" ? "single" : "multiple")
-              }
-            />
-          </div>
-        )}
       </div>
       {diskData && (
         <div className={app.info}>
