@@ -109,7 +109,7 @@ export const Files: FC<Props> = ({
   const { thumbnails } = useThumbnails(data, handleFocusFile);
 
   if (folders.length === 0 && data.length === 0) {
-    return <p>This folder is empty.</p>;
+    return <p style={{ height: "100%" }}>This folder is empty.</p>;
   }
 
   const fileContextHandlers: FileContextHandler[] = [

@@ -49,6 +49,10 @@ import useSelectList from "./hooks/useSelectList";
 import { sortBy, useSortedList } from "./hooks/useSortedList";
 import useToggle from "./hooks/useToggle";
 import tabStyles from "./Tabs.module.scss";
+import {
+  LocationContextHandler,
+  LocationContextMenu,
+} from "@components/location/LocationContextMenu";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -457,6 +461,13 @@ function App() {
     setFocusedFolder(folder);
   };
 
+  const currentFolderContextHandlers: LocationContextHandler[] = [
+    {
+      label: "Say your name",
+      onClick: (folder: FolderInfo) => alert(folder.name),
+    },
+  ];
+
   const content =
     activeTab === "files" ? (
       <div className={tabStyles.contentX}>
@@ -506,24 +517,29 @@ function App() {
 
           <section>
             {isFetched ? (
-              <Files
-                data={getSorted()}
-                onSelectFolder={handleSelectFolder}
-                view={view}
-                setView={setView}
-                folders={sortedFolders}
-                zoom={zoom}
-                isSelecting={selectMode === "multiple"}
-                onToggleSelected={toggleSelected}
-                onSelectedChanged={events.onSelectedChanged}
-                onSetAllSelected={events.onSetAllSelected}
-                onFocusFile={setFocusedFile}
-                onRename={handleSelectForRename}
-                onRenameFolder={handleSelectFolderForRename}
-                onMove={handleSelectForMove}
-                onDelete={handleSelectForDelete}
-                onDeleteFolder={handleSelectFolderForDelete}
-              />
+              <LocationContextMenu
+                location={data!.contents}
+                handlers={currentFolderContextHandlers}
+              >
+                <Files
+                  data={getSorted()}
+                  onSelectFolder={handleSelectFolder}
+                  view={view}
+                  setView={setView}
+                  folders={sortedFolders}
+                  zoom={zoom}
+                  isSelecting={selectMode === "multiple"}
+                  onToggleSelected={toggleSelected}
+                  onSelectedChanged={events.onSelectedChanged}
+                  onSetAllSelected={events.onSetAllSelected}
+                  onFocusFile={setFocusedFile}
+                  onRename={handleSelectForRename}
+                  onRenameFolder={handleSelectFolderForRename}
+                  onMove={handleSelectForMove}
+                  onDelete={handleSelectForDelete}
+                  onDeleteFolder={handleSelectFolderForDelete}
+                />
+              </LocationContextMenu>
             ) : (
               <Loading animated className={cx(tabStyles.loadingFiles)} />
             )}
