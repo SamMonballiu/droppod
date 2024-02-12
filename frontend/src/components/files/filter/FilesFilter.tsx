@@ -26,6 +26,19 @@ export interface FilterValues {
   name: TextFilter;
 }
 
+export const emptyFilter: FilterValues = {
+  rating: {
+    isActive: false,
+    type: "AtLeast",
+    value: 0,
+  },
+  name: {
+    isActive: false,
+    type: "Contains",
+    value: "",
+  },
+};
+
 const filterOn = {
   rating: <T,>(
     filter: FilterValues,
@@ -90,16 +103,10 @@ interface Props {
 }
 
 export const FilesFilter: FC<Props> = ({ onChange }) => {
-  const [nameFilter, setNameFilter] = useState<TextFilter>({
-    isActive: true,
-    type: "Contains",
-    value: "json",
-  });
-  const [ratingFilter, setRatingFilter] = useState<RatingFilter>({
-    isActive: false,
-    type: "AtLeast",
-    value: 0,
-  });
+  const [nameFilter, setNameFilter] = useState<TextFilter>(emptyFilter.name);
+  const [ratingFilter, setRatingFilter] = useState<RatingFilter>(
+    emptyFilter.rating
+  );
 
   const filters = useMemo(() => {
     return {
