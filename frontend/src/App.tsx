@@ -39,6 +39,7 @@ import {
   MdOutlineCreateNewFolder,
   MdOutlineListAlt,
   MdOutlinePhoto,
+  MdFilterAlt,
 } from "react-icons/md";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { TbTelescope } from "react-icons/tb";
@@ -54,10 +55,12 @@ import {
   LocationContextMenu,
 } from "@components/location/LocationContextMenu";
 import {
+  emptyFilter,
   FilesFilter,
   filterCollection,
   FilterValues,
 } from "@components/files/filter/FilesFilter";
+import { Popover } from "@headlessui/react";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -86,7 +89,7 @@ function App() {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
-  const [filesFilter, setFilesFilter] = useState<FilterValues>({});
+  const [filesFilter, setFilesFilter] = useState<FilterValues>(emptyFilter);
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -350,23 +353,35 @@ function App() {
 
   const topbar = (
     <div className={tabStyles.topBar}>
-      <FilesFilter onChange={(filter) => setFilesFilter(filter)} />
       {activeTab !== "upload" ? (
         <div
           className={cx(app.settings, {
-            [app.hidden]: view === "gallery" || true,
+            [app.hidden]: view === "gallery",
           })}
         >
           <>
-            <FileSortOptions
-              options={sortOptions}
-              value={sortProperty!}
-              onChange={(opt) => {
-                //@ts-ignore
-                handleSort(opt);
-              }}
-              isDescending={isDescending}
-            />
+            <div className={app.fileControls}>
+              <FileSortOptions
+                options={sortOptions}
+                value={sortProperty!}
+                onChange={(opt) => {
+                  //@ts-ignore
+                  handleSort(opt);
+                }}
+                isDescending={isDescending}
+              />
+
+              <Popover style={{ position: "relative" }} as="div">
+                <Popover.Button as="div">
+                  <MdFilterAlt className={app.button} />
+                </Popover.Button>
+
+                <Popover.Panel style={{ position: "absolute" }}>
+                  <FilesFilter onChange={(filter) => setFilesFilter(filter)} />
+                </Popover.Panel>
+              </Popover>
+            </div>
+
             {view === "grid" && selectMode === "single" && (
               <div className={app.zoomSlider}>
                 <TbTelescope />
@@ -480,6 +495,7 @@ function App() {
     activeTab === "files" ? (
       <div className={tabStyles.contentX}>
         {topbar}
+
         <div className={tabStyles.foldersFiles}>
           <section>
             {isFetchingFolderList ? (
