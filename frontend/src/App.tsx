@@ -40,6 +40,7 @@ import {
   MdOutlineListAlt,
   MdOutlinePhoto,
   MdFilterAlt,
+  MdErrorOutline,
 } from "react-icons/md";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { TbTelescope } from "react-icons/tb";
@@ -54,13 +55,9 @@ import {
   LocationContextHandler,
   LocationContextMenu,
 } from "@components/location/LocationContextMenu";
-import {
-  emptyFilter,
-  FilesFilter,
-  filterCollection,
-  FilterValues,
-} from "@components/files/filter/FilesFilter";
+import { FilesFilter } from "@components/files/filter/FilesFilter";
 import { Popover } from "@headlessui/react";
+import { useFilesFilter } from "@hooks/useFilesFilter";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -89,7 +86,13 @@ function App() {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
-  const [filesFilter, setFilesFilter] = useState<FilterValues>(emptyFilter);
+
+  const {
+    filters: filesFilter,
+    filterSetters,
+    filterCollection,
+    isActive: isFiltering,
+  } = useFilesFilter();
 
   const baseUrl = import.meta.env.DEV
     ? window.location.href.replace("5173", "4004")
@@ -144,8 +147,8 @@ function App() {
     !data
       ? []
       : filterCollection(filesFilter, data!.contents.files ?? [], {
-          rating: (x) => x.rating,
-          name: (x) => x.filename,
+          rating: (x: FileInfo) => x.rating,
+          name: (x: FileInfo) => x.filename,
         }),
     "filename",
     false
@@ -158,7 +161,7 @@ function App() {
 
     let filtered = data?.contents.folders;
     filtered = filterCollection(filesFilter, filtered, {
-      name: (x) => x.name,
+      name: (x: FolderInfo) => x.name,
     });
 
     if (sortProperty === "dateAdded") {
@@ -372,12 +375,13 @@ function App() {
               />
 
               <Popover style={{ position: "relative" }} as="div">
-                <Popover.Button as="div">
-                  <MdFilterAlt className={app.button} />
+                <Popover.Button as="div" className={app.button}>
+                  <MdFilterAlt />
+                  {isFiltering ? <MdErrorOutline /> : null}
                 </Popover.Button>
 
                 <Popover.Panel style={{ position: "absolute" }}>
-                  <FilesFilter onChange={(filter) => setFilesFilter(filter)} />
+                  <FilesFilter filter={filesFilter} onChange={filterSetters} />
                 </Popover.Panel>
               </Popover>
             </div>
