@@ -1,141 +1,57 @@
 import { Rating } from "@components";
 import { DebouncedTextBox } from "@components/common/DebouncedTextBox/DebouncedTextBox";
+import {
+  FilterSetters,
+  FilterValues,
+  TextConstraint,
+  ValueConstraint,
+  TextFilter,
+  ValueFilter,
+} from "@hooks/useFilesFilter";
 import { FileRatingValue } from "@models/fileinfo";
 import { FC, useState, useMemo, useEffect } from "react";
 import styles from "./FilesFilter.module.scss";
 
-type ValueConstraint = "AtLeast" | "AtMost" | "Exactly";
-type TextConstraint = "Contains" | "DoesNotContain";
-
-type ValueFilter<T> = {
-  isActive: boolean;
-  type: ValueConstraint;
-  value: T;
-};
-
-type TextFilter = {
-  isActive: boolean;
-  type: TextConstraint;
-  value: string;
-};
-
-type RatingFilter = ValueFilter<FileRatingValue>;
-
-export interface FilterValues {
-  rating: RatingFilter;
-  name: TextFilter;
-}
-
-export const emptyFilter: FilterValues = {
-  rating: {
-    isActive: false,
-    type: "AtLeast",
-    value: 0,
-  },
-  name: {
-    isActive: false,
-    type: "Contains",
-    value: "",
-  },
-};
-
-const filterOn = {
-  rating: <T,>(
-    filter: FilterValues,
-    collection: T[],
-    ratingGetter: (item: T) => FileRatingValue | undefined
-  ) => {
-    return collection.filter((x) => {
-      const rating = ratingGetter(x);
-      return filter.rating.type === "AtLeast"
-        ? rating && rating >= filter.rating.value
-        : filter.rating.type === "AtMost"
-        ? rating
-          ? rating <= filter.rating.value
-          : true
-        : filter.rating.value === 0
-        ? !rating
-        : rating === filter.rating.value;
-    });
-  },
-  name: <T,>(
-    filter: FilterValues,
-    collection: T[],
-    nameGetter: (item: T) => string
-  ): T[] => {
-    const { value, type } = filter.name;
-
-    return collection.filter((x) => {
-      const name = nameGetter(x);
-
-      return (
-        name.toLowerCase().includes(value.toLowerCase()) ===
-        (type === "Contains" ? true : false)
-      );
-    });
-  },
-};
-
-export interface PropertyGetters<T> {
-  rating?: (item: T) => FileRatingValue | undefined;
-  name?: (item: T) => string;
-}
-
-export const filterCollection = <T,>(
-  filter: FilterValues,
-  collection: T[],
-  getters: PropertyGetters<T>
-) => {
-  let filtered = [...collection];
-  if (filter.rating.isActive && getters.rating) {
-    filtered = filterOn.rating(filter, collection, getters.rating!);
-  }
-
-  if (filter.name.isActive && getters.name) {
-    filtered = filterOn.name(filter, collection, getters.name!);
-  }
-
-  return filtered;
-};
-
 interface Props {
-  onChange: (filter: FilterValues) => void;
+  filter: FilterValues;
+  onChange: FilterSetters;
+  //onChange: (filter: FilterValues) => void;
 }
 
-export const FilesFilter: FC<Props> = ({ onChange }) => {
-  const [nameFilter, setNameFilter] = useState<TextFilter>(emptyFilter.name);
-  const [ratingFilter, setRatingFilter] = useState<RatingFilter>(
-    emptyFilter.rating
-  );
+export const FilesFilter: FC<Props> = ({ filter, onChange }) => {
+  // const [nameFilter, setNameFilter] = useState<TextFilter>(emptyFilter.name);
+  // const [ratingFilter, setRatingFilter] = useState<RatingFilter>(
+  //   emptyFilter.rating
+  // );
 
-  const filters = useMemo(() => {
-    return {
-      rating: ratingFilter,
-      name: nameFilter,
-    } as FilterValues;
-  }, [ratingFilter, nameFilter]);
+  // const filters = useMemo(() => {
+  //   return {
+  //     rating: ratingFilter,
+  //     name: nameFilter,
+  //   } as FilterValues;
+  // }, [ratingFilter, nameFilter]);
 
-  useEffect(() => {
-    onChange(filters);
-  }, [filters]);
+  // useEffect(() => {
+  //   onChange(filters);
+  // }, [filters]);
 
   return (
     <div className={styles.filters}>
       <ValueFilter
         label="Rating"
-        filter={ratingFilter}
-        updateFilter={setRatingFilter}
+        filter={filter.rating}
+        updateFilter={onChange.rating}
       >
         <Rating
-          value={ratingFilter.value}
-          onRate={async (value) => setRatingFilter({ ...ratingFilter, value })}
+          value={filter.rating.value}
+          onRate={async (value) => onChange.rating({ ...filter.rating, value })}
         />
       </ValueFilter>
 
       <TextFilter
         label="Name"
-        filter={nameFilter}
-        updateFilter={setNameFilter}
+        filter={filter.name}
+        updateFilter={onChange.name}
       />
     </div>
   );
