@@ -8,33 +8,22 @@ import {
   TextFilter,
   ValueFilter,
 } from "@hooks/useFilesFilter";
-import { FileRatingValue } from "@models/fileinfo";
-import { FC, useState, useMemo, useEffect } from "react";
+import { FC } from "react";
 import styles from "./FilesFilter.module.scss";
 
 interface Props {
   filter: FilterValues;
   onChange: FilterSetters;
-  //onChange: (filter: FilterValues) => void;
+  isFiltering: boolean;
+  disableFilters: () => void;
 }
 
-export const FilesFilter: FC<Props> = ({ filter, onChange }) => {
-  // const [nameFilter, setNameFilter] = useState<TextFilter>(emptyFilter.name);
-  // const [ratingFilter, setRatingFilter] = useState<RatingFilter>(
-  //   emptyFilter.rating
-  // );
-
-  // const filters = useMemo(() => {
-  //   return {
-  //     rating: ratingFilter,
-  //     name: nameFilter,
-  //   } as FilterValues;
-  // }, [ratingFilter, nameFilter]);
-
-  // useEffect(() => {
-  //   onChange(filters);
-  // }, [filters]);
-
+export const FilesFilter: FC<Props> = ({
+  filter,
+  onChange,
+  isFiltering,
+  disableFilters,
+}) => {
   return (
     <div className={styles.filters}>
       <ValueFilter
@@ -53,6 +42,12 @@ export const FilesFilter: FC<Props> = ({ filter, onChange }) => {
         filter={filter.name}
         updateFilter={onChange.name}
       />
+
+      <div className={styles.buttons}>
+        <button disabled={!isFiltering} onClick={disableFilters}>
+          Disable filters
+        </button>
+      </div>
     </div>
   );
 };

@@ -26,7 +26,7 @@ export interface FilterValues {
 const isActive = (filter: FilterValues) =>
   filter.rating.isActive || filter.name.isActive;
 
-export const emptyFilter: FilterValues = {
+export const noFilter: FilterValues = {
   rating: {
     isActive: false,
     type: "AtLeast",
@@ -116,12 +116,13 @@ type FilesFilterReturnType = {
     getters: PropertyGetters<T>
   ) => T[];
   isActive: boolean;
+  disable: () => void;
 };
 
 export const useFilesFilter = (): FilesFilterReturnType => {
-  const [nameFilter, setNameFilter] = useState<TextFilter>(emptyFilter.name);
+  const [nameFilter, setNameFilter] = useState<TextFilter>(noFilter.name);
   const [ratingFilter, setRatingFilter] = useState<RatingFilter>(
-    emptyFilter.rating
+    noFilter.rating
   );
 
   const filters = useMemo(() => {
@@ -139,5 +140,9 @@ export const useFilesFilter = (): FilesFilterReturnType => {
     } as FilterSetters,
     filterCollection,
     isActive: isActive(filters),
+    disable: () => {
+      setNameFilter(noFilter.name);
+      setRatingFilter(noFilter.rating);
+    },
   };
 };

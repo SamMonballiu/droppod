@@ -92,6 +92,7 @@ function App() {
     filterSetters,
     filterCollection,
     isActive: isFiltering,
+    disable: disableFilters,
   } = useFilesFilter();
 
   const baseUrl = import.meta.env.DEV
@@ -377,11 +378,18 @@ function App() {
               <Popover style={{ position: "relative" }} as="div">
                 <Popover.Button as="div" className={app.button}>
                   <MdFilterAlt />
-                  {isFiltering ? <MdErrorOutline /> : null}
+                  {isFiltering ? (
+                    <MdErrorOutline title="Some files are currently being filtered." />
+                  ) : null}
                 </Popover.Button>
 
                 <Popover.Panel style={{ position: "absolute" }}>
-                  <FilesFilter filter={filesFilter} onChange={filterSetters} />
+                  <FilesFilter
+                    filter={filesFilter}
+                    onChange={filterSetters}
+                    isFiltering={isFiltering}
+                    disableFilters={disableFilters}
+                  />
                 </Popover.Panel>
               </Popover>
             </div>
@@ -550,6 +558,8 @@ function App() {
                 handlers={currentFolderContextHandlers}
               >
                 <Files
+                  isFiltered={isFiltering}
+                  disableFilters={disableFilters}
                   data={getSorted()}
                   onSelectFolder={handleSelectFolder}
                   view={view}
