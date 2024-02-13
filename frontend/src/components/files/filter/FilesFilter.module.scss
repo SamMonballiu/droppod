@@ -9,6 +9,7 @@
   z-index: 1;
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.33);
   color: rgba(0, 0, 0, 0.85);
+  font-size: 0.8em;
 }
 
 .clickable {
@@ -19,4 +20,10 @@
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }

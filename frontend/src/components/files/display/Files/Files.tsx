@@ -34,6 +34,8 @@ interface Props {
   onMove: (file: FileInfo) => void;
   onDelete: (file: FileInfo) => void;
   onDeleteFolder: (folder: FolderInfo) => void;
+  isFiltered: boolean;
+  disableFilters: () => void;
 }
 
 export const Files: FC<Props> = ({
@@ -53,6 +55,8 @@ export const Files: FC<Props> = ({
   onMove,
   onDelete,
   onDeleteFolder,
+  isFiltered,
+  disableFilters,
 }) => {
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
@@ -109,7 +113,18 @@ export const Files: FC<Props> = ({
   const { thumbnails } = useThumbnails(data, handleFocusFile);
 
   if (folders.length === 0 && data.length === 0) {
-    return <p style={{ height: "100%" }}>This folder is empty.</p>;
+    return (
+      <div>
+        <p style={{ height: "100%" }}>
+          {isFiltered
+            ? "This folder has nothing in it that meets the current filter(s)."
+            : "This folder is empty."}
+        </p>
+        {isFiltered && (
+          <button onClick={disableFilters}>Disable filters</button>
+        )}
+      </div>
+    );
   }
 
   const fileContextHandlers: FileContextHandler[] = [
