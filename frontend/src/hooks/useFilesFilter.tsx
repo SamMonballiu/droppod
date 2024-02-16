@@ -1,8 +1,11 @@
 import { FileRatingValue } from "@models/fileinfo";
 import { useState, useMemo } from "react";
 
-export type ValueConstraint = "AtLeast" | "AtMost" | "Exactly";
-export type TextConstraint = "Contains" | "DoesNotContain";
+export const ValueConstraints = ["AtLeast", "AtMost", "EqualTo"] as const;
+export type ValueConstraint = (typeof ValueConstraints)[number];
+
+export const TextConstraints = ["Contains", "DoesNotContain"] as const;
+export type TextConstraint = (typeof TextConstraints)[number];
 
 export type ValueFilter<T> = {
   isActive: boolean;

@@ -7,6 +7,8 @@ import {
   ValueConstraint,
   TextFilter,
   ValueFilter,
+  ValueConstraints,
+  TextConstraints,
 } from "@hooks/useFilesFilter";
 import { FC } from "react";
 import styles from "./FilesFilter.module.scss";
@@ -15,15 +17,9 @@ interface Props {
   filter: FilterValues;
   onChange: FilterSetters;
   isFiltering: boolean;
-  disableFilters: () => void;
 }
 
-export const FilesFilter: FC<Props> = ({
-  filter,
-  onChange,
-  isFiltering,
-  disableFilters,
-}) => {
+export const FilesFilter: FC<Props> = ({ filter, onChange, isFiltering }) => {
   return (
     <div className={styles.filters}>
       <ValueFilter
@@ -33,7 +29,10 @@ export const FilesFilter: FC<Props> = ({
       >
         <Rating
           value={filter.rating.value}
-          onRate={async (value) => onChange.rating({ ...filter.rating, value })}
+          onRate={async (value) => {
+            const isActive = value > 0;
+            onChange.rating({ ...filter.rating, isActive, value });
+          }}
         />
       </ValueFilter>
 
@@ -42,12 +41,6 @@ export const FilesFilter: FC<Props> = ({
         filter={filter.name}
         updateFilter={onChange.name}
       />
-
-      <div className={styles.buttons}>
-        <button disabled={!isFiltering} onClick={disableFilters}>
-          Disable filters
-        </button>
-      </div>
     </div>
   );
 };
@@ -83,7 +76,7 @@ const TextFilter: FC<TextFilterProps> = ({ label, filter, updateFilter }) => {
           })
         }
       >
-        {(["Contains", "DoesNotContain"] as TextConstraint[]).map((x) => (
+        {TextConstraints.map((x) => (
           <option key={x} value={x}>
             {humanise(x)}
           </option>
@@ -132,7 +125,7 @@ const ValueFilter = <T,>({
           })
         }
       >
-        {(["AtLeast", "AtMost", "Exactly"] as ValueConstraint[]).map((x) => (
+        {ValueConstraints.map((x) => (
           <option key={x} value={x}>
             {humanise(x)}
           </option>
