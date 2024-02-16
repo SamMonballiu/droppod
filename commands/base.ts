@@ -30,6 +30,10 @@ import {
   RenameFolderCommandValidator,
 } from "../features/folders/rename/renameFolderCommand";
 import { UploadFromUrlCommandHandler } from "../features/files/upload/uploadFromUrlCommand";
+import {
+  CreateFileCommandHandler,
+  CreateFileCommandValidator,
+} from "../features/files/create/createFileCommand";
 
 export interface Command {}
 
@@ -146,6 +150,7 @@ export class CommandHandlerFactory {
       new RenameFolderCommandValidator(),
       new DeleteCommandValidator(),
       new DeleteFolderCommandValidator(),
+      new CreateFileCommandValidator(),
     ];
     this.handlers = [
       new CreateFolderCommandHandler(),
@@ -156,6 +161,7 @@ export class CommandHandlerFactory {
       new DeleteCommandHandler(filesCache),
       new DeleteFolderCommandHandler(filesCache),
       new UploadFromUrlCommandHandler(filesCache),
+      new CreateFileCommandHandler(filesCache),
     ];
   }
 
