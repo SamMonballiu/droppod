@@ -24,6 +24,7 @@ import { mapRenameFolderRoute } from "./features/folders/rename/renameFolderRout
 import { mapGetDiskspaceRoute } from "./features/freespace/get/getFreeSpaceRoute";
 import { mapGetImageInfoRoute } from "./features/files/images/info/getImageInfoRoute";
 import { mapGetFileContentsRoute } from "./features/files/getContents/mapGetFileContentsRoute";
+import { mapCreateFileRoute } from "./features/files/create/createFileRoute";
 
 const args = argv(process.argv);
 
@@ -69,6 +70,7 @@ mapRenameFileRoute(app, handler);
 mapDeleteFilesRoute(app, handler);
 mapSetFileRatingRoute(app, handler);
 mapGetThumbnailsRoute(app, thumbnailCache);
+mapCreateFileRoute(app, handler);
 
 mapCreateFolderRoute(app, handler);
 mapGetFoldersRoute(app);
