@@ -1,23 +1,29 @@
 import { FileInfo } from "@models/fileinfo";
 import axios from "axios";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import styles from "./TextPreview.module.scss";
 
 interface Props {
-  file: FileInfo;
+  file?: FileInfo;
+  isEdit?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-export const TextPreview: FC<Props> = ({ file }) => {
-  const isEdit = false;
-  const [text, setText] = useState("");
+export const TextPreview: FC<Props> = ({ file, isEdit, value, onChange }) => {
+  const [text, setText] = useState(value ?? "");
+  useEffect(() => {
+    onChange?.(text);
+  }, [text]);
 
   const { isFetching } = useQuery(
     ["files", file],
     async () => {
-      return await axios.get("/files/contents?path=" + file.fullPath);
+      return await axios.get("/files/contents?path=" + file!.fullPath);
     },
     {
+      enabled: file !== undefined,
       onSuccess: (resp) => setText(resp.data),
     }
   );

@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  input {
+    font-size: 1.25em;
+    font-family: "Atkinson Hyperlegible", sans-serif;
+  }
+}
+
+.filename {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  & input {
+    flex-grow: 1;
+  }
+}
+
+.suffix {
+  opacity: 0.5;
+}
