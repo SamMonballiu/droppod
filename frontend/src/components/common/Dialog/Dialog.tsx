@@ -1,17 +1,22 @@
 import { Dialog as HeadlessDialog } from "@headlessui/react";
 import React, { FC, useRef } from "react";
 import styles from "./Dialog.module.scss";
+import global from "@root/global.module.scss";
+import cx from "classnames";
+
+export interface ButtonDefinition {
+  label: string;
+  className?: string;
+  onClick: () => void;
+  disabled?: boolean;
+  variant?: "plain" | "primary";
+}
 
 export interface DialogProps extends React.PropsWithChildren {
   title?: string;
   isOpen: boolean;
   onClose: () => void;
-  buttons?: {
-    label: string;
-    className?: string;
-    onClick: () => void;
-    disabled?: boolean;
-  }[];
+  buttons?: ButtonDefinition[];
 }
 
 export const Dialog: FC<DialogProps> = ({
@@ -50,7 +55,14 @@ export const Dialog: FC<DialogProps> = ({
                 <button
                   key={btn.label}
                   disabled={btn.disabled ?? false}
-                  className={btn.className}
+                  className={cx(
+                    global.btn,
+                    {
+                      [global.primary]: btn.variant === "primary",
+                      [global.plain]: !btn.variant || btn.variant === "plain",
+                    },
+                    btn.className
+                  )}
                   onClick={btn.onClick}
                 >
                   {btn.label}
