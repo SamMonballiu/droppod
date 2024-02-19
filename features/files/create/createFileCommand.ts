@@ -5,8 +5,8 @@ import {
   CommandValidateResult,
   CommandValidator,
 } from "@commands";
-import { qualify } from "@config";
 import fs from "fs";
+import path from "path";
 import { FilesCache } from "../files-cache";
 
 export class CreateFileCommand implements Command {
@@ -15,7 +15,7 @@ export class CreateFileCommand implements Command {
   public contents: string;
 
   public get fullPath() {
-    return qualify(this.filename);
+    return path.join(this.location, this.filename);
   }
 
   constructor(location: string, filename: string, contents: string) {
