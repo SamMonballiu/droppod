@@ -16,6 +16,7 @@ import {
   DeleteDialog,
   formatBytes,
 } from "@components";
+import { CreateFilePostmodel } from "@backend/features/files/create/createFilePostmodel";
 import { CreateFolderPostmodel } from "@backend/features/folders/create/createFolderPostmodel";
 import { DeleteFolderPostmodel } from "@backend/features/folders/delete/deleteFolderPostmodel";
 import { MoveFilesPostModel } from "@backend/features/files/move/moveFilesPostModel";
@@ -41,6 +42,7 @@ import {
   MdOutlinePhoto,
   MdFilterAlt,
   MdErrorOutline,
+  MdOutlineTextSnippet,
 } from "react-icons/md";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { TbTelescope } from "react-icons/tb";
@@ -58,6 +60,7 @@ import {
 import { FilesFilter } from "@components/files/filter/FilesFilter";
 import { Popover } from "@headlessui/react";
 import { useFilesFilter } from "@hooks/useFilesFilter";
+import { CreateTextFileDialog } from "@components/files/create/CreateTextFileDialog";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -83,6 +86,7 @@ function App() {
   const showFolderList = useToggle(true);
   const showRenameDialog = useToggle(false);
   const showDeleteDialog = useToggle(false);
+  const showNewFileDialog = useToggle(false);
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
@@ -229,6 +233,17 @@ function App() {
       ),
     },
     files: {
+      create: useMutation(
+        async (postmodel: CreateFilePostmodel) => {
+          await axios.post(baseUrl + "files/create", postmodel);
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["files", activeFolder]);
+            showNewFileDialog.set(false);
+          },
+        }
+      ),
       move: useMutation(
         async (postmodel: MoveFilesPostModel) => {
           const url = baseUrl + "files/move";
@@ -388,7 +403,6 @@ function App() {
                     filter={filesFilter}
                     onChange={filterSetters}
                     isFiltering={isFiltering}
-                    disableFilters={disableFilters}
                   />
                 </Popover.Panel>
               </Popover>
@@ -495,6 +509,11 @@ function App() {
             label: "New folder",
             onClick: createFolderDialog.toggle,
             icon: <MdOutlineCreateNewFolder />,
+          },
+          {
+            label: "New text file",
+            onClick: showNewFileDialog.toggle,
+            icon: <MdOutlineTextSnippet />,
           },
           {
             label: "Select files",
@@ -719,6 +738,20 @@ function App() {
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}
           onSubmit={handleCreateFolder}
+        />
+      )}
+      {showNewFileDialog.value && (
+        <CreateTextFileDialog
+          isSubmitting={mutations.files.create.isLoading}
+          isOpen={showNewFileDialog.value}
+          onClose={showNewFileDialog.toggle}
+          onSubmit={async (filename: string, contents: string) =>
+            await mutations.files.create.mutateAsync({
+              location: activeFolder,
+              filename,
+              contents,
+            })
+          }
         />
       )}
       {selectMode === "multiple" && isFetched && (
