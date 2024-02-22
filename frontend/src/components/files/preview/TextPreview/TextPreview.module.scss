@@ -1,3 +1,7 @@
+.contents {
+  position: relative;
+}
+
 .contents textarea,
 .contents p {
   font-family: "Fira Code", monospace;
@@ -6,8 +10,8 @@
   padding: 8px 12px;
   width: 60vw;
   height: 60vh;
-  overflow: auto;
-  white-space: pre;
+  overflow-y: auto;
+  white-space: pre-line;
   resize: none;
   border: none;
 
@@ -19,4 +23,24 @@
 iframe {
   width: 50vw;
   height: 50vh;
+}
+
+.save {
+  position: absolute;
+  bottom: 8px;
+  right: 14px;
+  cursor: pointer;
+  font-size: 2.4em;
+  opacity: 0.25;
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.success {
+  color: green;
+}
+
+.error {
+  color: orange;
 }
