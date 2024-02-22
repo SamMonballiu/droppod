@@ -13,29 +13,44 @@ interface Props extends DialogProps {
 export const CreateTextFileDialog: FC<Props> = ({
   onSubmit,
   isSubmitting,
+  onClose,
   ...props
 }) => {
   const [filename, setFilename] = useState<string>("");
   const [contents, setContents] = useState<string>("");
 
+  const handleCancel = () => {
+    if (
+      (contents !== "" && confirm("Discard unsaved changes?")) ||
+      contents === ""
+    ) {
+      onClose();
+    }
+  };
+
   const buttons: ButtonDefinition[] = [
     {
       label: "Cancel",
       className: cx(global.btn, global.plain),
-      onClick: props.onClose,
+      onClick: handleCancel,
       disabled: isSubmitting,
     },
     {
       label: "Create",
       className: global.btn,
       onClick: () => onSubmit(filename + ".txt", contents),
-      disabled: isSubmitting || true,
+      disabled: isSubmitting || filename === "" || contents === "",
       variant: "primary",
     },
   ];
 
   return (
-    <Dialog {...props} buttons={buttons} title="New text file">
+    <Dialog
+      {...props}
+      onClose={handleCancel}
+      buttons={buttons}
+      title="New text file"
+    >
       <div className={styles.container}>
         <div className={styles.filename}>
           <label htmlFor="foldername">Name:</label>
