@@ -10,6 +10,7 @@ import fs from "fs-extra";
 import { Readable } from "stream";
 import { finished } from "stream/promises";
 import { qualify } from "@config";
+import fetch from "node-fetch";
 
 const extractFilenameFromURL = (url: string): string | undefined => {
   const urlParts = url.split("/");
@@ -78,15 +79,14 @@ export class UploadFromUrlCommandHandler
 
       if (body !== null) {
         //@ts-ignore
-        await finished(Readable.fromWeb(body).pipe(stream));
+        await finished(body.pipe(stream));
+        this._filesCache.invalidate(command.folder);
         return CommandHandleResult.Success.WithoutResult();
       }
 
-      this._filesCache.invalidate(command.folder);
-
-      return CommandHandleResult.Error("Not yet implemented");
-    } catch (err) {
-      return CommandHandleResult.Error("Not yet implemented");
+      return CommandHandleResult.Error("Something went wrong.");
+    } catch (err: any) {
+      return CommandHandleResult.Error(err.toString());
     }
   }
 }
