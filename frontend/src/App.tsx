@@ -22,7 +22,7 @@ import { DeleteFolderPostmodel } from "@backend/features/folders/delete/deleteFo
 import { MoveFilesPostModel } from "@backend/features/files/move/moveFilesPostModel";
 import { RenamePostModel } from "@backend/features/files/rename/renameFilePostmodel";
 import { DeletePostmodel } from "@backend/features/files/delete/deleteFilePostmodel";
-import { FileInfo, isImage } from "@models/fileinfo";
+import { FileInfo, FileType, is, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
 import { FilesResponse, DiskSpaceResponse } from "@models/response";
 import axios from "axios";
@@ -348,6 +348,13 @@ function App() {
 
     return await mutations.folders.delete.mutateAsync(postmodel);
   };
+
+  const handleCreateFile = async (filename: string, contents: string) =>
+    await mutations.files.create.mutateAsync({
+      location: activeFolder,
+      filename,
+      contents,
+    });
 
   const breadcrumbs = (
     <div className={app.breadcrumbs}>
@@ -726,6 +733,9 @@ function App() {
             isOpen={focusedFile !== null}
             onClose={() => setFocusedFile(null)}
             file={focusedFile}
+            onSave={
+              is(focusedFile, FileType.Text) ? handleCreateFile : undefined
+            }
           />
         )}
 
@@ -745,13 +755,7 @@ function App() {
           isSubmitting={mutations.files.create.isLoading}
           isOpen={showNewFileDialog.value}
           onClose={showNewFileDialog.toggle}
-          onSubmit={async (filename: string, contents: string) =>
-            await mutations.files.create.mutateAsync({
-              location: activeFolder,
-              filename,
-              contents,
-            })
-          }
+          onSubmit={handleCreateFile}
         />
       )}
       {selectMode === "multiple" && isFetched && (

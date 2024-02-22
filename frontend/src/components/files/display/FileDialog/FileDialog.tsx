@@ -9,11 +9,12 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   file: FileInfo;
+  onSave?: (filename: string, contents: string) => Promise<void>;
 }
 
 const { Image, Video, Audio, Text } = FileType;
 
-export const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
+export const FileDialog: FC<Props> = ({ isOpen, onClose, file, onSave }) => {
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <div>
@@ -30,7 +31,7 @@ export const FileDialog: FC<Props> = ({ isOpen, onClose, file }) => {
             />
           )}
           {is(file, Audio) && <MediaPreview file={file} controls />}
-          {is(file, Text) && <TextPreview file={file} />}
+          {is(file, Text) && <TextPreview file={file} isEdit onSave={onSave} />}
         </div>
         <FileProperties file={file} />
       </div>
