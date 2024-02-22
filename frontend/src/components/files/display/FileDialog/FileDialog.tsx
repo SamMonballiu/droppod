@@ -4,6 +4,7 @@ import { FileProperties, ImagePreview, Dialog } from "@components";
 import styles from "./FileDialog.module.scss";
 import { MediaPreview } from "@components";
 import { TextPreview } from "@components/files/preview/TextPreview/TextPreview";
+import { useBooleanContext } from "@root/context/useBooleanContext";
 
 interface Props {
   isOpen: boolean;
@@ -15,8 +16,16 @@ interface Props {
 const { Image, Video, Audio, Text } = FileType;
 
 export const FileDialog: FC<Props> = ({ isOpen, onClose, file, onSave }) => {
+  const { value: isDirty } = useBooleanContext();
+
+  const handleClose = () => {
+    if (!isDirty || (isDirty && confirm("Discard unsaved changes?"))) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog isOpen={isOpen} onClose={onClose}>
+    <Dialog isOpen={isOpen} onClose={handleClose}>
       <div>
         <div className={styles.preview}>
           {is(file, Image) && (

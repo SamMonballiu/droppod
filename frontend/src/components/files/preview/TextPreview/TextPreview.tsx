@@ -10,6 +10,7 @@ import {
   MdErrorOutline,
 } from "react-icons/md";
 import cx from "classnames";
+import { useBooleanContext } from "@root/context/useBooleanContext";
 
 interface Props {
   file?: FileInfo;
@@ -26,12 +27,14 @@ export const TextPreview: FC<Props> = ({
   onChange,
   onSave,
 }) => {
+  const { setValue: setIsDirty } = useBooleanContext();
   const [text, setText] = useState(value ?? "");
-  useEffect(() => {
-    onChange?.(text);
-  }, [text]);
 
-  const { isFetching } = useQuery(
+  const {
+    data: response,
+    isFetching,
+    isFetched,
+  } = useQuery(
     ["files", file],
     async () => {
       return await axios.get("/files/contents?path=" + file!.fullPath);
@@ -41,6 +44,13 @@ export const TextPreview: FC<Props> = ({
       onSuccess: (resp) => setText(resp.data),
     }
   );
+
+  useEffect(() => {
+    onChange?.(text);
+    if (isFetched) {
+      setIsDirty(text !== response?.data);
+    }
+  }, [text]);
 
   return isFetching ? null : (
     <div className={styles.contents}>
@@ -52,6 +62,7 @@ export const TextPreview: FC<Props> = ({
       {onSave && isEdit && (
         <AsyncButton
           promise={() => onSave(file?.filename ?? "", text)}
+          onSuccess={() => setIsDirty(false)}
           icon={MdSave}
         />
       )}
@@ -61,9 +72,14 @@ export const TextPreview: FC<Props> = ({
 
 interface AsyncButtonProps {
   promise: () => Promise<any>;
+  onSuccess?: () => void;
   icon: FC;
 }
-const AsyncButton: FC<AsyncButtonProps> = ({ promise, icon: DefaultIcon }) => {
+const AsyncButton: FC<AsyncButtonProps> = ({
+  promise,
+  icon: DefaultIcon,
+  onSuccess,
+}) => {
   const [state, setState] = useState<"init" | "loading" | "success" | "error">(
     "init"
   );
@@ -77,6 +93,7 @@ const AsyncButton: FC<AsyncButtonProps> = ({ promise, icon: DefaultIcon }) => {
 
   useEffect(() => {
     if (state === "success") {
+      onSuccess?.();
       setTimeout(() => setState("init"), 5000);
     }
   }, [state]);
