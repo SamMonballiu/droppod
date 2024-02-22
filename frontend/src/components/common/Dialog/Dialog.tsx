@@ -60,6 +60,7 @@ export const Dialog: FC<DialogProps> = ({
                     {
                       [global.primary]: btn.variant === "primary",
                       [global.plain]: !btn.variant || btn.variant === "plain",
+                      [global.disabled]: btn.disabled,
                     },
                     btn.className
                   )}

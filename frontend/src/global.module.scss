@@ -11,6 +11,15 @@
   &:hover {
     filter: brightness(1.15) saturate(0.75);
   }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: default;
+
+    &:hover {
+      filter: none;
+    }
+  }
 }
 
 .primary {
