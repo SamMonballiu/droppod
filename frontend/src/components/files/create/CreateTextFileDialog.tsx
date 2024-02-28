@@ -1,9 +1,13 @@
-import { ButtonDefinition, Dialog, DialogProps } from "@components";
+import { Dialog, DialogButtonDefinition, DialogProps } from "@components";
 import { FC, useState } from "react";
 import { TextPreview } from "../preview/TextPreview/TextPreview";
 import styles from "./CreateTextFileDialog.module.scss";
 import global from "@root/global.module.scss";
 import cx from "classnames";
+import {
+  BooleanContextProvider,
+  useBooleanContext,
+} from "@root/context/useBooleanContext";
 
 interface Props extends DialogProps {
   onSubmit: (filename: string, contents: string) => Promise<void>;
@@ -13,26 +17,16 @@ interface Props extends DialogProps {
 export const CreateTextFileDialog: FC<Props> = ({
   onSubmit,
   isSubmitting,
-  onClose,
   ...props
 }) => {
   const [filename, setFilename] = useState<string>("");
   const [contents, setContents] = useState<string>("");
 
-  const handleCancel = () => {
-    if (
-      (contents !== "" && confirm("Discard unsaved changes?")) ||
-      contents === ""
-    ) {
-      onClose();
-    }
-  };
-
-  const buttons: ButtonDefinition[] = [
+  const buttons: DialogButtonDefinition[] = [
     {
       label: "Cancel",
       className: cx(global.btn, global.plain),
-      onClick: handleCancel,
+      type: "cancel",
       disabled: isSubmitting,
     },
     {
@@ -45,26 +39,50 @@ export const CreateTextFileDialog: FC<Props> = ({
   ];
 
   return (
-    <Dialog
-      {...props}
-      onClose={handleCancel}
-      buttons={buttons}
-      title="New text file"
-    >
-      <div className={styles.container}>
-        <div className={styles.filename}>
-          <label htmlFor="foldername">Name:</label>
-          <input
-            id="foldername"
-            autoFocus
-            type="text"
-            value={filename}
-            onChange={(e) => setFilename(e.target.value)}
-          />
-          <span className={styles.suffix}>.txt</span>
-        </div>
-        <TextPreview isEdit value={contents} onChange={setContents} />
+    <BooleanContextProvider>
+      <Dialog {...props} buttons={buttons} title="New text file">
+        <CreateTextFile
+          filename={{ value: filename, set: setFilename }}
+          contents={{ value: contents, set: setContents }}
+        />
+      </Dialog>
+    </BooleanContextProvider>
+  );
+};
+
+type Setter<T> = {
+  value: T;
+  set: (value: T) => void;
+};
+interface CreateProps {
+  filename: Setter<string>;
+  contents: Setter<string>;
+}
+
+const CreateTextFile: FC<CreateProps> = ({ filename, contents }) => {
+  const isDirty = useBooleanContext();
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.filename}>
+        <label htmlFor="foldername">Name:</label>
+        <input
+          id="foldername"
+          autoFocus
+          type="text"
+          value={filename.value}
+          onChange={(e) => filename.set(e.target.value)}
+        />
+        <span className={styles.suffix}>.txt</span>
       </div>
-    </Dialog>
+      <TextPreview
+        isEdit
+        value={contents.value}
+        onChange={(value: string) => {
+          contents.set(value);
+          isDirty?.setValue(true);
+        }}
+      />
+    </div>
   );
 };

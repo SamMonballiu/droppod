@@ -27,7 +27,7 @@ export const TextPreview: FC<Props> = ({
   onChange,
   onSave,
 }) => {
-  const { setValue: setIsDirty } = useBooleanContext();
+  const isDirty = useBooleanContext();
   const [text, setText] = useState(value ?? "");
 
   const {
@@ -48,7 +48,7 @@ export const TextPreview: FC<Props> = ({
   useEffect(() => {
     onChange?.(text);
     if (isFetched) {
-      setIsDirty(text !== response?.data);
+      isDirty?.setValue(text !== response?.data);
     }
   }, [text]);
 
@@ -62,7 +62,7 @@ export const TextPreview: FC<Props> = ({
       {onSave && isEdit && (
         <AsyncButton
           promise={() => onSave(file?.filename ?? "", text)}
-          onSuccess={() => setIsDirty(false)}
+          onSuccess={() => isDirty?.setValue(false)}
           icon={MdSave}
         />
       )}
