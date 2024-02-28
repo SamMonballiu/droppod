@@ -61,7 +61,6 @@ import { FilesFilter } from "@components/files/filter/FilesFilter";
 import { Popover } from "@headlessui/react";
 import { useFilesFilter } from "@hooks/useFilesFilter";
 import { CreateTextFileDialog } from "@components/files/create/CreateTextFileDialog";
-import { BooleanContextProvider as IsDirtyContextProvider } from "./context/useBooleanContext";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -730,16 +729,14 @@ function App() {
         !showRenameDialog.value &&
         !showMoveDialog.value &&
         !showDeleteDialog.value && (
-          <IsDirtyContextProvider>
-            <FileDialog
-              isOpen={focusedFile !== null}
-              onClose={() => setFocusedFile(null)}
-              file={focusedFile}
-              onSave={
-                is(focusedFile, FileType.Text) ? handleCreateFile : undefined
-              }
-            />
-          </IsDirtyContextProvider>
+          <FileDialog
+            isOpen={focusedFile !== null}
+            onClose={() => setFocusedFile(null)}
+            file={focusedFile}
+            onSave={
+              is(focusedFile, FileType.Text) ? handleCreateFile : undefined
+            }
+          />
         )}
 
       {renameFileDialog}

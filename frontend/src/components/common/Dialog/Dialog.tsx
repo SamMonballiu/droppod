@@ -3,20 +3,25 @@ import React, { FC, useRef } from "react";
 import styles from "./Dialog.module.scss";
 import global from "@root/global.module.scss";
 import cx from "classnames";
+import { useBooleanContext } from "@root/context/useBooleanContext";
 
 export interface ButtonDefinition {
   label: string;
   className?: string;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
   variant?: "plain" | "primary";
+}
+
+export interface DialogButtonDefinition extends ButtonDefinition {
+  type?: "cancel";
 }
 
 export interface DialogProps extends React.PropsWithChildren {
   title?: string;
   isOpen: boolean;
   onClose: () => void;
-  buttons?: ButtonDefinition[];
+  buttons?: DialogButtonDefinition[];
 }
 
 export const Dialog: FC<DialogProps> = ({
@@ -26,13 +31,20 @@ export const Dialog: FC<DialogProps> = ({
   children,
   buttons,
 }) => {
+  const isDirty = useBooleanContext();
   const dialogRef = useRef<HTMLElement | undefined>();
   const backdropRef = useRef<HTMLElement | undefined>();
 
   const handleClose = () => {
-    dialogRef.current?.classList.add(styles.closePanel);
-    backdropRef.current?.classList.add(styles.closeBackdrop);
-    setTimeout(onClose, 200);
+    if (
+      !isDirty ||
+      !isDirty.value ||
+      (isDirty.value && confirm("Discard unsaved changes?"))
+    ) {
+      dialogRef.current?.classList.add(styles.closePanel);
+      backdropRef.current?.classList.add(styles.closeBackdrop);
+      setTimeout(onClose, 200);
+    }
   };
 
   return (
@@ -64,7 +76,10 @@ export const Dialog: FC<DialogProps> = ({
                     },
                     btn.className
                   )}
-                  onClick={btn.onClick}
+                  onClick={
+                    btn?.onClick ??
+                    (btn.type === "cancel" ? () => handleClose() : undefined)
+                  }
                 >
                   {btn.label}
                 </button>
