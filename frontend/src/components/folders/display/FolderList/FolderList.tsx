@@ -22,7 +22,11 @@ export const FolderList: FC<Props> = ({
   isActiveFolder,
   onToggleExpanded,
 }) => {
-  const folders = data.folders.map((f) => {
+  const byName = (first: FolderInfo, second: FolderInfo) => {
+    return first.name.toLowerCase() < second.name.toLowerCase() ? -1 : 1;
+  };
+
+  const folders = data.folders.sort(byName).map((f) => {
     const fullName = f.parent + f.name;
     const canExpand = f.folders.length > 0;
     const toggleExpanded = canExpand
