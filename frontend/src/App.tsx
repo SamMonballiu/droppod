@@ -27,7 +27,7 @@ import { FolderInfo } from "@models/folderInfo";
 import { FilesResponse, DiskSpaceResponse } from "@models/response";
 import axios from "axios";
 import cx from "classnames";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import {
   AiOutlineClose,
   AiOutlineDelete,
@@ -59,8 +59,14 @@ import {
 } from "@components/location/LocationContextMenu";
 import { FilesFilter } from "@components/files/filter/FilesFilter";
 import { Popover } from "@headlessui/react";
-import { useFilesFilter } from "@hooks/useFilesFilter";
+import {
+  FilterSetters,
+  FilterValues,
+  useFilesFilter,
+} from "@hooks/useFilesFilter";
 import { CreateTextFileDialog } from "@components/files/create/CreateTextFileDialog";
+import { useMutations } from "@hooks/useMutations";
+import { useApp } from "./useApp";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -182,179 +188,29 @@ function App() {
       : filtered;
   }, [data, sortProperty, isDescending, sortBy, filesFilter]);
 
-  const sortOptions: SortOption<FileInfo>[] = [
-    { property: "filename", name: "Filename" },
-    { property: "dateAdded", name: "Date" },
-    { property: "size", name: "Size" },
-    { property: "extension", name: "Extension" },
-    { property: "rating", name: "Rating" },
-  ];
+  const mutations = useMutations(
+    queryClient,
+    baseUrl,
+    activeFolder,
+    setFocusedFile,
+    setFocusedFolder,
+    setSelectMode,
+    setAllSelected,
+    createFolderDialog,
+    showNewFileDialog,
+    showMoveDialog,
+    showRenameDialog,
+    showDeleteDialog
+  );
 
-  const mutations = {
-    folders: {
-      create: useMutation(
-        async (postmodel: CreateFolderPostmodel) => {
-          const url = baseUrl + "folders/create";
-          return (await axios.post(url, postmodel)).data;
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(["files", activeFolder]);
-            queryClient.invalidateQueries(["folders"]);
-            createFolderDialog.set(false);
-          },
-        }
-      ),
-      delete: useMutation(
-        async (postmodel: DeleteFolderPostmodel) => {
-          const url = baseUrl + "folders/delete";
-          return await axios.post(url, postmodel);
-        },
-        {
-          onSuccess: () => {
-            setFocusedFolder(null);
-            queryClient.invalidateQueries(["files", activeFolder]);
-            queryClient.invalidateQueries(["folders"]);
-          },
-        }
-      ),
-      rename: useMutation(
-        async (postmodel: RenamePostModel) => {
-          const url = baseUrl + "folders/rename";
-          return await axios.post(url, postmodel);
-        },
-        {
-          onSuccess: () => {
-            setFocusedFolder(null);
-            queryClient.invalidateQueries(["files", activeFolder]);
-            queryClient.invalidateQueries(["folders"]);
-          },
-        }
-      ),
-    },
-    files: {
-      create: useMutation(
-        async (postmodel: CreateFilePostmodel) => {
-          await axios.post(baseUrl + "files/create", postmodel);
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(["files", activeFolder]);
-            showNewFileDialog.set(false);
-          },
-        }
-      ),
-      move: useMutation(
-        async (postmodel: MoveFilesPostModel) => {
-          const url = baseUrl + "files/move";
-          await axios.post(url, postmodel);
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(["files", activeFolder]);
-            queryClient.invalidateQueries(["folders"]);
-            showMoveDialog.set(false);
-            setSelectMode("single");
-            setFocusedFile(null);
-          },
-        }
-      ),
-      rename: useMutation(
-        async (postmodel: RenamePostModel) => {
-          const url = baseUrl + "files/rename";
-          await axios.post(url, postmodel);
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(["files", activeFolder]);
-            showRenameDialog.set(false);
-            setFocusedFile(null);
-          },
-        }
-      ),
-      delete: useMutation(
-        async (postmodel: DeletePostmodel) => {
-          const url = baseUrl + "files/delete";
-          await axios.post(url, postmodel);
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(["files", activeFolder]);
-            showDeleteDialog.set(false);
-            setFocusedFile(null);
-            setAllSelected(false);
-          },
-        }
-      ),
-    },
-  };
-
-  const onCreateFolder = async (folderName: string) => {
-    const postmodel: CreateFolderPostmodel = {
-      location: activeFolder,
-      folderName,
-    };
-
-    return await mutations.folders.create.mutateAsync(postmodel);
-  };
-
-  const handleMoveFiles = async (destination: string) => {
-    const postmodel: MoveFilesPostModel = {
-      location: activeFolder,
-      destination,
-      filenames:
-        selectMode === "multiple"
-          ? selectedFiles
-          : [focusedFile?.filename ?? ""],
-    };
-
-    return await mutations.files.move.mutateAsync(postmodel);
-  };
-
-  const handleRename = async (newName: string) => {
-    const postmodel: RenamePostModel = {
-      path: activeFolder,
-      currentName: focusedFile!.filename,
-      newName,
-    };
-
-    return await mutations.files.rename.mutateAsync(postmodel);
-  };
-
-  const handleRenameFolder = async (newName: string) => {
-    const postmodel: RenamePostModel = {
-      path: activeFolder,
-      currentName: focusedFolder!.name,
-      newName,
-    };
-
-    return await mutations.folders.rename.mutateAsync(postmodel);
-  };
-
-  const handleDelete = async (names: string[]) => {
-    const postmodel: DeletePostmodel = {
-      path: activeFolder,
-      names,
-    };
-
-    return await mutations.files.delete.mutateAsync(postmodel);
-  };
-
-  const handleDeleteFolder = async (folderName: string) => {
-    const postmodel: DeleteFolderPostmodel = {
-      parentPath: activeFolder,
-      folderName,
-    };
-
-    return await mutations.folders.delete.mutateAsync(postmodel);
-  };
-
-  const handleCreateFile = async (filename: string, contents: string) =>
-    await mutations.files.create.mutateAsync({
-      location: activeFolder,
-      filename,
-      contents,
-    });
+  const { handle } = useApp(
+    mutations,
+    activeFolder,
+    selectMode,
+    focusedFile,
+    focusedFolder,
+    selectedFiles
+  );
 
   const breadcrumbs = (
     <div className={app.breadcrumbs}>
@@ -378,86 +234,25 @@ function App() {
   };
 
   const topbar = (
-    <div className={tabStyles.topBar}>
-      {activeTab !== "upload" ? (
-        <div
-          className={cx(app.settings, {
-            [app.hidden]: view === "gallery",
-          })}
-        >
-          <>
-            <div className={app.fileControls}>
-              <FileSortOptions
-                options={sortOptions}
-                value={sortProperty!}
-                onChange={(opt) => {
-                  //@ts-ignore
-                  handleSort(opt);
-                }}
-                isDescending={isDescending}
-              />
-
-              <Popover style={{ position: "relative" }} as="div">
-                <Popover.Button as="div" className={app.button}>
-                  <MdFilterAlt />
-                  {isFiltering ? (
-                    <MdErrorOutline title="Some files are currently being filtered." />
-                  ) : null}
-                </Popover.Button>
-
-                <Popover.Panel style={{ position: "absolute" }}>
-                  <FilesFilter
-                    filter={filesFilter}
-                    onChange={filterSetters}
-                    isFiltering={isFiltering}
-                  />
-                </Popover.Panel>
-              </Popover>
-            </div>
-
-            {view === "grid" && selectMode === "single" && (
-              <div className={app.zoomSlider}>
-                <TbTelescope />
-                <input
-                  type="range"
-                  min="1"
-                  max="4"
-                  value={zoom}
-                  onChange={(e) =>
-                    setZoom(parseInt(e.target.value) as FileGridZoom)
-                  }
-                />
-              </div>
-            )}
-          </>
-
-          {selectMode === "single" && (
-            <div className={app.icons}>
-              <MdOutlineListAlt
-                className={cx({ [app.active]: view === "list" })}
-                onClick={() => setView("list")}
-              />
-              <MdGridView
-                className={cx({ [app.active]: view === "grid" })}
-                onClick={() => setView("grid")}
-              />
-              {data?.contents.files?.some(isImage) && (
-                <MdOutlinePhoto
-                  // @ts-ignore
-                  className={cx({ [app.active]: view === "gallery" })}
-                  onClick={() => setView("gallery")}
-                />
-              )}
-            </div>
-          )}
-        </div>
-      ) : null}
-      {breadcrumbs}
-    </div>
+    <TopBar
+      view={view}
+      onSetView={setView}
+      selectMode={selectMode}
+      zoom={zoom}
+      onSetZoom={setZoom}
+      activeTab={activeTab}
+      sortProperty={sortProperty}
+      isDescending={isDescending}
+      isFiltering={isFiltering}
+      filesFilter={filesFilter}
+      filterSetters={filterSetters}
+      showGalleryButton={data?.contents.files?.some(isImage) ?? false}
+      breadcrumbs={breadcrumbs}
+    />
   );
 
   const handleCreateFolder = async (folderName: string) => {
-    return await onCreateFolder(folderName);
+    return await handle.folder.create(folderName);
   };
 
   const handleSelectFolder = (folderName: string) => {
@@ -644,7 +439,7 @@ function App() {
           ? selectedFiles
           : [focusedFile?.filename ?? ""]
       }
-      onConfirm={handleMoveFiles}
+      onConfirm={handle.file.move}
       isMoving={mutations.files.move.isLoading}
     />
   );
@@ -657,7 +452,7 @@ function App() {
         data?.contents.files,
         data?.contents.folders
       )}
-      onConfirm={async (newName) => await handleRename(newName)}
+      onConfirm={async (newName) => await handle.file.rename(newName)}
       isOpen={showRenameDialog.value}
       onClose={() => {
         showRenameDialog.toggle();
@@ -674,7 +469,7 @@ function App() {
         data?.contents.files,
         data?.contents.folders
       )}
-      onConfirm={async (newName) => await handleRenameFolder(newName)}
+      onConfirm={async (newName) => await handle.folder.rename(newName)}
       isOpen={showRenameDialog.value}
       onClose={() => {
         showRenameDialog.set(false);
@@ -695,7 +490,7 @@ function App() {
       }}
       names={focusedFile ? [focusedFile.filename] : selectedFiles}
       mode="file"
-      onConfirm={handleDelete}
+      onConfirm={handle.file.delete}
       isDeleting={mutations.files.delete.isLoading}
     />
   );
@@ -710,7 +505,7 @@ function App() {
         }}
         names={[focusedFolder!.name]}
         mode="folder"
-        onConfirm={(names) => handleDeleteFolder(names[0])}
+        onConfirm={(names) => handle.folder.delete(names[0])}
         isDeleting={mutations.folders.delete.isLoading}
       />
     );
@@ -734,7 +529,7 @@ function App() {
             onClose={() => setFocusedFile(null)}
             file={focusedFile}
             onSave={
-              is(focusedFile, FileType.Text) ? handleCreateFile : undefined
+              is(focusedFile, FileType.Text) ? handle.file.create : undefined
             }
           />
         )}
@@ -755,7 +550,7 @@ function App() {
           isSubmitting={mutations.files.create.isLoading}
           isOpen={showNewFileDialog.value}
           onClose={showNewFileDialog.toggle}
-          onSubmit={handleCreateFile}
+          onSubmit={handle.file.create}
         />
       )}
       {selectMode === "multiple" && isFetched && (
@@ -780,3 +575,122 @@ function App() {
 }
 
 export default App;
+
+interface TopBarProps {
+  view: View;
+  selectMode: "single" | "multiple";
+  zoom: FileGridZoom;
+  onSetZoom: (zoom: FileGridZoom) => void;
+  onSetView: (view: View) => void;
+  activeTab: Tabs;
+  sortProperty: keyof FileInfo | null;
+  isDescending: boolean;
+  isFiltering: boolean;
+  filesFilter: FilterValues;
+  filterSetters: FilterSetters;
+  showGalleryButton: boolean;
+  breadcrumbs: React.ReactNode;
+}
+
+const TopBar: FC<TopBarProps> = ({
+  view,
+  onSetView,
+  selectMode,
+  zoom,
+  onSetZoom,
+  activeTab,
+  sortProperty,
+  isDescending,
+  isFiltering,
+  filesFilter,
+  filterSetters,
+  showGalleryButton,
+  breadcrumbs,
+}) => {
+  const sortOptions: SortOption<FileInfo>[] = [
+    { property: "filename", name: "Filename" },
+    { property: "dateAdded", name: "Date" },
+    { property: "size", name: "Size" },
+    { property: "extension", name: "Extension" },
+    { property: "rating", name: "Rating" },
+  ];
+
+  return (
+    <div className={tabStyles.topBar}>
+      {activeTab !== "upload" ? (
+        <div
+          className={cx(app.settings, {
+            [app.hidden]: view === "gallery",
+          })}
+        >
+          <>
+            <div className={app.fileControls}>
+              <FileSortOptions
+                options={sortOptions}
+                value={sortProperty!}
+                onChange={(opt) => {
+                  //@ts-ignore
+                  handleSort(opt);
+                }}
+                isDescending={isDescending}
+              />
+
+              <Popover style={{ position: "relative" }} as="div">
+                <Popover.Button as="div" className={app.button}>
+                  <MdFilterAlt />
+                  {isFiltering ? (
+                    <MdErrorOutline title="Some files are currently being filtered." />
+                  ) : null}
+                </Popover.Button>
+
+                <Popover.Panel style={{ position: "absolute" }}>
+                  <FilesFilter
+                    filter={filesFilter}
+                    onChange={filterSetters}
+                    isFiltering={isFiltering}
+                  />
+                </Popover.Panel>
+              </Popover>
+            </div>
+
+            {view === "grid" && selectMode === "single" && (
+              <div className={app.zoomSlider}>
+                <TbTelescope />
+                <input
+                  type="range"
+                  min="1"
+                  max="4"
+                  value={zoom}
+                  onChange={(e) =>
+                    onSetZoom(parseInt(e.target.value) as FileGridZoom)
+                  }
+                />
+              </div>
+            )}
+          </>
+
+          {selectMode === "single" && (
+            <div className={app.icons}>
+              <MdOutlineListAlt
+                className={cx({ [app.active]: view === "list" })}
+                onClick={() => onSetView("list")}
+              />
+              <MdGridView
+                className={cx({ [app.active]: view === "grid" })}
+                onClick={() => onSetView("grid")}
+              />
+              {showGalleryButton && (
+                <MdOutlinePhoto
+                  // @ts-ignore
+                  className={cx({ [app.active]: view === "gallery" })}
+                  onClick={() => onSetView("gallery")}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      ) : null}
+      {breadcrumbs}
+    </div>
+  );
+};
