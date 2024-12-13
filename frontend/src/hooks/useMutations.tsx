@@ -10,7 +10,7 @@ import axios, { AxiosResponse } from "axios";
 import { QueryClient, useMutation, UseMutationResult } from "react-query";
 import { Toggleable } from "./useToggle";
 
-type NullableSetter<T> = (value: T | null) => void;
+export type NullableSetter<T> = (value: T | null) => void;
 type Mutation<TData, TVar> = UseMutationResult<TData, unknown, TVar, unknown>;
 type AxiosMutation<T> = Mutation<AxiosResponse<any, any>, T>;
 
@@ -81,6 +81,7 @@ export const useMutations = (
           onSuccess: () => {
             queryClient.invalidateQueries(["files", activeFolder]);
             queryClient.invalidateQueries(["folders"]);
+            showRenameDialog.set(false);
           },
         }
       ),
