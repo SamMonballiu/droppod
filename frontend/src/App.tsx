@@ -8,20 +8,11 @@ import {
   FileSelectionInfo,
   FolderList,
   Loading,
-  MoveFilesDialog,
   SortOption,
   Upload,
   FileDialog,
-  RenameDialog,
-  DeleteDialog,
   formatBytes,
 } from "@components";
-import { CreateFilePostmodel } from "@backend/features/files/create/createFilePostmodel";
-import { CreateFolderPostmodel } from "@backend/features/folders/create/createFolderPostmodel";
-import { DeleteFolderPostmodel } from "@backend/features/folders/delete/deleteFolderPostmodel";
-import { MoveFilesPostModel } from "@backend/features/files/move/moveFilesPostModel";
-import { RenamePostModel } from "@backend/features/files/rename/renameFilePostmodel";
-import { DeletePostmodel } from "@backend/features/files/delete/deleteFilePostmodel";
 import { FileInfo, FileType, is, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
 import { FilesResponse, DiskSpaceResponse } from "@models/response";
@@ -29,7 +20,6 @@ import axios from "axios";
 import cx from "classnames";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import {
-  AiOutlineClose,
   AiOutlineDelete,
   AiOutlineSelect,
   AiOutlineSend,
@@ -46,8 +36,7 @@ import {
 } from "react-icons/md";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { TbTelescope } from "react-icons/tb";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { getRenameValidator } from "validators/rename";
+import { useQuery, useQueryClient } from "react-query";
 import app from "./App.module.scss";
 import useSelectList from "./hooks/useSelectList";
 import { sortBy, useSortedList } from "./hooks/useSortedList";
@@ -203,35 +192,23 @@ function App() {
     showDeleteDialog
   );
 
-  const { handle } = useApp(
+  const { handle, dialogs, select } = useApp(
     mutations,
     activeFolder,
     selectMode,
     focusedFile,
     focusedFolder,
-    selectedFiles
+    selectedFiles,
+    setFocusedFile,
+    setFocusedFolder,
+    data,
+    folderList,
+    createFolderDialog,
+    showNewFileDialog,
+    showMoveDialog,
+    showRenameDialog,
+    showDeleteDialog
   );
-
-  const breadcrumbs = (
-    <div className={app.breadcrumbs}>
-      <div>
-        <Breadcrumbs
-          path={activeFolder}
-          onClick={setActiveFolder}
-          isReadOnly={activeTab === "upload"}
-        />
-      </div>
-      {diskData && (
-        <div className={app.info}>
-          Free space: {formatBytes(diskData!.data.freeSpace)}
-        </div>
-      )}
-    </div>
-  );
-
-  const handleSort = (option: SortOption<FileInfo>) => {
-    sort(option.property);
-  };
 
   const topbar = (
     <TopBar
@@ -247,7 +224,25 @@ function App() {
       filesFilter={filesFilter}
       filterSetters={filterSetters}
       showGalleryButton={data?.contents.files?.some(isImage) ?? false}
-      breadcrumbs={breadcrumbs}
+      breadcrumbs={
+        <div className={app.breadcrumbs}>
+          <div>
+            <Breadcrumbs
+              path={activeFolder}
+              onClick={setActiveFolder}
+              isReadOnly={activeTab === "upload"}
+            />
+          </div>
+          {diskData && (
+            <div className={app.info}>
+              Free space: {formatBytes(diskData!.data.freeSpace)}
+            </div>
+          )}
+        </div>
+      }
+      onSort={(option: SortOption<FileInfo>) => {
+        sort(option.property);
+      }}
     />
   );
 
@@ -276,31 +271,6 @@ function App() {
     } else {
       setExpandedFolders([...expandedFolders, folderName]);
     }
-  };
-
-  const handleSelectForRename = (file: FileInfo) => {
-    showRenameDialog.set(true);
-    setFocusedFile(file);
-  };
-
-  const handleSelectFolderForRename = (folder: FolderInfo) => {
-    showRenameDialog.set(true);
-    setFocusedFolder(folder);
-  };
-
-  const handleSelectForMove = (file: FileInfo) => {
-    showMoveDialog.set(true);
-    setFocusedFile(file);
-  };
-
-  const handleSelectForDelete = (file: FileInfo) => {
-    showDeleteDialog.set(true);
-    setFocusedFile(file);
-  };
-
-  const handleSelectFolderForDelete = (folder: FolderInfo) => {
-    showDeleteDialog.set(true);
-    setFocusedFolder(folder);
   };
 
   const currentFolderContextHandlers: LocationContextHandler[] =
@@ -392,11 +362,11 @@ function App() {
                   onSelectedChanged={events.onSelectedChanged}
                   onSetAllSelected={events.onSetAllSelected}
                   onFocusFile={setFocusedFile}
-                  onRename={handleSelectForRename}
-                  onRenameFolder={handleSelectFolderForRename}
-                  onMove={handleSelectForMove}
-                  onDelete={handleSelectForDelete}
-                  onDeleteFolder={handleSelectFolderForDelete}
+                  onRename={select.file.forRename}
+                  onRenameFolder={select.folder.forRename}
+                  onMove={select.file.forMove}
+                  onDelete={select.file.forDelete}
+                  onDeleteFolder={select.folder.forDelete}
                 />
               </LocationContextMenu>
             ) : (
@@ -425,92 +395,6 @@ function App() {
     </>
   );
 
-  const moveFilesDialog = !folderList ? null : (
-    <MoveFilesDialog
-      isOpen={showMoveDialog.value}
-      onClose={() => {
-        showMoveDialog.toggle();
-        setFocusedFile(null);
-      }}
-      data={folderList}
-      activeFolder={activeFolder}
-      files={
-        selectMode === "multiple"
-          ? selectedFiles
-          : [focusedFile?.filename ?? ""]
-      }
-      onConfirm={handle.file.move}
-      isMoving={mutations.files.move.isLoading}
-    />
-  );
-
-  const renameFileDialog = focusedFile ? (
-    <RenameDialog
-      currentName={focusedFile!.filename}
-      validateName={getRenameValidator(
-        focusedFile!.filename,
-        data?.contents.files,
-        data?.contents.folders
-      )}
-      onConfirm={async (newName) => await handle.file.rename(newName)}
-      isOpen={showRenameDialog.value}
-      onClose={() => {
-        showRenameDialog.toggle();
-        setFocusedFile(null);
-      }}
-    />
-  ) : null;
-
-  const renameFolderDialog = focusedFolder ? (
-    <RenameDialog
-      currentName={focusedFolder!.name}
-      validateName={getRenameValidator(
-        focusedFolder!.name,
-        data?.contents.files,
-        data?.contents.folders
-      )}
-      onConfirm={async (newName) => await handle.folder.rename(newName)}
-      isOpen={showRenameDialog.value}
-      onClose={() => {
-        showRenameDialog.set(false);
-        setFocusedFolder(null);
-      }}
-    />
-  ) : null;
-
-  const deleteDialog = (
-    <DeleteDialog
-      isOpen={
-        showDeleteDialog.value &&
-        (focusedFile !== null || selectedFiles.length > 0)
-      }
-      onClose={() => {
-        setFocusedFile(null);
-        showDeleteDialog.toggle();
-      }}
-      names={focusedFile ? [focusedFile.filename] : selectedFiles}
-      mode="file"
-      onConfirm={handle.file.delete}
-      isDeleting={mutations.files.delete.isLoading}
-    />
-  );
-
-  const deleteFolderDialog = React.useMemo(() => {
-    return focusedFolder === null ? null : (
-      <DeleteDialog
-        isOpen={showDeleteDialog.value && focusedFolder !== null}
-        onClose={() => {
-          setFocusedFolder(null);
-          showDeleteDialog.toggle();
-        }}
-        names={[focusedFolder!.name]}
-        mode="folder"
-        onConfirm={(names) => handle.folder.delete(names[0])}
-        isDeleting={mutations.folders.delete.isLoading}
-      />
-    );
-  }, [focusedFolder]);
-
   const multiFileActions = (
     <div className={app.multiFileButtons}>
       <AiOutlineSend onClick={showMoveDialog.toggle} />
@@ -534,11 +418,11 @@ function App() {
           />
         )}
 
-      {renameFileDialog}
-      {renameFolderDialog}
-      {moveFilesDialog}
-      {deleteDialog}
-      {deleteFolderDialog}
+      {dialogs.file.rename}
+      {dialogs.folder.rename}
+      {dialogs.file.move}
+      {dialogs.file.delete}
+      {dialogs.folder.delete}
       {createFolderDialog.value && (
         <CreateFolderDialog
           onClose={createFolderDialog.toggle}
@@ -590,6 +474,7 @@ interface TopBarProps {
   filterSetters: FilterSetters;
   showGalleryButton: boolean;
   breadcrumbs: React.ReactNode;
+  onSort: (value: SortOption<FileInfo>) => void;
 }
 
 const TopBar: FC<TopBarProps> = ({
@@ -630,7 +515,7 @@ const TopBar: FC<TopBarProps> = ({
                 value={sortProperty!}
                 onChange={(opt) => {
                   //@ts-ignore
-                  handleSort(opt);
+                  onSort(opt);
                 }}
                 isDescending={isDescending}
               />
