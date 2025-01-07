@@ -491,6 +491,7 @@ const TopBar: FC<TopBarProps> = ({
   filterSetters,
   showGalleryButton,
   breadcrumbs,
+  onSort,
 }) => {
   const sortOptions: SortOption<FileInfo>[] = [
     { property: "filename", name: "Filename" },
