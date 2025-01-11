@@ -1,9 +1,9 @@
 import styles from "./upload.module.scss";
 import React, { FC, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import cx from "classnames";
 import axios from "axios";
 import { UploadFromUrl } from "./UploadFromUrl";
+import ProgressBar from "@ohaeseong/react-progress-bar";
 
 interface Props {
   folder: string;
@@ -12,15 +12,28 @@ interface Props {
 }
 
 export const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
-  const [state, setState] = useState<"progress" | "success">("progress");
+  const [state, setState] = useState<"initial" | "progress" | "success">(
+    "initial"
+  );
   const files = useRef<HTMLInputElement | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const queryClient = useQueryClient();
-  const { mutateAsync, isLoading, isSuccess } = useMutation(
+  const { mutateAsync, isLoading: isUploading } = useMutation(
     async (formData: FormData) => {
       const url = `${baseUrl}upload_files?folder=${folder}`;
       try {
-        return await axios.post(url, formData);
+        setState("progress");
+        return await axios.post(url, formData, {
+          onUploadProgress: (progressEvent) => {
+            const total = progressEvent.total || 0;
+            const current = progressEvent.loaded;
+            const percentCompleted = Math.round((current * 100) / total);
+            if (percentCompleted % 4 === 0) {
+              setUploadProgress(percentCompleted);
+            }
+          },
+        });
       } catch (err) {
         onError?.(err as unknown as string | Error);
       }
@@ -28,7 +41,10 @@ export const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["files", folder]);
-        setState("success");
+        setTimeout(() => {
+          setState("success");
+          setUploadProgress(0);
+        }, 600);
       },
     }
   );
@@ -60,24 +76,45 @@ export const Upload: FC<Props> = ({ onError, baseUrl, folder }) => {
           />
         </div>
 
-        {state === "progress" && (
+        {state === "initial" && uploadProgress === 0 && !isUploading ? (
           <button
-            className={cx(styles.submitBtn, { [styles.disabled]: isLoading })}
+            className={styles.submitBtn}
             type="submit"
-            disabled={isLoading}
+            disabled={isUploading}
           >
-            {isLoading ? "Uploading... " : "Upload"}
+            Upload
           </button>
-        )}
+        ) : null}
 
-        {state === "success" && (
-          <div className={styles.success}>
-            <span>Upload complete!</span>
-            <span className={styles.link} onClick={() => setState("progress")}>
-              Upload more
-            </span>
+        {state !== "initial" ? (
+          <div className={styles.frame}>
+            {state === "progress" ? (
+              <>
+                <span>Uploading...</span>
+
+                <div className={styles.progress}>
+                  <ProgressBar
+                    value={uploadProgress}
+                    max={100}
+                    labelVisible={false}
+                    transitionDuration="0.1s"
+                    trackColor="#89C95A"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <span>Upload complete!</span>
+                <span
+                  className={styles.link}
+                  onClick={() => setState("initial")}
+                >
+                  Upload more
+                </span>
+              </>
+            )}
           </div>
-        )}
+        ) : null}
       </form>
 
       <UploadFromUrl folder={folder} onError={onError} baseUrl={baseUrl} />
