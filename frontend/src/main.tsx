@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 
 import { QueryClient, QueryClientProvider } from "react-query";
+import { BaseUrlContextProvider } from "./context/useBaseUrlContext";
 
 const mainQueryClient = new QueryClient({
   defaultOptions: {
@@ -16,7 +17,9 @@ const mainQueryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={mainQueryClient}>
-      <App />
+      <BaseUrlContextProvider>
+        <App />
+      </BaseUrlContextProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );
