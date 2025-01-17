@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { Route } from "wouter";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BaseUrlContextProvider } from "./context/useBaseUrlContext";
@@ -18,7 +19,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={mainQueryClient}>
       <BaseUrlContextProvider>
-        <App />
+        <Route path="/*" component={App} />
       </BaseUrlContextProvider>
     </QueryClientProvider>
   </React.StrictMode>

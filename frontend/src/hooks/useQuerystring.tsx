@@ -1,11 +1,15 @@
+import { useLocation } from "wouter";
+
 export function useQuerystring() {
   const url = new URL(window.location.href);
+  const [, setLocation] = useLocation();
 
   return {
     has: (key: string, value?: string) => {
       if (value !== undefined) {
         return url.searchParams.get(key) === value;
       } else {
+        return url.searchParams.has(key);
       }
     },
     in: (key: string, values: string[]) => {
@@ -21,14 +25,7 @@ export function useQuerystring() {
       } else {
         url.searchParams.set(key, value);
       }
-      console.log(
-        "qs update url:",
-        key,
-        value === "" ? "empty" : value,
-        url.toString()
-      );
-      history.replaceState(null, "", url);
-      //setLocation(url.toString(), { replace: true });
+      setLocation(url.toString(), { replace: true });
     },
   };
 }

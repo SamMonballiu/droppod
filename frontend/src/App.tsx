@@ -58,6 +58,7 @@ import { useMutations } from "@hooks/useMutations";
 import { useApp } from "./useApp";
 import { useQuerystringSync } from "@hooks/useQuerystringSync";
 import { useBaseUrlContext } from "./context/useBaseUrlContext";
+import { useLocation } from "wouter";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -71,16 +72,18 @@ type Tabs = "files" | "upload";
 
 export type View = "list" | "grid" | "gallery";
 
-function App() {
-  const [folderQuerystring, setFolderQuerystring] = useQuerystringSync<string>(
-    "folder",
-    ""
-  );
+interface Props {
+  params: {
+    "*": string;
+  };
+}
+
+const App: FC<Props> = ({ params }) => {
   const [fileQuerystring, setFileQuerystring] = useQuerystringSync<string>(
     "file",
     ""
   );
-  const [activeFolder, setActiveFolder] = useState(folderQuerystring);
+  const [activeFolder, setActiveFolder] = useState("/" + params["*"]);
 
   const [view, setView] = useState<View>("grid");
   const [selectMode, setSelectMode] = useState<"single" | "multiple">("single");
@@ -96,6 +99,7 @@ function App() {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
+  const [, setLocation] = useLocation();
 
   const {
     filters: filesFilter,
@@ -108,7 +112,7 @@ function App() {
   const { baseUrl } = useBaseUrlContext();
 
   const { data, isFetched } = useQuery(
-    ["files", activeFolder],
+    ["files", activeFolder.toLowerCase()],
     async ({ signal }) => {
       let url = baseUrl + "files";
       if (activeFolder !== "") {
@@ -126,9 +130,14 @@ function App() {
       staleTime: Infinity,
       onError: () => handleSelectFolder(""),
       onSuccess: (resp) => {
-        const file = resp?.contents.files.find(
+        if (!resp) {
+          return;
+        }
+
+        const file = (resp.contents?.files ?? []).find(
           (f) => f.filename === fileQuerystring
         );
+
         if (file) {
           setTimeout(() => setFocusedFile(file), isImage(file) ? 800 : 100);
         }
@@ -243,7 +252,7 @@ function App() {
             : "/" + folderName;
         queryClient.cancelQueries(["files"]);
         setActiveFolder(newFolder);
-        setFolderQuerystring(newFolder);
+        setLocation(newFolder === "" ? "/" + newFolder : newFolder);
         if (!expandedFolders.includes(folderName)) {
           handleToggleExpanded(folderName);
         }
@@ -486,7 +495,7 @@ function App() {
       </div>
     </>
   );
-}
+};
 
 export default App;
 
