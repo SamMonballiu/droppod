@@ -19,7 +19,7 @@ export const Breadcrumbs: FC<Props> = ({
   includeHome = true,
   className,
 }) => {
-  const pathElements = path.split("/");
+  const pathElements = path?.split("/") ?? [];
 
   const mapped = pathElements.map((el, idx) => {
     const targetUrl = pathElements.slice(0, idx + 1).join("/");

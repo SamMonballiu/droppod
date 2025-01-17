@@ -6,6 +6,7 @@ import cx from "classnames";
 import axios from "axios";
 import { useMutation } from "react-query";
 import { FileInfo, FileRatingValue } from "@models/fileinfo";
+import { useBaseUrlContext } from "@root/context/useBaseUrlContext";
 
 interface Props {
   file: FileInfo;
@@ -16,9 +17,7 @@ interface Props {
 }
 
 export const FileRating: FC<Props> = (props) => {
-  const baseUrl = import.meta.env.DEV
-    ? window.location.href.replace("5173", "4004")
-    : window.location.href;
+  const { baseUrl } = useBaseUrlContext();
 
   const rate = useMutation(async (postmodel: SetFileRatingPostmodel) => {
     const url = baseUrl + "rate-file";
