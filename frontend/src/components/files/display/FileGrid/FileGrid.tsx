@@ -11,6 +11,7 @@ import {
   FolderContextHandler,
   FolderContextMenu,
 } from "@components/folders/modify/FolderContextMenu";
+import { useQuerystring } from "@hooks/useQuerystring";
 
 export type FileGridZoom = 1 | 2 | 3 | 4;
 interface Props {
@@ -49,6 +50,15 @@ export const FileGrid: FC<Props> = ({
       />
     ));
   }, [files]);
+
+  const qs = useQuerystring();
+
+  React.useLayoutEffect(() => {
+    if (qs.has("file")) {
+      const item = document.getElementById(qs.get("file")!);
+      item?.scrollIntoView();
+    }
+  }, []);
 
   return (
     <div className={styles.container}>

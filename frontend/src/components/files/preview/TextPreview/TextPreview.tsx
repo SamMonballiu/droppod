@@ -11,6 +11,7 @@ import {
 } from "react-icons/md";
 import cx from "classnames";
 import { useBooleanContext } from "@root/context/useBooleanContext";
+import { useBaseUrlContext } from "@root/context/useBaseUrlContext";
 
 interface Props {
   file?: FileInfo;
@@ -28,6 +29,7 @@ export const TextPreview: FC<Props> = ({
   onSave,
 }) => {
   const isDirty = useBooleanContext();
+  const { baseUrl } = useBaseUrlContext();
   const [text, setText] = useState(value ?? "");
 
   const {
@@ -37,7 +39,7 @@ export const TextPreview: FC<Props> = ({
   } = useQuery(
     ["files", file],
     async () => {
-      return await axios.get("/files/contents?path=" + file!.fullPath);
+      return await axios.get(baseUrl + "files/contents?path=" + file!.fullPath);
     },
     {
       enabled: file !== undefined,

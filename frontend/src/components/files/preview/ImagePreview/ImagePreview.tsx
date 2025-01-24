@@ -16,9 +16,10 @@ interface Props {
   className?: string;
 }
 
-const url = import.meta.env.DEV
-  ? window.location.href.replace("5173", "4004")
-  : window.location.href;
+const url =
+  (import.meta.env.DEV
+    ? window.location.origin.replace("5173", "4004")
+    : window.location.origin) + "/";
 
 export const ImagePreview: FC<Props> = ({
   file,

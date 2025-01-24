@@ -56,6 +56,9 @@ import {
 import { CreateTextFileDialog } from "@components/files/create/CreateTextFileDialog";
 import { useMutations } from "@hooks/useMutations";
 import { useApp } from "./useApp";
+import { useQuerystringSync } from "@hooks/useQuerystringSync";
+import { useBaseUrlContext } from "./context/useBaseUrlContext";
+import { useLocation } from "wouter";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -69,8 +72,19 @@ type Tabs = "files" | "upload";
 
 export type View = "list" | "grid" | "gallery";
 
-function App() {
-  const [activeFolder, setActiveFolder] = useState("");
+interface Props {
+  params: {
+    "*": string;
+  };
+}
+
+const App: FC<Props> = ({ params }) => {
+  const [fileQuerystring, setFileQuerystring] = useQuerystringSync<string>(
+    "file",
+    ""
+  );
+  const [activeFolder, setActiveFolder] = useState("/" + params["*"]);
+
   const [view, setView] = useState<View>("grid");
   const [selectMode, setSelectMode] = useState<"single" | "multiple">("single");
   const [zoom, setZoom] = useState<FileGridZoom>(2);
@@ -85,6 +99,7 @@ function App() {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
+  const [, setLocation] = useLocation();
 
   const {
     filters: filesFilter,
@@ -94,12 +109,10 @@ function App() {
     disable: disableFilters,
   } = useFilesFilter();
 
-  const baseUrl = import.meta.env.DEV
-    ? window.location.href.replace("5173", "4004")
-    : window.location.href;
+  const { baseUrl } = useBaseUrlContext();
 
   const { data, isFetched } = useQuery(
-    ["files", activeFolder],
+    ["files", activeFolder.toLowerCase()],
     async ({ signal }) => {
       let url = baseUrl + "files";
       if (activeFolder !== "") {
@@ -115,6 +128,20 @@ function App() {
     },
     {
       staleTime: Infinity,
+      onError: () => handleSelectFolder(""),
+      onSuccess: (resp) => {
+        if (!resp) {
+          return;
+        }
+
+        const file = (resp.contents?.files ?? []).find(
+          (f) => f.filename === fileQuerystring
+        );
+
+        if (file) {
+          setTimeout(() => setFocusedFile(file), isImage(file) ? 800 : 100);
+        }
+      },
     }
   );
 
@@ -210,6 +237,37 @@ function App() {
     showDeleteDialog
   );
 
+  const handleCreateFolder = async (folderName: string) => {
+    return await handle.folder.create(folderName);
+  };
+
+  const handleSelectFolder = (folderName: string) => {
+    switch (selectMode) {
+      case "single":
+        const newFolder =
+          folderName === ""
+            ? ""
+            : folderName.startsWith("/")
+            ? folderName
+            : "/" + folderName;
+        queryClient.cancelQueries(["files"]);
+        setActiveFolder(newFolder);
+        setLocation(newFolder === "" ? "/" + newFolder : newFolder);
+        if (!expandedFolders.includes(folderName)) {
+          handleToggleExpanded(folderName);
+        }
+        break;
+      case "multiple":
+        //toggleSelected(folderName);
+        break;
+    }
+  };
+
+  const handleSelectFile = (file: FileInfo | null) => {
+    setFocusedFile(file);
+    setFileQuerystring(file?.filename ?? "");
+  };
+
   const topbar = (
     <TopBar
       view={view}
@@ -229,7 +287,7 @@ function App() {
           <div>
             <Breadcrumbs
               path={activeFolder}
-              onClick={setActiveFolder}
+              onClick={handleSelectFolder}
               isReadOnly={activeTab === "upload"}
             />
           </div>
@@ -245,25 +303,6 @@ function App() {
       }}
     />
   );
-
-  const handleCreateFolder = async (folderName: string) => {
-    return await handle.folder.create(folderName);
-  };
-
-  const handleSelectFolder = (folderName: string) => {
-    switch (selectMode) {
-      case "single":
-        queryClient.cancelQueries(["files"]);
-        setActiveFolder(folderName === "" ? "" : "/" + folderName);
-        if (!expandedFolders.includes(folderName)) {
-          handleToggleExpanded(folderName);
-        }
-        break;
-      case "multiple":
-        //toggleSelected(folderName);
-        break;
-    }
-  };
 
   const handleToggleExpanded = (folderName: string) => {
     if (expandedFolders.includes(folderName)) {
@@ -330,6 +369,7 @@ function App() {
                     onSelect={handleSelectFolder}
                     data={folderList!}
                     isExpanded={(folder) =>
+                      activeFolder.includes(folder.parent + folder.name) ||
                       expandedFolders.includes(folder.parent + folder.name)
                     }
                     isActiveFolder={(folder) =>
@@ -361,7 +401,7 @@ function App() {
                   onToggleSelected={toggleSelected}
                   onSelectedChanged={events.onSelectedChanged}
                   onSetAllSelected={events.onSetAllSelected}
-                  onFocusFile={setFocusedFile}
+                  onFocusFile={handleSelectFile}
                   onRename={select.file.forRename}
                   onRenameFolder={select.folder.forRename}
                   onMove={select.file.forMove}
@@ -410,7 +450,7 @@ function App() {
         !showDeleteDialog.value && (
           <FileDialog
             isOpen={focusedFile !== null}
-            onClose={() => setFocusedFile(null)}
+            onClose={() => handleSelectFile(null)}
             file={focusedFile}
             onSave={
               is(focusedFile, FileType.Text) ? handle.file.create : undefined
@@ -456,7 +496,7 @@ function App() {
       </div>
     </>
   );
-}
+};
 
 export default App;
 
