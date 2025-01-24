@@ -369,6 +369,7 @@ const App: FC<Props> = ({ params }) => {
                     onSelect={handleSelectFolder}
                     data={folderList!}
                     isExpanded={(folder) =>
+                      activeFolder.includes(folder.parent + folder.name) ||
                       expandedFolders.includes(folder.parent + folder.name)
                     }
                     isActiveFolder={(folder) =>
