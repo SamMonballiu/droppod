@@ -114,7 +114,7 @@ const Folder: FC<{
   );
 };
 
-const File: FC<{
+export const File: FC<{
   file: FileInfo;
   zoom: FileGridZoom;
   onSelect: (file: FileInfo) => void;
@@ -134,6 +134,8 @@ const File: FC<{
       className={cx(styles.file, zoomMap[zoom])}
       onClick={(e) => {
         e.stopPropagation();
+        e.preventDefault();
+        console.log("onSelect", file.filename);
         onSelect(file);
       }}
     >

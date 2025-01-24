@@ -5,6 +5,7 @@ import { Route } from "wouter";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BaseUrlContextProvider } from "./context/useBaseUrlContext";
+import { MediaListContextProvider } from "./context/useMediaListContext";
 
 const mainQueryClient = new QueryClient({
   defaultOptions: {
@@ -19,7 +20,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={mainQueryClient}>
       <BaseUrlContextProvider>
-        <Route path="/*" component={App} />
+        <MediaListContextProvider>
+          <Route path="/*" component={App} />
+        </MediaListContextProvider>
       </BaseUrlContextProvider>
     </QueryClientProvider>
   </React.StrictMode>

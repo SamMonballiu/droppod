@@ -13,7 +13,7 @@ export const FileContextMenu: FC<Props> = ({ file, children, handlers }) => {
   return (
     <ContextMenu
       context={file}
-      handlers={handlers}
+      handlers={handlers.filter((handler) => handler.condition?.(file) ?? true)}
       getId={(file: FileInfo) => `ctx-${file.filename}`}
     >
       {children}

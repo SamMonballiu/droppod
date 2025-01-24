@@ -33,6 +33,7 @@ import {
   MdFilterAlt,
   MdErrorOutline,
   MdOutlineTextSnippet,
+  MdMusicNote,
 } from "react-icons/md";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { TbTelescope } from "react-icons/tb";
@@ -59,6 +60,7 @@ import { useApp } from "./useApp";
 import { useQuerystringSync } from "@hooks/useQuerystringSync";
 import { useBaseUrlContext } from "./context/useBaseUrlContext";
 import { useLocation } from "wouter";
+import { useMediaListContext } from "./context/useMediaListContext";
 
 const dateReviver = (key: string, value: any) => {
   if (key === "dateAdded" && Date.parse(value)) {
@@ -100,6 +102,7 @@ const App: FC<Props> = ({ params }) => {
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
   const [, setLocation] = useLocation();
+  const { addFiles: addToPlaylist } = useMediaListContext();
 
   const {
     filters: filesFilter,
@@ -331,6 +334,16 @@ const App: FC<Props> = ({ params }) => {
             onClick: () => setSelectMode("multiple"),
             icon: <AiOutlineSelect />,
           },
+          {
+            label: "Add to playlist",
+            onClick: () => {
+              if (data?.contents.files) {
+                addToPlaylist(data.contents.files);
+              }
+            },
+
+            icon: <MdMusicNote />,
+          },
         ];
 
   const content =
@@ -438,6 +451,15 @@ const App: FC<Props> = ({ params }) => {
     <div className={app.multiFileButtons}>
       <AiOutlineSend onClick={showMoveDialog.toggle} />
       <AiOutlineDelete onClick={showDeleteDialog.toggle} />
+      {/* <MdMusicNote
+        onClick={() =>
+          addToPlaylist(
+            data?.contents.files?.filter((f) =>
+              selectedFiles.includes(f.filename)
+            ) ?? []
+          )
+        }
+      /> */}
     </div>
   );
 

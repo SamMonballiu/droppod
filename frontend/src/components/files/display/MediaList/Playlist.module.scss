@@ -1,0 +1,114 @@
+.playlist {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding: 24px 36px;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  border-radius: 8px;
+
+  border: 1px solid #ddd;
+  background: white;
+}
+
+.small {
+  width: 25vw;
+}
+
+.full {
+  padding: 36px 48px;
+  width: 35vw;
+  height: 90vh;
+  align-items: flex-start;
+  //   bottom: 0;
+  //   right: 0;
+}
+
+.panel {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+
+  svg {
+    cursor: pointer;
+  }
+}
+
+.playlistItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  p {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  svg {
+    display: none;
+    cursor: pointer;
+    color: darkred;
+  }
+
+  &:hover {
+    svg {
+      display: block;
+    }
+  }
+}
+
+.controls {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timestamp {
+  font-family: monospace;
+  opacity: 0.5;
+}
+
+.titles {
+  flex-grow: 1;
+  overflow: auto;
+  max-height: 80vh;
+  width: 100%;
+}
+
+.titles p {
+  margin: 8px 0;
+  opacity: 0.8;
+}
+
+.playing {
+  font-weight: bolder;
+}
+
+.volume {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progress {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modeIcon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  opacity: 0.25;
+  transition: opacity 300ms;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.5;
+  }
+}

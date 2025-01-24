@@ -2,7 +2,7 @@ import cx from "classnames";
 import { FC, useEffect } from "react";
 import { MdModeEdit, MdSearch } from "react-icons/md";
 import { SubscribableEvent } from "@models/event";
-import { FileInfo, isImage } from "@models/fileinfo";
+import { FileInfo, FileType, is, isImage } from "@models/fileinfo";
 import { FolderInfo } from "@models/folderInfo";
 import { View } from "../../../../App";
 import { useThumbnails } from "../../../../hooks/useThumbnails";
@@ -13,9 +13,16 @@ import {
   FileContextHandler,
   MemoizedGallery,
 } from "@components";
+
+import { MediaList } from "@components/files/display/MediaList/MediaList";
 import styles from "./Files.module.scss";
 import { AiOutlineClear, AiOutlineSend } from "react-icons/ai";
+import { MdMusicNote } from "react-icons/md";
 import { FolderContextHandler } from "@components/folders/modify/FolderContextMenu";
+import {
+  MediaListContextProvider,
+  useMediaListContext,
+} from "@root/context/useMediaListContext";
 
 interface Props {
   data: FileInfo[];
@@ -58,6 +65,7 @@ export const Files: FC<Props> = ({
   isFiltered,
   disableFilters,
 }) => {
+  const { addFile } = useMediaListContext();
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
     thumbnail?.classList.toggle(
@@ -129,6 +137,12 @@ export const Files: FC<Props> = ({
 
   const fileContextHandlers: FileContextHandler[] = [
     { label: "Show details", onClick: handleFocusFile, icon: <MdSearch /> },
+    {
+      label: "Add to playlist",
+      icon: <MdMusicNote />,
+      onClick: addFile,
+      condition: (file) => is(file, FileType.Audio),
+    },
     { label: "Rename", onClick: onRename, icon: <MdModeEdit /> },
     { label: "Move", onClick: onMove, icon: <AiOutlineSend /> },
     { label: "Delete", onClick: onDelete, icon: <AiOutlineClear /> },
@@ -162,7 +176,7 @@ export const Files: FC<Props> = ({
             fileContextHandlers={fileContextHandlers}
             folderContextHandlers={folderContextHandlers}
           />
-        ) : (
+        ) : view === "grid" ? (
           <FileGrid
             files={data}
             folders={folders}
@@ -173,7 +187,7 @@ export const Files: FC<Props> = ({
             fileContextHandlers={fileContextHandlers}
             folderContextHandlers={folderContextHandlers}
           />
-        )}
+        ) : null}
       </div>
     </div>
   );

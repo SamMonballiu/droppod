@@ -11,6 +11,7 @@ export type ContextHandler<T> = {
   icon?: React.ReactNode;
   label: string;
   disabled?: boolean;
+  condition?: (item: T) => boolean;
   onClick?: (context: T) => void;
 };
 
