@@ -74,8 +74,8 @@ describe("RenameFolderCommandHandler", () => {
     handler.handle(command);
 
     expect(transferFolderRatingSpy).toHaveBeenCalledWith(
-      "path/currentName",
-      "path/newName"
+      "/path/currentName",
+      "/path/newName"
     );
   });
 });

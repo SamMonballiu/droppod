@@ -14,18 +14,24 @@ const set = async (filename: string, rating: FileRatingValue) => {
   await storage.setItem(filename, rating);
 };
 
+const sanitize = (name: string) => (name.startsWith("/") ? name : "/" + name);
+
 const transfer = async (
   sourceFilename: string,
   destinationFilename: string
 ) => {
-  const rating = await get(sourceFilename);
+  const [source, destination] = [sourceFilename, destinationFilename].map(
+    sanitize
+  );
+
+  const rating = await get(source);
 
   if (rating === undefined) {
     return;
   }
 
-  await set(destinationFilename, rating);
-  await remove(sourceFilename);
+  await set(destination, rating);
+  await remove(source);
 };
 
 const transferFolder = async (
