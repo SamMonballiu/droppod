@@ -1,7 +1,8 @@
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
-import express from "express";
+import express, { Response, Request } from "express";
 import cors from "cors";
+import path from "path";
 import fs from "fs";
 import { cache as thumbnailCache } from "./thumbnail-cache";
 import argv from "minimist";
@@ -76,6 +77,11 @@ mapCreateFolderRoute(app, handler);
 mapGetFoldersRoute(app);
 mapDeleteFolderRoute(app, handler);
 mapRenameFolderRoute(app, handler);
+
+// All other routes to be handled clientside
+app.get("*", (_: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "/public", "index.html"));
+});
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}.`);
