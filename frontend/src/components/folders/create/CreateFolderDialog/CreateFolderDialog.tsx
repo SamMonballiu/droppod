@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import { ButtonDefinition, Dialog } from "@components";
 import styles from "./CreateFolderDialog.module.scss";
+import global from "@root/global.module.scss";
 
 interface Props {
   onClose: () => void;
@@ -18,11 +19,15 @@ export const CreateFolderDialog: FC<Props> = ({ onClose, onSubmit }) => {
   };
 
   const buttons: ButtonDefinition[] = [
-    { label: "Cancel", onClick: onClose, variant: "plain" },
+    {
+      label: "Cancel",
+      onClick: onClose,
+      className: global.primaryButton,
+    },
     {
       label: "Create",
       onClick: handleSubmit,
-      variant: "primary",
+      className: global.secondaryButton,
     },
   ];
 
