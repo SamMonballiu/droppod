@@ -188,7 +188,7 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
               </div>
             ))
           ) : (
-            <p className={styles.playing}>{playlist[activeIndex]?.filename}</p>
+            <p className={styles.playing} onClick={() => onSetMode("full")}>{playlist[activeIndex]?.filename}</p>
           )}
         </div>
       </section>
