@@ -91,6 +91,14 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
 
           <FaStepForward onClick={gotoNext} />
 
+          <div className={styles.progress}>
+            {audioRef.current && (
+              <span className={styles.timestamp}>
+                {activeIndex + 1}/{playlist.length}
+              </span>
+            )}
+          </div>
+
           {playlist.length ? (
             <audio
               style={{ display: "none" }}
