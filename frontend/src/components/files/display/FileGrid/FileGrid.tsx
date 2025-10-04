@@ -135,7 +135,6 @@ export const File: FC<{
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
-        console.log("onSelect", file.filename);
         onSelect(file);
       }}
     >

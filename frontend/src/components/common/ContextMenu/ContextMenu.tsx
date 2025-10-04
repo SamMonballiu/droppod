@@ -12,7 +12,7 @@ export type ContextHandler<T> = {
   label: string;
   disabled?: boolean;
   condition?: (item: T) => boolean;
-  onClick?: (context: T) => void;
+  onClick?: (context: T, event: Event) => void;
 };
 
 interface Props<T> extends React.PropsWithChildren {
@@ -33,7 +33,7 @@ export const ContextMenu = <T,>({
     return handlers.map((h) => (
       <ContextMenuItem
         key={h.label}
-        onClick={() => h.onClick?.(context)}
+        onClick={(e) => h.onClick?.(context, e)}
         disabled={h.disabled}
         className={styles.menuItem}
       >

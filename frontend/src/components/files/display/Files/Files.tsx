@@ -140,7 +140,10 @@ export const Files: FC<Props> = ({
     {
       label: "Add to playlist",
       icon: <MdMusicNote />,
-      onClick: addFile,
+      onClick: (file, evt) => {
+        evt.stopPropagation();
+        addFile(file);
+      },
       condition: (file) => is(file, FileType.Audio),
     },
     { label: "Rename", onClick: onRename, icon: <MdModeEdit /> },
