@@ -46,12 +46,14 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
   const goToPrevious = () => {
     if (activeIndex > 0) {
       setActiveIndex(activeIndex - 1);
+      setCurrentTime(0);
     }
   };
 
   const gotoNext = () => {
     if (activeIndex < playlist.length - 1) {
       setActiveIndex(activeIndex + 1);
+      setCurrentTime(0);
     }
   };
 
