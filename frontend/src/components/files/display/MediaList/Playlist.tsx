@@ -75,6 +75,13 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
   const ModeIcon = mode === "condensed" ? FaChevronUp : FaChevronDown;
   const VolumeIcon = audioRef.current?.volume === 0 ? FaVolumeMute : FaVolumeUp;
 
+  const volumeIcon = <VolumeIcon
+              onClick={() => {
+                if (!audioRef.current) return;
+                audioRef.current.volume = audioRef.current.volume === 1 ? 0 : 1;
+              }}
+            />
+
   return (
     <div
       className={cx(styles.playlist, {
@@ -143,16 +150,12 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
               </>
             )}
           </div>
+          {mode === "condensed" ? volumeIcon : null}
         </div>
 
         {mode === "full" ? (
           <div className={styles.volume}>
-            <VolumeIcon
-              onClick={() => {
-                if (!audioRef.current) return;
-                audioRef.current.volume = audioRef.current.volume === 1 ? 0 : 1;
-              }}
-            />
+            {volumeIcon}
             <div style={{ flexGrow: 1 }}>
               <PlaylistProgressBar
                 height={8}
