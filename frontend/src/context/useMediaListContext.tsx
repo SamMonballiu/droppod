@@ -7,6 +7,8 @@ interface MediaListContextData {
   addFile: (file: FileInfo) => void;
   addFiles: (files: FileInfo[]) => void;
   removeFile: (file: FileInfo) => void;
+  mode: PlaylistMode;
+  setMode: (mode: PlaylistMode) => void;
 }
 
 const MediaListContext = createContext<MediaListContextData>(
@@ -18,13 +20,13 @@ export function useMediaListContext() {
   return useContext(MediaListContext);
 }
 
-export type PlaylistMode = "condensed" | "full";
+export type PlaylistMode = "mini" | "condensed" | "full";
 
 export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [files, setFiles] = useState<FileInfo[]>([]);
-  const [mode, setMode] = useState<PlaylistMode>("condensed");
+  const [mode, setMode] = useState<PlaylistMode>("mini");
 
   React.useEffect(() => {
     console.log("F", files);
@@ -49,9 +51,10 @@ export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <MediaListContext.Provider value={{ files, addFile, addFiles, removeFile }}>
+    <MediaListContext.Provider
+      value={{ files, addFile, addFiles, removeFile, mode, setMode }}
+    >
       {children}
-      {files.length > 0 ? <Playlist mode={mode} onSetMode={setMode} /> : null}
     </MediaListContext.Provider>
   );
 };

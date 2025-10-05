@@ -75,81 +75,91 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
   const ModeIcon = mode === "condensed" ? FaChevronUp : FaChevronDown;
   const VolumeIcon = audioRef.current?.volume === 0 ? FaVolumeMute : FaVolumeUp;
 
-  const volumeIcon = <VolumeIcon
-              onClick={() => {
-                if (!audioRef.current) return;
-                audioRef.current.volume = audioRef.current.volume === 1 ? 0 : 1;
-              }}
-            />
+  const volumeIcon = (
+    <VolumeIcon
+      onClick={() => {
+        if (!audioRef.current) return;
+        audioRef.current.volume = audioRef.current.volume === 1 ? 0 : 1;
+      }}
+    />
+  );
+
+  const player = playlist.length ? (
+    <audio
+      style={{ display: "none" }}
+      ref={audioRef}
+      src={getPath(playlist[activeIndex])}
+      autoPlay={true}
+      onEnded={gotoNext}
+      onPause={() => setIsPlaying(false)}
+      onTimeUpdate={() => {
+        setIsPlaying(true);
+        setCurrentTime(
+          (audioRef.current?.currentTime ?? 1) /
+            (audioRef.current?.duration ?? 1)
+        );
+      }}
+    />
+  ) : null;
 
   return (
     <div
       className={cx(styles.playlist, {
-        [styles.full]: mode === "full",
+        [styles.mini]: mode === "mini",
         [styles.small]: mode === "condensed",
+        [styles.full]: mode === "full",
       })}
     >
       <section className={styles.panel}>
         <div className={styles.controls}>
-          <FaStepBackward onClick={goToPrevious} />
+          {mode !== "mini" ? <FaStepBackward onClick={goToPrevious} /> : null}
           {isPlaying ? (
             <FaPause onClick={() => audioRef.current?.pause()} />
           ) : (
             <FaPlay onClick={handlePlay} />
           )}
 
-          <FaStepForward onClick={gotoNext} />
+          {mode !== "mini" ? <FaStepForward onClick={gotoNext} /> : null}
+          {player}
 
-          <div className={styles.progress}>
-            {audioRef.current && (
-              <span className={styles.timestamp}>
-                {activeIndex + 1}/{playlist.length}
-              </span>
-            )}
-          </div>
+          {mode !== "mini" ? (
+            <>
+              <div className={styles.progress}>
+                {audioRef.current && (
+                  <span className={styles.timestamp}>
+                    {activeIndex + 1}/{playlist.length}
+                  </span>
+                )}
+              </div>
 
-          {playlist.length ? (
-            <audio
-              style={{ display: "none" }}
-              ref={audioRef}
-              src={getPath(playlist[activeIndex])}
-              autoPlay={true}
-              onEnded={gotoNext}
-              onPause={() => setIsPlaying(false)}
-              onTimeUpdate={() => {
-                setIsPlaying(true);
-                setCurrentTime(
-                  (audioRef.current?.currentTime ?? 1) /
-                    (audioRef.current?.duration ?? 1)
-                );
-              }}
-            />
+              <div style={{ flexGrow: 1 }}>
+                <PlaylistProgressBar
+                  value={currentTime}
+                  onClick={(percentage) => {
+                    if (!audioRef.current) {
+                      return;
+                    }
+
+                    const time =
+                      audioRef.current?.duration * (percentage / 100);
+                    audioRef.current!.currentTime = time;
+                  }}
+                />
+              </div>
+
+              <div className={styles.progress}>
+                {audioRef.current && (
+                  <>
+                    <span className={styles.timestamp}>
+                      {convertToTimestamp(audioRef.current.currentTime)} /{" "}
+                      {convertToTimestamp(audioRef.current.duration)}
+                    </span>
+                  </>
+                )}
+              </div>
+            </>
           ) : null}
 
-          <div style={{ flexGrow: 1 }}>
-            <PlaylistProgressBar
-              value={currentTime}
-              onClick={(percentage) => {
-                if (!audioRef.current) {
-                  return;
-                }
-
-                const time = audioRef.current?.duration * (percentage / 100);
-                audioRef.current!.currentTime = time;
-              }}
-            />
-          </div>
-
-          <div className={styles.progress}>
-            {audioRef.current && (
-              <>
-                <span className={styles.timestamp}>
-                  {convertToTimestamp(audioRef.current.currentTime)} /{" "}
-                  {convertToTimestamp(audioRef.current.duration)}
-                </span>
-              </>
-            )}
-          </div>
           {mode === "condensed" ? volumeIcon : null}
         </div>
 
@@ -187,15 +197,24 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
                 </p>
               </div>
             ))
-          ) : (
-            <p className={styles.playing} onClick={() => onSetMode("full")}>{playlist[activeIndex]?.filename}</p>
+          ) : mode === "mini" ? null : (
+            <p className={styles.playing} onClick={() => onSetMode("full")}>
+              {playlist[activeIndex]?.filename}
+            </p>
           )}
         </div>
       </section>
 
+      {mode !== "mini" ? (
+        <ModeIcon
+          className={cx(styles.shrinkIcon, styles.rotated)}
+          onClick={() => onSetMode(mode === "condensed" ? "mini" : "condensed")}
+        />
+      ) : null}
+
       {/* <section> */}
       <ModeIcon
-        className={styles.modeIcon}
+        className={cx(styles.modeIcon, { [styles.rotated]: mode === "mini" })}
         onClick={() => onSetMode(mode === "condensed" ? "full" : "condensed")}
       />
       {/* </section> */}

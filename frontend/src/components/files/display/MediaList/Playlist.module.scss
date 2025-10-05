@@ -2,27 +2,48 @@
   display: flex;
   align-items: center;
   gap: 36px;
-  padding: 24px 36px;
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  border-radius: 8px;
-
   border: 1px solid #ddd;
   background: white;
 }
 
+.mini {
+  display: flex;
+  gap: 12px;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  border-radius: 40px;
+  border: 1px solid #ddd;
+  background: white;
+  padding: 20px;
+  margin: 0;
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+
+  cursor: pointer;
+}
+
 .small {
   width: 25vw;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  border-radius: 8px;
+  padding: 24px 36px;
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.3);
 }
 
 .full {
-  padding: 36px 48px;
-  width: 35vw;
-  height: 90vh;
+  // padding: 36px 48px;
+  padding: 18px 24px;
+  height: 100vh;
+  overflow-y: auto;
   align-items: flex-start;
-  //   bottom: 0;
-  //   right: 0;
+  $width: 25vw;
+  flex-basis: $width;
+  width: $width;
+  max-width: $width;
+  min-width: $width;
 }
 
 .panel {
@@ -80,8 +101,9 @@
 }
 
 .titles p {
-  margin: 8px 0;
+  margin: 4px 0;
   opacity: 0.8;
+  font-size: 0.9em;
 }
 
 .playing {
@@ -107,6 +129,24 @@
   right: 8px;
   opacity: 0.25;
   transition: opacity 300ms;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.5;
+  }
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+.shrinkIcon {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  opacity: 0.25;
+  transition: opacity 300ms;
+  transform: rotate(180deg);
 
   &:hover {
     cursor: pointer;
