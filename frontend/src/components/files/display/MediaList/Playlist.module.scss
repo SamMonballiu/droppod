@@ -80,19 +80,6 @@
   }
 }
 
-.controls {
-  display: flex;
-  width: 100%;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.timestamp {
-  font-family: monospace;
-  opacity: 0.5;
-}
-
 .titles {
   flex-grow: 1;
   overflow: auto;
@@ -109,18 +96,6 @@
 .playing {
   font-weight: bolder;
   cursor: pointer;
-}
-
-.volume {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.progress {
-  display: flex;
-  justify-content: flex-end;
 }
 
 .modeIcon {
