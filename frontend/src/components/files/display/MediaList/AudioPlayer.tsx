@@ -147,8 +147,11 @@ export const AudioPlayer: FC = () => {
                     return;
                   }
 
-                  const time = audioRef.current?.duration * (percentage / 100);
+                  const ratio = percentage / 100;
+
+                  const time = audioRef.current?.duration * ratio;
                   audioRef.current!.currentTime = time;
+                  setCurrentTime(ratio);
                 }}
               />
             </div>
@@ -221,7 +224,7 @@ const PlaylistProgressBar: FC<ProgressBarProps> = ({
         height={height}
         trackColor={color}
         labelVisible={false}
-        transitionDuration="0.1s"
+        transitionDuration="0.05s"
       />
     </div>
   );
