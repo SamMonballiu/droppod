@@ -27,8 +27,6 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
     removeFile(file);
   };
 
-  const ModeIcon = mode === "condensed" ? FaChevronUp : FaChevronDown;
-
   return (
     <div
       className={cx(styles.playlist, {
@@ -63,16 +61,18 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
       </section>
 
       {mode !== "mini" ? (
-        <ModeIcon
-          className={cx(styles.shrinkIcon, styles.rotated)}
+        <FaChevronDown
+          className={styles.shrinkIcon}
           onClick={() => onSetMode(mode === "condensed" ? "mini" : "condensed")}
         />
       ) : null}
 
-      <ModeIcon
-        className={cx(styles.modeIcon, { [styles.rotated]: mode === "mini" })}
-        onClick={() => onSetMode(mode === "condensed" ? "full" : "condensed")}
-      />
+      {mode !== "full" ? (
+        <FaChevronUp
+          className={styles.modeIcon}
+          onClick={() => onSetMode(mode === "condensed" ? "full" : "condensed")}
+        />
+      ) : null}
     </div>
   );
 };

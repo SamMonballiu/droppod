@@ -36,7 +36,7 @@
 .full {
   // padding: 36px 48px;
   padding: 18px 24px;
-  height: 100vh;
+  height: 90vh;
   overflow-y: auto;
   align-items: flex-start;
   $width: 25vw;
@@ -44,6 +44,8 @@
   width: $width;
   max-width: $width;
   min-width: $width;
+  position: relative;
+  margin-left: 12px;
 }
 
 .panel {
@@ -111,17 +113,12 @@
   }
 }
 
-.rotated {
-  transform: rotate(180deg);
-}
-
 .shrinkIcon {
   position: absolute;
   bottom: 8px;
   left: 8px;
   opacity: 0.25;
   transition: opacity 300ms;
-  transform: rotate(180deg);
 
   &:hover {
     cursor: pointer;
