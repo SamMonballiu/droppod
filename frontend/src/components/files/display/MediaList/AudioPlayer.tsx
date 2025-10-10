@@ -10,41 +10,59 @@ import {
   FaVolumeUp,
 } from "react-icons/fa";
 import ProgressBar from "@ohaeseong/react-progress-bar";
+import { FileInfo } from "@models/fileinfo";
 
-interface Props {
-  onNext: () => void;
-  onPrevious: () => void;
-  path: string;
-  activeIndex: number;
-}
+const getPath = (file: FileInfo | null) => {
+  if (!file) return "";
+  const path = `${window.location.protocol}//${window.location.host.replace(
+    "5173",
+    "4004"
+  )}/${encodeURIComponent(file.fullPath)}`;
+  return path;
+};
 
-export const AudioPlayer: FC<Props> = ({
-  onNext,
-  onPrevious,
-  path,
-  activeIndex,
-}) => {
-  const { files: playlist, mode } = useMediaListContext();
+export const AudioPlayer: FC = () => {
+  const {
+    files: playlist,
+    mode,
+    activeFile: currentSong,
+    setActiveFile: playSong,
+  } = useMediaListContext();
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const can = () => {
+    const idx = playlist.indexOf(currentSong!);
+
+    return {
+      previous: idx > 0,
+      next: idx < playlist.length - 1,
+    };
+  };
+
   const handle = {
     previous: () => {
-      setCurrentTime(0);
-      onPrevious();
+      const idx = playlist.indexOf(currentSong!);
+      if (can().previous) {
+        setCurrentTime(0);
+        playSong(playlist[idx - 1]);
+      }
     },
     next: () => {
-      setCurrentTime(0);
-      onNext();
+      const idx = playlist.indexOf(currentSong!);
+      if (can().next) {
+        setCurrentTime(0);
+        playSong(playlist[idx + 1]);
+      }
     },
   };
 
-  const player = playlist.length ? (
+  const htmlAudioElement = playlist.length ? (
     <audio
       style={{ display: "none" }}
       ref={audioRef}
-      src={path}
+      src={getPath(currentSong)}
       autoPlay={true}
       onEnded={handle.next}
       onPause={() => setIsPlaying(false)}
@@ -95,14 +113,14 @@ export const AudioPlayer: FC<Props> = ({
         )}
 
         {mode !== "mini" ? <FaStepForward onClick={handle.next} /> : null}
-        {player}
+        {htmlAudioElement}
 
         {mode !== "mini" ? (
           <>
             <div className={styles.progress}>
               {audioRef.current && (
                 <span className={styles.timestamp}>
-                  {activeIndex + 1}/{playlist.length}
+                  {playlist.indexOf(currentSong!) + 1}/{playlist.length}
                 </span>
               )}
             </div>

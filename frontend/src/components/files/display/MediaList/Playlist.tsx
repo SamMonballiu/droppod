@@ -1,23 +1,14 @@
 import { FileInfo } from "@models/fileinfo";
-import ProgressBar from "@ohaeseong/react-progress-bar";
 import {
   PlaylistMode,
   useMediaListContext,
 } from "@root/context/useMediaListContext";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import styles from "./Playlist.module.scss";
 import cx from "classnames";
 import { AiOutlineClose } from "react-icons/ai";
 import { AudioPlayer } from "./AudioPlayer";
-
-const getPath = (file: FileInfo) => {
-  const path = `${window.location.protocol}//${window.location.host.replace(
-    "5173",
-    "4004"
-  )}/${encodeURIComponent(file.fullPath)}`;
-  return path;
-};
 
 interface Props {
   mode: PlaylistMode;
@@ -25,20 +16,12 @@ interface Props {
 }
 
 export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
-  const { files: playlist, removeFile } = useMediaListContext();
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-
-  const goToPrevious = () => {
-    if (activeIndex > 0) {
-      setActiveIndex(activeIndex - 1);
-    }
-  };
-
-  const gotoNext = () => {
-    if (activeIndex < playlist.length - 1) {
-      setActiveIndex(activeIndex + 1);
-    }
-  };
+  const {
+    files: playlist,
+    removeFile,
+    activeFile,
+    setActiveFile,
+  } = useMediaListContext();
 
   const removeFromPlaylist = (file: FileInfo) => {
     removeFile(file);
@@ -55,21 +38,17 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
       })}
     >
       <section className={styles.panel}>
-        <AudioPlayer
-          onNext={gotoNext}
-          onPrevious={goToPrevious}
-          path={getPath(playlist[activeIndex])}
-          activeIndex={activeIndex}
-        />
+        <AudioPlayer />
         <div className={styles.titles}>
           {mode === "full" ? (
             playlist.map((item, idx) => (
-              <div className={styles.playlistItem}>
+              <div className={styles.playlistItem} key={item.fullPath}>
                 <AiOutlineClose onClick={() => removeFromPlaylist(item)} />
                 <p
-                  key={item.fullPath}
-                  className={cx({ [styles.playing]: idx === activeIndex })}
-                  onDoubleClick={() => setActiveIndex(idx)}
+                  className={cx({
+                    [styles.playing]: item.fullPath === activeFile?.fullPath,
+                  })}
+                  onDoubleClick={() => setActiveFile(playlist[idx])}
                 >
                   {item.filename}
                 </p>
@@ -77,7 +56,7 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
             ))
           ) : mode === "mini" ? null : (
             <p className={styles.playing} onClick={() => onSetMode("full")}>
-              {playlist[activeIndex]?.filename}
+              {activeFile?.filename}
             </p>
           )}
         </div>

@@ -9,6 +9,8 @@ interface MediaListContextData {
   removeFile: (file: FileInfo) => void;
   mode: PlaylistMode;
   setMode: (mode: PlaylistMode) => void;
+  activeFile: FileInfo | null;
+  setActiveFile: (file: FileInfo) => void;
 }
 
 const MediaListContext = createContext<MediaListContextData>(
@@ -25,8 +27,9 @@ export type PlaylistMode = "mini" | "condensed" | "full";
 export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [files, setFiles] = useState<FileInfo[]>([]);
-  const [mode, setMode] = useState<PlaylistMode>("mini");
+  const [files, setFilesState] = useState<FileInfo[]>([]);
+  const [activeFile, setActiveFileState] = useState<FileInfo | null>(null);
+  const [mode, setMode] = useState<PlaylistMode>("condensed");
 
   React.useEffect(() => {
     console.log("F", files);
@@ -37,22 +40,36 @@ export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
 
   const addFile = (file: FileInfo) => {
     if (!has(file)) {
-      setFiles([...files, file]);
+      setFilesState([...files, file]);
     }
   };
 
   const addFiles = (fileArr: FileInfo[]) => {
     const audioFiles = fileArr.filter((f) => is(f, FileType.Audio) && !has(f));
-    setFiles([...files, ...audioFiles]);
+    setFilesState([...files, ...audioFiles]);
+    setActiveFile(fileArr[0]);
   };
 
   const removeFile = (file: FileInfo) => {
-    setFiles(files.filter((x) => x.fullPath !== file.fullPath));
+    setFilesState(files.filter((x) => x.fullPath !== file.fullPath));
+  };
+
+  const setActiveFile = (file: FileInfo) => {
+    setActiveFileState(file);
   };
 
   return (
     <MediaListContext.Provider
-      value={{ files, addFile, addFiles, removeFile, mode, setMode }}
+      value={{
+        files,
+        addFile,
+        addFiles,
+        removeFile,
+        mode,
+        setMode,
+        activeFile,
+        setActiveFile,
+      }}
     >
       {children}
     </MediaListContext.Provider>
