@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import styles from "./AudioPlayer.module.scss";
 import { useMediaListContext } from "@root/context/useMediaListContext";
 import {
@@ -58,6 +58,25 @@ export const AudioPlayer: FC = () => {
     },
   };
 
+  useEffect(() => {
+    const updateTime = () => {
+      if (audioRef.current) {
+        const time = audioRef.current.currentTime;
+        const ratio = (time ?? 0) / (audioRef.current?.duration ?? 1);
+        setCurrentTime(ratio);
+      }
+    };
+
+    let interval: number;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        updateTime();
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
   const htmlAudioElement = playlist.length ? (
     <audio
       style={{ display: "none" }}
@@ -65,18 +84,13 @@ export const AudioPlayer: FC = () => {
       src={getPath(currentSong)}
       autoPlay={true}
       onEnded={handle.next}
+      onPlay={() => setIsPlaying(true)}
       onPause={() => setIsPlaying(false)}
-      onTimeUpdate={() => {
-        setIsPlaying(true);
-        setCurrentTime(
-          (audioRef.current?.currentTime ?? 1) /
-            (audioRef.current?.duration ?? 1)
-        );
-      }}
     />
   ) : null;
 
   const handlePlay = () => {
+    setIsPlaying(true);
     audioRef.current?.play();
   };
 
