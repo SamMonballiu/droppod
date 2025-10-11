@@ -103,7 +103,7 @@ const App: FC<Props> = ({ params }) => {
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
   const [, setLocation] = useLocation();
-  const { addFiles: addToPlaylist } = useMediaListContext();
+  const { files: playlist, addFiles: addToPlaylist } = useMediaListContext();
 
   const {
     filters: filesFilter,
@@ -338,7 +338,7 @@ const App: FC<Props> = ({ params }) => {
             icon: <AiOutlineSelect />,
           },
           {
-            label: "Add to playlist",
+            label: playlist.length > 0 ? "Add to playlist" : "Start playlist",
             onClick: () => {
               if (data?.contents.files) {
                 addToPlaylist(data.contents.files);
@@ -356,83 +356,85 @@ const App: FC<Props> = ({ params }) => {
           {topbar}
 
           <div style={{ display: "flex" }}>
-          <div className={tabStyles.foldersFiles}>
-            <section>
-              {isFetchingFolderList ? (
-                <Loading
-                  animated
-                  className={cx(
-                    tabStyles.folderList,
-                    tabStyles.loadingFolderList
-                  )}
-                />
-              ) : (
-                //@ts-ignore
-                <Collapsible
-                  collapsed={!showFolderList.value}
-                  expandButton={
-                    <RxDoubleArrowRight
-                      className={app.folderListIcon}
-                      onClick={showFolderList.toggle}
-                    />
-                  }
-                >
-                  <div className={app.folderListContainer}>
-                    <RxDoubleArrowLeft
-                      className={cx(app.collapse, app.folderListIcon)}
-                      onClick={showFolderList.toggle}
-                    />
-                    <FolderList
-                      className={tabStyles.folderList}
-                      onSelect={handleSelectFolder}
-                      data={folderList!}
-                      isExpanded={(folder) =>
-                        expandedFolders.includes(folder.parent + folder.name)
-                      }
-                      isActiveFolder={(folder) =>
-                        activeFolder === `/${folder.parent}${folder.name}`
-                      }
-                      onToggleExpanded={handleToggleExpanded}
-                    />
-                  </div>
-                </Collapsible>
-              )}
-            </section>
-
-            <section>
-              {isFetched ? (
-                <LocationContextMenu
-                  location={data!.contents}
-                  handlers={currentFolderContextHandlers}
-                >
-                  <Files
-                    isFiltered={isFiltering}
-                    disableFilters={disableFilters}
-                    data={getSorted()}
-                    onSelectFolder={handleSelectFolder}
-                    view={view}
-                    setView={setView}
-                    folders={sortedFolders}
-                    zoom={zoom}
-                    isSelecting={selectMode === "multiple"}
-                    onToggleSelected={toggleSelected}
-                    onSelectedChanged={events.onSelectedChanged}
-                    onSetAllSelected={events.onSetAllSelected}
-                    onFocusFile={handleSelectFile}
-                    onRename={select.file.forRename}
-                    onRenameFolder={select.folder.forRename}
-                    onMove={select.file.forMove}
-                    onDelete={select.file.forDelete}
-                    onDeleteFolder={select.folder.forDelete}
+            <div className={tabStyles.foldersFiles}>
+              <section>
+                {isFetchingFolderList ? (
+                  <Loading
+                    animated
+                    className={cx(
+                      tabStyles.folderList,
+                      tabStyles.loadingFolderList
+                    )}
                   />
-                </LocationContextMenu>
-              ) : (
-                <Loading animated className={cx(tabStyles.loadingFiles)} />
-              )}
-            </section>
-          </div>
+                ) : (
+                  //@ts-ignore
+                  <Collapsible
+                    collapsed={!showFolderList.value}
+                    expandButton={
+                      <RxDoubleArrowRight
+                        className={app.folderListIcon}
+                        onClick={showFolderList.toggle}
+                      />
+                    }
+                  >
+                    <div className={app.folderListContainer}>
+                      <RxDoubleArrowLeft
+                        className={cx(app.collapse, app.folderListIcon)}
+                        onClick={showFolderList.toggle}
+                      />
+                      <FolderList
+                        className={tabStyles.folderList}
+                        onSelect={handleSelectFolder}
+                        data={folderList!}
+                        isExpanded={(folder) =>
+                          expandedFolders.includes(folder.parent + folder.name)
+                        }
+                        isActiveFolder={(folder) =>
+                          activeFolder === `/${folder.parent}${folder.name}`
+                        }
+                        onToggleExpanded={handleToggleExpanded}
+                      />
+                    </div>
+                  </Collapsible>
+                )}
+              </section>
 
-          {files.length > 0 ? <Playlist mode={mode} onSetMode={setMode} /> : null}
+              <section>
+                {isFetched ? (
+                  <LocationContextMenu
+                    location={data!.contents}
+                    handlers={currentFolderContextHandlers}
+                  >
+                    <Files
+                      isFiltered={isFiltering}
+                      disableFilters={disableFilters}
+                      data={getSorted()}
+                      onSelectFolder={handleSelectFolder}
+                      view={view}
+                      setView={setView}
+                      folders={sortedFolders}
+                      zoom={zoom}
+                      isSelecting={selectMode === "multiple"}
+                      onToggleSelected={toggleSelected}
+                      onSelectedChanged={events.onSelectedChanged}
+                      onSetAllSelected={events.onSetAllSelected}
+                      onFocusFile={handleSelectFile}
+                      onRename={select.file.forRename}
+                      onRenameFolder={select.folder.forRename}
+                      onMove={select.file.forMove}
+                      onDelete={select.file.forDelete}
+                      onDeleteFolder={select.folder.forDelete}
+                    />
+                  </LocationContextMenu>
+                ) : (
+                  <Loading animated className={cx(tabStyles.loadingFiles)} />
+                )}
+              </section>
+            </div>
+
+            {files.length > 0 ? (
+              <Playlist mode={mode} onSetMode={setMode} />
+            ) : null}
           </div>
         </section>
       </div>

@@ -30,15 +30,14 @@ export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
   const [activeFile, setActiveFileState] = useState<FileInfo | null>(null);
   const [mode, setMode] = useState<PlaylistMode>("condensed");
 
-  React.useEffect(() => {
-    console.log("F", files);
-  }, [files]);
-
   const has = (file: FileInfo) =>
     files.some((f) => f.fullPath === file.fullPath);
 
   const addFile = (file: FileInfo) => {
     if (!has(file)) {
+      if (files.length === 0) {
+        setActiveFileState(file);
+      }
       setFilesState([...files, file]);
     }
   };

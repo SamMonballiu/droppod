@@ -14,15 +14,11 @@ import {
   MemoizedGallery,
 } from "@components";
 
-import { MediaList } from "@components/files/display/MediaList/MediaList";
 import styles from "./Files.module.scss";
 import { AiOutlineClear, AiOutlineSend } from "react-icons/ai";
 import { MdMusicNote } from "react-icons/md";
 import { FolderContextHandler } from "@components/folders/modify/FolderContextMenu";
-import {
-  MediaListContextProvider,
-  useMediaListContext,
-} from "@root/context/useMediaListContext";
+import { useMediaListContext } from "@root/context/useMediaListContext";
 
 interface Props {
   data: FileInfo[];
@@ -65,7 +61,7 @@ export const Files: FC<Props> = ({
   isFiltered,
   disableFilters,
 }) => {
-  const { addFile } = useMediaListContext();
+  const { addFile, files: playlist } = useMediaListContext();
   const handleSelectedStyle = (filename: string, isSelected: boolean) => {
     const thumbnail = document.getElementById(filename)?.parentElement;
     thumbnail?.classList.toggle(
@@ -138,7 +134,7 @@ export const Files: FC<Props> = ({
   const fileContextHandlers: FileContextHandler[] = [
     { label: "Show details", onClick: handleFocusFile, icon: <MdSearch /> },
     {
-      label: "Add to playlist",
+      label: playlist.length > 0 ? "Add to playlist" : "Start playlist",
       icon: <MdMusicNote />,
       onClick: (file, evt) => {
         evt.stopPropagation();
