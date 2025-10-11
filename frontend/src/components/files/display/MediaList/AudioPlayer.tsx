@@ -27,9 +27,10 @@ export const AudioPlayer: FC = () => {
     mode,
     activeFile: currentSong,
     setActiveFile: playSong,
+    isPlaying,
+    setIsPlaying,
   } = useMediaListContext();
   const [currentTime, setCurrentTime] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const can = () => {

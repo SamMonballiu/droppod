@@ -6,6 +6,7 @@ import cx from "classnames";
 import { ImageInfoResponse } from "@models/response";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { useMediaListContext } from "@root/context/useMediaListContext";
 
 interface Props {
   file: FileInfo;
@@ -25,6 +26,7 @@ export const FileProperties: FC<Props> = ({
     "fullPath",
   ],
 }) => {
+  const { addFile } = useMediaListContext();
   const isNonRawImage =
     is(file, FileType.Image) && !hasRawExtension(file.filename);
 
@@ -69,6 +71,11 @@ export const FileProperties: FC<Props> = ({
     <div className={cx(styles.container, className)}>
       {/* @ts-ignore */}
       {properties.map((p) => ({ ...parts.get(p), key: p }))}
+      {is(file, FileType.Audio) ? (
+        <a href="#" onClick={() => addFile(file)}>
+          add to playlist
+        </a>
+      ) : null}
     </div>
   );
 };

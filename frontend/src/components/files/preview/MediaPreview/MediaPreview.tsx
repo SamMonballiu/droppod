@@ -1,4 +1,5 @@
 import { FileInfo, FileType, is } from "@models/fileinfo";
+import { useMediaListContext } from "@root/context/useMediaListContext";
 import { FC } from "react";
 
 interface Props {
@@ -13,6 +14,12 @@ export const MediaPreview: FC<Props> = ({ file, className, ...mediaProps }) => {
     "5173",
     "4004"
   )}/${encodeURIComponent(file.fullPath.substring(1))}`;
+
+  const { isPlaying } = useMediaListContext();
+  if (isPlaying) {
+    return null;
+  }
+
   if (is(file, FileType.Audio)) {
     return <audio src={path} className={className} {...mediaProps} />;
   }

@@ -10,6 +10,8 @@ interface MediaListContextData {
   setMode: (mode: PlaylistMode) => void;
   activeFile: FileInfo | null;
   setActiveFile: (file: FileInfo) => void;
+  isPlaying: boolean;
+  setIsPlaying: (val: boolean) => void;
 }
 
 const MediaListContext = createContext<MediaListContextData>(
@@ -29,6 +31,7 @@ export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
   const [files, setFilesState] = useState<FileInfo[]>([]);
   const [activeFile, setActiveFileState] = useState<FileInfo | null>(null);
   const [mode, setMode] = useState<PlaylistMode>("condensed");
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const has = (file: FileInfo) =>
     files.some((f) => f.fullPath === file.fullPath);
@@ -67,6 +70,8 @@ export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
         setMode,
         activeFile,
         setActiveFile,
+        isPlaying,
+        setIsPlaying,
       }}
     >
       {children}
