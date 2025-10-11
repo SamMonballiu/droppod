@@ -9,6 +9,8 @@ import styles from "./Playlist.module.scss";
 import cx from "classnames";
 import { AiOutlineClose } from "react-icons/ai";
 import { PlaylistPlayer } from "./PlaylistPlayer";
+import { insert } from "@formkit/drag-and-drop";
+import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 
 interface Props {
   mode: PlaylistMode;
@@ -16,16 +18,7 @@ interface Props {
 }
 
 export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
-  const {
-    files: playlist,
-    removeFile,
-    activeFile,
-    setActiveFile,
-  } = useMediaListContext();
-
-  const removeFromPlaylist = (file: FileInfo) => {
-    removeFile(file);
-  };
+  const { activeFile } = useMediaListContext();
 
   return (
     <div
@@ -37,21 +30,10 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
     >
       <section className={styles.panel}>
         <PlaylistPlayer />
+
         <div className={styles.titles}>
           {mode === "full" ? (
-            playlist.map((item, idx) => (
-              <div className={styles.playlistItem} key={item.fullPath}>
-                <AiOutlineClose onClick={() => removeFromPlaylist(item)} />
-                <p
-                  className={cx({
-                    [styles.playing]: item.fullPath === activeFile?.fullPath,
-                  })}
-                  onDoubleClick={() => setActiveFile(playlist[idx])}
-                >
-                  {item.filename}
-                </p>
-              </div>
-            ))
+            <PlaylistItems />
           ) : (
             <p
               className={styles.playing}
@@ -78,5 +60,55 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
         />
       ) : null}
     </div>
+  );
+};
+
+const PlaylistItems: FC = () => {
+  const {
+    files: playlist,
+    setFiles: setPlaylist,
+    removeFile,
+    activeFile,
+    setActiveFile,
+  } = useMediaListContext();
+
+  const [parentRef, values] = useDragAndDrop<HTMLDivElement, FileInfo>(
+    playlist,
+    {
+      sortable: true,
+      onSort: (data) => {
+        setPlaylist(data.values as FileInfo[]);
+      },
+      plugins: [
+        insert({
+          insertPoint: () => {
+            const div = document.createElement("div");
+            div.classList.add(styles.dndInsert);
+            return div;
+          },
+        }),
+      ],
+    }
+  );
+
+  return (
+    <section ref={parentRef}>
+      {values.map((item, idx) => {
+        const isCurrentItem = item.fullPath === activeFile?.fullPath;
+        return (
+          <div className={styles.playlistItem} key={item.fullPath}>
+            <AiOutlineClose onClick={() => removeFile(item)} />
+            <p
+              className={cx({
+                [styles.playing]: isCurrentItem,
+              })}
+              onDoubleClick={() => setActiveFile(playlist[idx])}
+            >
+              {item.filename}
+            </p>
+          </div>
+        );
+      })}
+    </section>
   );
 };

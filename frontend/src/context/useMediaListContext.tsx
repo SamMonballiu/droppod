@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, FC } from "react";
 
 interface MediaListContextData {
   files: FileInfo[];
+  setFiles: (files: FileInfo[]) => void;
   addFile: (file: FileInfo) => void;
   addFiles: (files: FileInfo[]) => void;
   removeFile: (file: FileInfo) => void;
@@ -63,6 +64,7 @@ export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
     <MediaListContext.Provider
       value={{
         files,
+        setFiles: setFilesState,
         addFile,
         addFiles,
         removeFile,
