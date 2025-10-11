@@ -52,8 +52,12 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
                 </p>
               </div>
             ))
-          ) : mode === "mini" ? null : (
-            <p className={styles.playing} onClick={() => onSetMode("full")}>
+          ) : (
+            <p
+              className={styles.playing}
+              onClick={() => onSetMode(mode === "mini" ? "condensed" : "full")}
+              title={mode === "mini" ? activeFile?.filename : ""}
+            >
               {activeFile?.filename}
             </p>
           )}

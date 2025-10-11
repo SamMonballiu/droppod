@@ -169,7 +169,7 @@ export const AudioPlayer: FC = () => {
           </>
         ) : null}
 
-        {mode === "condensed" ? volumeIcon : null}
+        {mode === "condensed" || mode === "mini" ? volumeIcon : null}
       </div>
 
       {mode === "full" ? (
