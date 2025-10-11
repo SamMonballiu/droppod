@@ -2,6 +2,7 @@
   display: flex;
   gap: 12px;
   flex-direction: column;
+  //width: 100%;
 }
 
 .controls {
@@ -15,6 +16,7 @@
 .progress {
   display: flex;
   justify-content: flex-end;
+  user-select: none;
 }
 
 .timestamp {
@@ -27,4 +29,9 @@
   gap: 12px;
   align-items: center;
   justify-content: space-between;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: default;
 }

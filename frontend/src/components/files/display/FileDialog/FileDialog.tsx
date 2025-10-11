@@ -21,21 +21,18 @@ const { Image, Video, Audio, Text } = FileType;
 export const FileDialog: FC<Props> = ({ isOpen, onClose, file, onSave }) => {
   return (
     <BooleanContextProvider>
-      <Dialog isOpen={isOpen} onClose={onClose}>
+      <Dialog isOpen={isOpen} onClose={onClose} className={styles.dialog}>
         <div>
           <div className={styles.preview}>
             {is(file, Image) && (
               <ImagePreview file={file} className={styles.image} />
             )}
             {is(file, Video) && (
-              <MediaPreview
-                file={file}
-                className={styles.video}
-                controls
-                autoPlay
-              />
+              <MediaPreview file={file} className={styles.video} autoPlay />
             )}
-            {is(file, Audio) && <MediaPreview file={file} controls />}
+            {is(file, Audio) && (
+              <MediaPreview file={file} className={styles.audio} />
+            )}
             {is(file, Text) && (
               <TextPreview file={file} isEdit onSave={onSave} />
             )}

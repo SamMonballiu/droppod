@@ -22,6 +22,7 @@ export interface DialogProps extends React.PropsWithChildren {
   isOpen: boolean;
   onClose: () => void;
   buttons?: DialogButtonDefinition[];
+  className?: string;
 }
 
 export const Dialog: FC<DialogProps> = ({
@@ -30,6 +31,7 @@ export const Dialog: FC<DialogProps> = ({
   onClose,
   children,
   buttons,
+  className,
 }) => {
   const isDirty = useBooleanContext();
   const dialogRef = useRef<HTMLElement | undefined>();
@@ -58,7 +60,10 @@ export const Dialog: FC<DialogProps> = ({
       </div>
 
       <div className={styles.dialog}>
-        <HeadlessDialog.Panel ref={dialogRef} className={styles.panel}>
+        <HeadlessDialog.Panel
+          ref={dialogRef}
+          className={cx(styles.panel, className)}
+        >
           {title && <HeadlessDialog.Title>{title}</HeadlessDialog.Title>}
           {children}
           {buttons && (

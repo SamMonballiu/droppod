@@ -8,7 +8,7 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import styles from "./Playlist.module.scss";
 import cx from "classnames";
 import { AiOutlineClose } from "react-icons/ai";
-import { AudioPlayer } from "./AudioPlayer";
+import { PlaylistPlayer } from "./PlaylistPlayer";
 
 interface Props {
   mode: PlaylistMode;
@@ -36,7 +36,7 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
       })}
     >
       <section className={styles.panel}>
-        <AudioPlayer />
+        <PlaylistPlayer />
         <div className={styles.titles}>
           {mode === "full" ? (
             playlist.map((item, idx) => (

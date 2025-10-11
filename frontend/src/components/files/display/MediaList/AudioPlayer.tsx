@@ -1,16 +1,30 @@
+import { FileInfo } from "@models/fileinfo";
+import ProgressBar from "@ohaeseong/react-progress-bar";
+import { PlaylistMode } from "@root/context/useMediaListContext";
 import { FC, useEffect, useRef, useState } from "react";
-import styles from "./AudioPlayer.module.scss";
-import { useMediaListContext } from "@root/context/useMediaListContext";
 import {
-  FaStepBackward,
   FaPause,
   FaPlay,
+  FaStepBackward,
   FaStepForward,
   FaVolumeMute,
   FaVolumeUp,
 } from "react-icons/fa";
-import ProgressBar from "@ohaeseong/react-progress-bar";
-import { FileInfo } from "@models/fileinfo";
+import styles from "./AudioPlayer.module.scss";
+import cx from "classnames";
+
+interface Props {
+  mode: PlaylistMode;
+  file: FileInfo;
+  autoPlay?: boolean;
+  itemPosition?: [number, number];
+  onNext?: () => void;
+  onPrevious?: () => void;
+  onPlay?: () => void;
+  onPause?: () => void;
+  className?: string;
+  disabled?: boolean;
+}
 
 const getPath = (file: FileInfo | null) => {
   if (!file) return "";
@@ -21,43 +35,21 @@ const getPath = (file: FileInfo | null) => {
   return path;
 };
 
-export const AudioPlayer: FC = () => {
-  const {
-    files: playlist,
-    mode,
-    activeFile: currentSong,
-    setActiveFile: playSong,
-    isPlaying,
-    setIsPlaying,
-  } = useMediaListContext();
+export const AudioPlayer: FC<Props> = ({
+  mode,
+  file,
+  autoPlay = false,
+  itemPosition,
+  onNext,
+  onPrevious,
+  onPlay,
+  onPause,
+  className,
+  disabled = false,
+}) => {
   const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const can = () => {
-    const idx = playlist.indexOf(currentSong!);
-
-    return {
-      previous: idx > 0,
-      next: idx < playlist.length - 1,
-    };
-  };
-
-  const handle = {
-    previous: () => {
-      const idx = playlist.indexOf(currentSong!);
-      if (can().previous) {
-        setCurrentTime(0);
-        playSong(playlist[idx - 1]);
-      }
-    },
-    next: () => {
-      const idx = playlist.indexOf(currentSong!);
-      if (can().next) {
-        setCurrentTime(0);
-        playSong(playlist[idx + 1]);
-      }
-    },
-  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -78,17 +70,27 @@ export const AudioPlayer: FC = () => {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  const htmlAudioElement = playlist.length ? (
+  const htmlAudioElement = (
     <audio
       style={{ display: "none" }}
       ref={audioRef}
-      src={getPath(currentSong)}
-      autoPlay={true}
-      onEnded={handle.next}
-      onPlay={() => setIsPlaying(true)}
-      onPause={() => setIsPlaying(false)}
+      src={getPath(file)}
+      autoPlay={autoPlay && !disabled}
+      onEnded={() => {
+        onNext?.();
+        setCurrentTime(0);
+        audioRef.current!.currentTime = 0;
+      }}
+      onPlay={() => {
+        onPlay?.();
+        setIsPlaying(true);
+      }}
+      onPause={() => {
+        onPause?.();
+        setIsPlaying(false);
+      }}
     />
-  ) : null;
+  );
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -118,24 +120,43 @@ export const AudioPlayer: FC = () => {
   );
 
   return (
-    <div className={styles.container}>
+    <div className={cx(styles.container, className)}>
       <div className={styles.controls}>
-        {mode !== "mini" ? <FaStepBackward onClick={handle.previous} /> : null}
+        {onPrevious && mode !== "mini" ? (
+          <FaStepBackward
+            onClick={disabled ? undefined : onPrevious}
+            className={cx({ [styles.disabled]: disabled })}
+          />
+        ) : null}
         {isPlaying ? (
-          <FaPause onClick={() => audioRef.current?.pause()} />
+          <FaPause
+            onClick={
+              disabled
+                ? undefined
+                : () => {
+                    onPause?.();
+                    audioRef.current?.pause();
+                  }
+            }
+            className={cx({ [styles.disabled]: disabled })}
+          />
         ) : (
-          <FaPlay onClick={handlePlay} />
+          <FaPlay
+            onClick={disabled ? undefined : handlePlay}
+            className={cx({ [styles.disabled]: disabled })}
+          />
         )}
 
-        {mode !== "mini" ? <FaStepForward onClick={handle.next} /> : null}
+        {onNext && mode !== "mini" ? <FaStepForward onClick={onNext} /> : null}
+
         {htmlAudioElement}
 
         {mode !== "mini" ? (
           <>
             <div className={styles.progress}>
-              {audioRef.current && (
+              {itemPosition && audioRef.current && (
                 <span className={styles.timestamp}>
-                  {playlist.indexOf(currentSong!) + 1}/{playlist.length}
+                  {itemPosition[0]}/{itemPosition[1]}
                 </span>
               )}
             </div>
@@ -143,28 +164,31 @@ export const AudioPlayer: FC = () => {
             <div style={{ flexGrow: 1 }}>
               <PlaylistProgressBar
                 value={currentTime}
-                onClick={(percentage) => {
-                  if (!audioRef.current) {
-                    return;
-                  }
+                disabled={disabled}
+                onClick={
+                  disabled
+                    ? undefined
+                    : (percentage) => {
+                        if (!audioRef.current) {
+                          return;
+                        }
 
-                  const ratio = percentage / 100;
+                        const ratio = percentage / 100;
 
-                  const time = audioRef.current?.duration * ratio;
-                  audioRef.current!.currentTime = time;
-                  setCurrentTime(ratio);
-                }}
+                        const time = audioRef.current?.duration * ratio;
+                        audioRef.current!.currentTime = time;
+                        setCurrentTime(ratio);
+                      }
+                }
               />
             </div>
 
             <div className={styles.progress}>
               {audioRef.current && (
-                <>
-                  <span className={styles.timestamp}>
-                    {convertToTimestamp(audioRef.current.currentTime)} /{" "}
-                    {convertToTimestamp(audioRef.current.duration)}
-                  </span>
-                </>
+                <span className={styles.timestamp}>
+                  {convertToTimestamp(audioRef.current.currentTime)} /{" "}
+                  {convertToTimestamp(audioRef.current.duration)}
+                </span>
               )}
             </div>
           </>
@@ -201,6 +225,7 @@ interface ProgressBarProps {
   onClick?: (val: number) => void;
   height?: number;
   color?: React.ComponentProps<typeof ProgressBar>["color"];
+  disabled?: boolean;
 }
 
 const PlaylistProgressBar: FC<ProgressBarProps> = ({
@@ -208,6 +233,7 @@ const PlaylistProgressBar: FC<ProgressBarProps> = ({
   onClick,
   height = 15,
   color = "#89C95A",
+  disabled = false,
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const div = event.currentTarget; // Get the clicked div
@@ -218,7 +244,10 @@ const PlaylistProgressBar: FC<ProgressBarProps> = ({
   };
 
   return (
-    <div onClick={handleClick} style={{ cursor: "pointer" }}>
+    <div
+      onClick={handleClick}
+      style={{ cursor: disabled ? "default" : "pointer" }}
+    >
       <ProgressBar
         value={value}
         max={1}
