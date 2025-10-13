@@ -3,14 +3,18 @@ import {
   PlaylistMode,
   useMediaListContext,
 } from "@root/context/useMediaListContext";
-import { FC } from "react";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { FC, useEffect } from "react";
+import { FaChevronUp, FaChevronDown, FaPlay } from "react-icons/fa";
 import styles from "./Playlist.module.scss";
 import cx from "classnames";
 import { AiOutlineClose } from "react-icons/ai";
 import { PlaylistPlayer } from "./PlaylistPlayer";
 import { insert } from "@formkit/drag-and-drop";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
+import {
+  FileContextHandler,
+  FileContextMenu,
+} from "@components/files/modify/FileContextMenu/FileContextMenu";
 
 interface Props {
   mode: PlaylistMode;
@@ -72,41 +76,72 @@ const PlaylistItems: FC = () => {
     setActiveFile,
   } = useMediaListContext();
 
-  const [parentRef, values] = useDragAndDrop<HTMLDivElement, FileInfo>(
-    playlist,
-    {
-      sortable: true,
-      onSort: (data) => {
-        setPlaylist(data.values as FileInfo[]);
+  const handlers = (file: FileInfo): FileContextHandler[] => {
+    return [
+      {
+        label: "Play",
+        icon: <FaPlay className={styles.contextIcon} />,
+        disabled: activeFile === file,
+        onClick: () => {
+          const idx = playlist.indexOf(file);
+          setActiveFile(playlist[idx]);
+        },
       },
-      plugins: [
-        insert({
-          insertPoint: () => {
-            const div = document.createElement("div");
-            div.classList.add(styles.dndInsert);
-            return div;
-          },
-        }),
-      ],
-    }
-  );
+      {
+        label: "Remove",
+        icon: <AiOutlineClose className={styles.contextIcon} />,
+        disabled: activeFile === file,
+        onClick: () => removeFile(file),
+      },
+    ];
+  };
+
+  useEffect(() => {
+    setValues(playlist);
+  }, [playlist]);
+
+  const [parentRef, values, setValues] = useDragAndDrop<
+    HTMLDivElement,
+    FileInfo
+  >(playlist, {
+    sortable: true,
+    onSort: (data) => {
+      setPlaylist(data.values as FileInfo[]);
+    },
+    plugins: [
+      insert({
+        insertPoint: () => {
+          const div = document.createElement("div");
+          div.classList.add(styles.dndInsert);
+          return div;
+        },
+      }),
+    ],
+  });
 
   return (
     <section ref={parentRef}>
       {values.map((item, idx) => {
         const isCurrentItem = item.fullPath === activeFile?.fullPath;
         return (
-          <div className={styles.playlistItem} key={item.fullPath}>
-            <AiOutlineClose onClick={() => removeFile(item)} />
-            <p
-              className={cx({
-                [styles.playing]: isCurrentItem,
-              })}
-              onDoubleClick={() => setActiveFile(playlist[idx])}
-            >
-              {item.filename}
-            </p>
-          </div>
+          <FileContextMenu
+            key={item.fullPath}
+            file={item}
+            handlers={handlers(item)}
+            getId={(file) => `ctx-playlist-${file.filename}`}
+          >
+            <div className={styles.playlistItem}>
+              <AiOutlineClose onClick={() => removeFile(item)} />
+              <p
+                className={cx({
+                  [styles.playing]: isCurrentItem,
+                })}
+                onDoubleClick={() => setActiveFile(playlist[idx])}
+              >
+                {item.filename}
+              </p>
+            </div>
+          </FileContextMenu>
         );
       })}
     </section>
