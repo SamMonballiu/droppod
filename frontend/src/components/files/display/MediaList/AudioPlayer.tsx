@@ -112,6 +112,7 @@ export const AudioPlayer: FC<Props> = ({
 
   const volumeIcon = (
     <VolumeIcon
+      className={cx({ [styles.disabled]: disabled })}
       onClick={() => {
         if (!audioRef.current) return;
         audioRef.current.volume = audioRef.current.volume === 1 ? 0 : 1;
