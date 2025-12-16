@@ -6,6 +6,10 @@
   background: white;
 }
 
+.hidden {
+  display: none;
+}
+
 .mini {
   display: flex;
   gap: 12px;
@@ -16,6 +20,7 @@
   border: 1px solid #ddd;
   background: white;
   padding: 4px 32px;
+  padding-left: 48px;
   margin: 0;
   box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.3);
   z-index: 10;
@@ -32,6 +37,11 @@
     overflow: clip;
     white-space: pre;
     text-overflow: ellipsis;
+  }
+
+  .shrinkIcon {
+    position: absolute;
+    left: 16px;
   }
 
   cursor: pointer;

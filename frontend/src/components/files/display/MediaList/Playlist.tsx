@@ -27,6 +27,7 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
   return (
     <div
       className={cx(styles.playlist, {
+        [styles.hidden]: mode === "hidden",
         [styles.mini]: mode === "mini",
         [styles.small]: mode === "condensed",
         [styles.full]: mode === "full",
@@ -50,12 +51,19 @@ export const Playlist: FC<Props> = ({ mode, onSetMode }) => {
         </div>
       </section>
 
-      {mode !== "mini" ? (
-        <FaChevronDown
-          className={styles.shrinkIcon}
-          onClick={() => onSetMode(mode === "condensed" ? "mini" : "condensed")}
-        />
-      ) : null}
+      <FaChevronDown
+        className={styles.shrinkIcon}
+        onClick={() =>
+          onSetMode(
+            {
+              full: "condensed",
+              condensed: "mini",
+              mini: "hidden",
+              hidden: "hidden",
+            }[mode] as PlaylistMode
+          )
+        }
+      />
 
       {mode !== "full" ? (
         <FaChevronUp

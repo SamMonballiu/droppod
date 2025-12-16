@@ -24,7 +24,7 @@ export function useMediaListContext() {
   return useContext(MediaListContext);
 }
 
-export type PlaylistMode = "mini" | "condensed" | "full";
+export type PlaylistMode = "hidden" | "mini" | "condensed" | "full";
 
 export const MediaListContextProvider: FC<{ children: React.ReactNode }> = ({
   children,

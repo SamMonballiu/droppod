@@ -103,7 +103,12 @@ const App: FC<Props> = ({ params }) => {
   const [focusedFile, setFocusedFile] = useState<FileInfo | null>(null);
   const [focusedFolder, setFocusedFolder] = useState<FolderInfo | null>(null);
   const [, setLocation] = useLocation();
-  const { files: playlist, addFiles: addToPlaylist } = useMediaListContext();
+  const {
+    files: playlist,
+    addFiles: addToPlaylist,
+    mode: playlistMode,
+    setMode: setPlaylistMode,
+  } = useMediaListContext();
 
   const {
     filters: filesFilter,
@@ -455,6 +460,12 @@ const App: FC<Props> = ({ params }) => {
         className={cx({ [tabStyles.active]: activeTab === "upload" })}
         onClick={() => setActiveTab("upload")}
       />
+      {playlistMode === "hidden" && playlist.length > 0 && (
+        <MdMusicNote
+          className={tabStyles.active}
+          onClick={() => setPlaylistMode("full")}
+        />
+      )}
     </>
   );
 
